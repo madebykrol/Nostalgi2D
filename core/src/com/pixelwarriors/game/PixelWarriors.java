@@ -60,11 +60,8 @@ public class PixelWarriors extends ApplicationAdapter implements InputProcessor 
 		mapSizeH = mainLayer.getHeight();
 
 		camera = new PixelWarriorCamera(w, h);
-
 		camera.setToOrtho(false, (w / h) * 10, 10);
-
 		camera.setWorldBounds(0, 0, mapSizeW, mapSizeH, 32);
-
 		camera.setPositionSafe(0, 58);
 
 		viewport = new FitViewport(w, h, camera);
