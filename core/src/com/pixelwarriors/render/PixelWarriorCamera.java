@@ -34,9 +34,14 @@ public class PixelWarriorCamera extends OrthographicCamera {
     }
 
     public void setPositionSafe(float x, float y) {
+
+        // Clamp x
         float x1 = MathUtils.clamp(x, left + camViewportHalfWidth, right - camViewportHalfWidth);
+
+        // Clamp y
         float y1 = MathUtils.clamp(y, bottom + camViewportHalfHeight, top - camViewportHalfHeight);
 
+        // Set these positions
         this.position.set(x1, y1, 0);
         update();
     }

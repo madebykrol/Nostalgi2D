@@ -96,17 +96,14 @@ public class PixelWarriors extends ApplicationAdapter implements InputProcessor 
 	@Override
 	public boolean keyUp(int keycode) {
 		if(keycode == Input.Keys.LEFT)
-			camera.translate(-32,0);
+			camera.setPositionSafe(camera.position.x - 1, camera.position.y);
 		if(keycode == Input.Keys.RIGHT)
-			camera.translate(32,0);
+			camera.setPositionSafe(camera.position.x + 1, camera.position.y);
 		if(keycode == Input.Keys.UP)
-			camera.translate(0,-32);
+			camera.setPositionSafe(camera.position.x, camera.position.y + 1);
 		if(keycode == Input.Keys.DOWN)
-			camera.translate(0,32);
-		if(keycode == Input.Keys.NUM_1)
-			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
-		if(keycode == Input.Keys.NUM_2)
-			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+			camera.setPositionSafe(camera.position.x,camera.position.y-1);
+
 		return false;
 	}
 
