@@ -1,4 +1,6 @@
-package com.pixelwarriors.engine;
+package com.nostalgi.engine.interfaces;
+
+import com.nostalgi.engine.Stat;
 
 /**
  * Created by Kristoffer on 2016-06-30.

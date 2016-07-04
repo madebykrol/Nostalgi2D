@@ -1,4 +1,6 @@
-package com.pixelwarriors.engine;
+package com.nostalgi.engine.interfaces;
+
+import com.nostalgi.engine.Stat;
 
 import javafx.animation.Animation;
 

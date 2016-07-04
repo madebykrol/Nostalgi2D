@@ -1,9 +1,9 @@
-package com.pixelwarriors.game.client;
+package com.nostalgi.game.client;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.pixelwarriors.game.PixelWarriors;
+import com.nostalgi.game.Nostalgi;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -14,6 +14,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new PixelWarriors();
+                return new Nostalgi();
         }
 }

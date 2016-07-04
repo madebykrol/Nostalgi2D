@@ -1,33 +1,36 @@
-package com.pixelwarriors.game;
+package com.nostalgi.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.pixelwarriors.render.PixelWarriorCamera;
+import com.nostalgi.engine.BaseGameMode;
+import com.nostalgi.engine.BaseGameState;
+import com.nostalgi.engine.BasePlayerCharacter;
+import com.nostalgi.engine.GrassLandLevel;
+import com.nostalgi.engine.NostalgiBaseEngine;
+import com.nostalgi.engine.interfaces.IGameEngine;
+import com.nostalgi.engine.interfaces.IGameMode;
+import com.nostalgi.engine.interfaces.IGameState;
+import com.nostalgi.render.NostalgiCamera;
 
-import sun.rmi.runtime.Log;
+public class Nostalgi extends ApplicationAdapter implements InputProcessor {
 
-public class PixelWarriors extends ApplicationAdapter implements InputProcessor {
-	TiledMap tiledMap;
-	PixelWarriorCamera camera;
+	NostalgiCamera camera;
 	TiledMapRenderer tiledMapRenderer;
 	Viewport viewport;
 	private BitmapFont font;
@@ -36,11 +39,9 @@ public class PixelWarriors extends ApplicationAdapter implements InputProcessor 
 	float w;
 	float h;
 
-	int mapSizeW;
-	int mapSizeH;
-
-	int tileSize = 32;
-
+	IGameMode gameMode;
+	IGameState gameState;
+	IGameEngine gameEngine;
 
 
 	Vector3 last_touch_down = new Vector3();
@@ -48,23 +49,35 @@ public class PixelWarriors extends ApplicationAdapter implements InputProcessor 
 	@Override
 	public void create () {
 
-		tiledMap = new TmxMapLoader().load("grasslands.tmx");
-		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / 32f);
+		this.gameState = new BaseGameState(
+				new GrassLandLevel(new TmxMapLoader()),
+				new BasePlayerCharacter());
+
+		this.gameMode = new BaseGameMode(this.gameState);
+
+		this.gameEngine = new NostalgiBaseEngine(this.gameState, this.gameMode);
+
+		this.gameEngine.init();
+
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(
+				gameState.getCurrentLevel().getMap(),
+				1 / (float)gameState.getCurrentLevel().getTileSize());
 
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		TiledMapTileLayer mainLayer = (TiledMapTileLayer)tiledMap.getLayers().get(0);
-		tileSize = (int) mainLayer.getTileWidth();
-		mapSizeW = mainLayer.getWidth();
-		mapSizeH = mainLayer.getHeight();
+		camera = new NostalgiCamera(
+				1024, 768,
+				gameState.getCurrentLevel().getHeight(), gameState.getCurrentLevel().getWidth(),
+				gameState.getCurrentLevel().getTileSize());
 
-		camera = new PixelWarriorCamera(w, h);
-		camera.setToOrtho(false, (w / h) * 10, 10);
-		camera.setWorldBounds(0, 0, mapSizeW, mapSizeH, 32);
-		camera.setPositionSafe(0, 58);
+		camera.setPositionSafe(
+				gameState.getCurrentLevel().getCameraInitLocation().x,
+				gameState.getCurrentLevel().getCameraInitLocation().y);
 
-		viewport = new FitViewport(w, h, camera);
+		camera.zoom = 1f;
+
+		viewport = new StretchViewport(768, 1024, camera);
 
 		font = new BitmapFont();
 		batch = new SpriteBatch();
@@ -86,6 +99,12 @@ public class PixelWarriors extends ApplicationAdapter implements InputProcessor 
 		batch.begin();
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
 		batch.end();
+	}
+
+
+	@Override
+	public void resize(int width, int height) {
+
 	}
 
 	@Override

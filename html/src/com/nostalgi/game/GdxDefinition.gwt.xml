@@ -8,7 +8,7 @@
 	<inherits name='com.badlogic.gdx.controllers.controllers-gwt' />
 
 	<inherits name='PixelWarriors' />
-	<entry-point class='com.pixelwarriors.game.client.HtmlLauncher' />
+	<entry-point class='com.nostalgi.game.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 </module>
