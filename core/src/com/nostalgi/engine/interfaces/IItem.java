@@ -5,7 +5,7 @@ import com.nostalgi.engine.Stat;
 /**
  * Created by Kristoffer on 2016-06-30.
  */
-public interface IItem {
+public interface IItem extends ITicker {
 
     public String getName();
     public int getItemClass();

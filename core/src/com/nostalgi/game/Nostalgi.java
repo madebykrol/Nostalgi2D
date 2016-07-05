@@ -97,6 +97,9 @@ public class Nostalgi extends ApplicationAdapter implements InputProcessor {
 		tiledMapRenderer.render();
 
 		batch.begin();
+
+		gameEngine.update();
+
 		font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
 		batch.end();
 	}

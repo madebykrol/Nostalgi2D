@@ -10,4 +10,7 @@ public interface IGameEngine {
     public IGameState getGameState();
     public IGameMode getGameMode();
 
+    public IHud getHud();
+    public void setHud(IHud hud);
+
 }

@@ -24,5 +24,5 @@ public interface ICharacter {
     public IItem getInventoryItem(int slot);
     public IItem[] getInventoryItems();
 
-
+    public void setCurrentController(IController controller);
 }
