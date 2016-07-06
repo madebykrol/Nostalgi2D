@@ -5,12 +5,16 @@ package com.nostalgi.engine.interfaces;
  */
 public interface IGameState {
 
-    public ILevel getCurrentLevel();
-    public void setCurrentLevel(ILevel level);
+    ILevel getCurrentLevel();
+    void setCurrentLevel(ILevel level);
 
-    public ICharacter getPlayerCharacter();
-    public void setPlayerCharacter(ICharacter character);
+    ICharacter getPlayerCharacter();
+    void setPlayerCharacter(ICharacter character);
 
-    public void setCurrentGameMode(IGameMode mode);
-    public IGameMode getCurrentGameMode();
+    void setCurrentGameMode(IGameMode mode);
+    IGameMode getCurrentGameMode();
+
+    void update(float delta);
+
+    float getGameTime();
 }

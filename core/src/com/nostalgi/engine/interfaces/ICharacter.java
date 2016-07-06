@@ -1,28 +1,35 @@
 package com.nostalgi.engine.interfaces;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.Stat;
-
-import javafx.animation.Animation;
 
 /**
  * Created by Kristoffer on 2016-06-30.
  */
-public interface ICharacter {
+public interface ICharacter extends Disposable{
 
-    public Animation getCurrentAnimation();
-    public void setCurrentAnimation();
-    public void addAnimation(int state, Animation animation);
-    public Animation getAnimation(int state);
+    Animation getCurrentAnimation();
 
+    void setCurrentAnimation(Animation animation);
+    void setCurrentAnimation(int state);
 
-    public Stat getStat(int mod);
-    public void setStat(int mod, Stat stat);
+    void addAnimation(int state, Animation animation);
+    Animation getAnimation(int state);
 
-    public IItem getEquipmentItem(int slot);
-    public IItem[] getEquipmentItems();
+    Vector2 getPosition();
+    void setPosition(Vector2 position);
 
-    public IItem getInventoryItem(int slot);
-    public IItem[] getInventoryItems();
+    Stat getStat(int mod);
+    void setStat(int mod, Stat stat);
 
-    public void setCurrentController(IController controller);
+    IItem getEquipmentItem(int slot);
+    IItem[] getEquipmentItems();
+
+    IItem getInventoryItem(int slot);
+    IItem[] getInventoryItems();
+
+    void setCurrentController(IController controller);
+    IController getCurrentController();
 }

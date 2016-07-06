@@ -14,6 +14,14 @@ public abstract class BaseLevel implements ILevel {
 
     protected TiledMap map;
     private TiledMapTileLayer mainLayer;
+    private int originX;
+    private int originY;
+
+
+    public BaseLevel(int originX, int originY) {
+        this.originX = originX;
+        this.originY = originY;
+    }
 
     @Override
     public ISpawner[] getNpcSpawns() {
@@ -66,6 +74,20 @@ public abstract class BaseLevel implements ILevel {
             return (int) mainLayer.getTileWidth();
 
         return 0;
+    }
+
+    @Override
+    public LevelBounds getBounds() {
+        return new LevelBounds(originX,originY,getWidth(), getHeight());
+    }
+
+    @Override
+    public void setBounds(LevelBounds bounds) {
+
+    }
+
+    public void dispose() {
+        this.map.dispose();
     }
 
     protected void setMainLayer() {

@@ -13,6 +13,7 @@ public class BaseGameState implements IGameState {
     protected ILevel currentLevel;
     protected ICharacter currentPlayerCharacter;
     protected IGameMode currentGameMode;
+    protected float gameTime;
 
     public BaseGameState(ILevel level, ICharacter playerCharacter) {
         this.currentLevel = level;
@@ -47,5 +48,15 @@ public class BaseGameState implements IGameState {
     @Override
     public IGameMode getCurrentGameMode() {
         return this.currentGameMode;
+    }
+
+    @Override
+    public void update(float delta) {
+        gameTime += delta;
+    }
+
+    @Override
+    public float getGameTime() {
+        return this.gameTime;
     }
 }

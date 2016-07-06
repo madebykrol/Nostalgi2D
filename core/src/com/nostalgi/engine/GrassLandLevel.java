@@ -10,8 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 public class GrassLandLevel extends BaseLevel {
 
     public GrassLandLevel(TmxMapLoader mapLoader) {
+        super(0,0);
         this.setMap(mapLoader.load("grasslands.tmx"));
     }
+
 
     @Override
     public Vector2 getCameraInitLocation() {
