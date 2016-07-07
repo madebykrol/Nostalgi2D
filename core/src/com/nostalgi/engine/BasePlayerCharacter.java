@@ -1,8 +1,10 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
+import com.nostalgi.engine.interfaces.IGameState;
 import com.nostalgi.engine.interfaces.IItem;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -16,6 +18,7 @@ public class BasePlayerCharacter implements ICharacter {
 
     protected Animation currentAnimation;
     protected IController currentController;
+    protected IGameState gameState;
 
     protected Vector2 position;
     protected Map<Integer, Animation> animations;
@@ -48,6 +51,11 @@ public class BasePlayerCharacter implements ICharacter {
             return animations.get(state);
 
         return null;
+    }
+
+    @Override
+    public boolean isAnimated() {
+        return true;
     }
 
     @Override
@@ -98,6 +106,11 @@ public class BasePlayerCharacter implements ICharacter {
     @Override
     public IController getCurrentController() {
         return this.currentController;
+    }
+
+    @Override
+    public Sprite getStaticSprite(float deltaT) {
+        return null;
     }
 
     @Override

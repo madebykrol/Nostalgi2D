@@ -1,6 +1,8 @@
 package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.Stat;
@@ -18,6 +20,8 @@ public interface ICharacter extends Disposable{
     void addAnimation(int state, Animation animation);
     Animation getAnimation(int state);
 
+    boolean isAnimated();
+
     Vector2 getPosition();
     void setPosition(Vector2 position);
 
@@ -32,4 +36,7 @@ public interface ICharacter extends Disposable{
 
     void setCurrentController(IController controller);
     IController getCurrentController();
+
+    Sprite getStaticSprite(float deltaT);
+
 }
