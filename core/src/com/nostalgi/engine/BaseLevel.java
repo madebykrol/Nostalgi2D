@@ -1,11 +1,20 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.interfaces.IDoor;
 import com.nostalgi.engine.interfaces.ILevel;
 import com.nostalgi.engine.interfaces.ISpawner;
 import com.nostalgi.engine.interfaces.IWall;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-03.
@@ -16,11 +25,18 @@ public abstract class BaseLevel implements ILevel {
     private TiledMapTileLayer mainLayer;
     private int originX;
     private int originY;
+    private final String boundsLayer;
 
+    private ArrayList<Polygon> mapBounds;
 
     public BaseLevel(int originX, int originY) {
+        this(originX, originY, "Bounds");
+    }
+
+    public BaseLevel(int originX, int originY, String boundsLayer) {
         this.originX = originX;
         this.originY = originY;
+        this.boundsLayer = boundsLayer;
     }
 
     @Override
@@ -42,6 +58,7 @@ public abstract class BaseLevel implements ILevel {
     public void setMap(TiledMap map) {
         this.map = map;
         this.setMainLayer();
+        this.setMapBounds();
     }
 
     @Override
@@ -77,13 +94,17 @@ public abstract class BaseLevel implements ILevel {
     }
 
     @Override
-    public LevelBounds getBounds() {
-        return new LevelBounds(originX,originY,getWidth(), getHeight());
+    public LevelCameraBounds getCameraBounds() {
+        return new LevelCameraBounds(originX,originY,getWidth(), getHeight());
     }
 
     @Override
-    public void setBounds(LevelBounds bounds) {
+    public void setCameraBounds(LevelCameraBounds bounds) {
 
+    }
+
+    public ArrayList<Polygon> getMapBounds() {
+        return this.mapBounds;
     }
 
     public void dispose() {
@@ -93,6 +114,31 @@ public abstract class BaseLevel implements ILevel {
     protected void setMainLayer() {
         if(this.map != null) {
             this.mainLayer = (TiledMapTileLayer)this.map.getLayers().get(0);
+        }
+    }
+
+    protected void setMapBounds() {
+        mapBounds = new ArrayList<Polygon>();
+        MapLayer boundsLayer = map.getLayers().get(this.boundsLayer);
+        if(boundsLayer != null) {
+            for (MapObject object :boundsLayer.getObjects()){
+
+                Polygon pShape = new Polygon();
+
+                if(object instanceof RectangleMapObject) {
+                    RectangleMapObject obj = (RectangleMapObject)object;
+
+                    // Derp
+                } else if( object instanceof PolygonMapObject) {
+                    PolygonMapObject obj = (PolygonMapObject) object;
+
+                    pShape = obj.getPolygon();
+                    // Herp
+                }
+
+                mapBounds.add(pShape);
+                System.out.println("Polygon yay: " + object.toString());
+            }
         }
     }
 }

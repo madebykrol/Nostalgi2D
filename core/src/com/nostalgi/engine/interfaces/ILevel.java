@@ -1,34 +1,38 @@
 package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Disposable;
-import com.nostalgi.engine.LevelBounds;
+import com.nostalgi.engine.LevelCameraBounds;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-03.
  */
 public interface ILevel extends Disposable {
 
-    public LevelBounds getBounds();
-    public void setBounds(LevelBounds bounds);
+    LevelCameraBounds getCameraBounds();
+    void setCameraBounds(LevelCameraBounds bounds);
 
-    public ISpawner[] getNpcSpawns();
-    public ISpawner[] getMonsterSpawns();
+    ISpawner[] getNpcSpawns();
+    ISpawner[] getMonsterSpawns();
 
-    public Vector2 getCameraInitLocation();
+    Vector2 getCameraInitLocation();
 
-    public TiledMap getMap();
-    public void setMap(TiledMap map);
+    TiledMap getMap();
+    void setMap(TiledMap map);
 
-    public IWall[] getWalls();
+    IWall[] getWalls();
 
-    public IDoor[] getDoors();
+    IDoor[] getDoors();
 
-    public int getWidth();
-    public int getHeight();
+    int getWidth();
+    int getHeight();
 
-    public int getTileSize();
+    int getTileSize();
 
-
+    ArrayList<Polygon> getMapBounds();
 }

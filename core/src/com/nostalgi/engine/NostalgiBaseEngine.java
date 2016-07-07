@@ -6,12 +6,19 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.IGameState;
 import com.nostalgi.engine.interfaces.IHud;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -67,6 +74,29 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(hud != null) {
             hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
+        ArrayList<Polygon> boundingBoxes = getGameState().getCurrentLevel().getMapBounds();
+        ShapeRenderer batch = new ShapeRenderer();
+        batch.setProjectionMatrix(this.currentCamera.combined);
+        batch.setAutoShapeType(true);
+        batch.begin();
+            batch.setColor(1,0,0,1);
+
+            for(Polygon shape : boundingBoxes) {
+                float[] vertices = new float[shape.getVertices().length];
+                if(vertices.length > 2) {
+
+                    for(int i = 0; i < vertices.length; i++) {
+                       vertices[i] = (shape.getVertices()[i] + shape.getX())/32f;
+                       vertices[i+1] = (shape.getVertices()[i+1] + shape.getY())/32f;
+                        i++;
+                    }
+
+                    batch.polygon(vertices);
+                }
+            }
+
+        batch.end();
+        batch.dispose();
     }
 
     @Override

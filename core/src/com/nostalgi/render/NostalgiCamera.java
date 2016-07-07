@@ -1,12 +1,10 @@
 package com.nostalgi.render;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
-import com.nostalgi.engine.LevelBounds;
+import com.nostalgi.engine.LevelCameraBounds;
 
 /**
  * Created by Kristoffer on 2016-06-26.
@@ -18,14 +16,14 @@ public class NostalgiCamera extends OrthographicCamera {
     float camViewportHalfHeight = 0;
 
 
-    public NostalgiCamera(float w, float h, LevelBounds bounds, int unitScale) {
+    public NostalgiCamera(float w, float h, LevelCameraBounds bounds, int unitScale) {
         super(w, h);
         this.unitScale = unitScale;
         setToOrtho(false, w / (unitScale), h / (unitScale));
         setWorldBounds(bounds);
     }
 
-    public void setWorldBounds(LevelBounds bounds) {
+    public void setWorldBounds(LevelCameraBounds bounds) {
         this.setWorldBounds(bounds.left, bounds.bottom, bounds.right, bounds.top);
     }
 

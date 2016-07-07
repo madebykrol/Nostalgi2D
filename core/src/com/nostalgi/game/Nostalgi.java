@@ -2,21 +2,12 @@ package com.nostalgi.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseController;
@@ -48,16 +39,18 @@ public class Nostalgi extends ApplicationAdapter {
 	IGameEngine gameEngine;
 
 
+	protected World world;
+
 	@Override
 	public void create () {
-
+		world = new World(new Vector2(0, 0), true);
 		this.gameState = new BaseGameState(
 				new GrassLandLevel(new TmxMapLoader()),
 				new BasePlayerCharacter());
 
 		camera = new NostalgiCamera(
 				1024, 768,
-				gameState.getCurrentLevel().getBounds(),
+				gameState.getCurrentLevel().getCameraBounds(),
 				gameState.getCurrentLevel().getTileSize());
 
 		camera.setPositionSafe(
