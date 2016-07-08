@@ -31,11 +31,16 @@ public class NostalgiBaseEngine implements IGameEngine {
     protected SpriteBatch batch;
     protected OrthographicCamera currentCamera;
     protected MapRenderer mapRenderer;
-    protected float gameTime;
     protected InputMultiplexer inputProcessor;
 
+    protected World world;
+
+    public NostalgiBaseEngine(Vector2 gravity) {
+        world = new World(gravity, true);
+    }
 
     public NostalgiBaseEngine(IGameState state, IGameMode mode, MapRenderer mapRenderer) {
+        this(state.getGravity());
         this.state = state;
         this.mode = mode;
 
@@ -57,7 +62,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(this.state.getPlayerCharacter().getCurrentController().getInputProcessor() != null)
             inputProcessor.addProcessor(
                     state.getPlayerCharacter().getCurrentController().getInputProcessor());
-
     }
 
     @Override
@@ -86,8 +90,8 @@ public class NostalgiBaseEngine implements IGameEngine {
                 if(vertices.length > 2) {
 
                     for(int i = 0; i < vertices.length; i++) {
-                       vertices[i] = (shape.getVertices()[i] + shape.getX())/32f;
-                       vertices[i+1] = (shape.getVertices()[i+1] + shape.getY())/32f;
+                        vertices[i] = (shape.getVertices()[i] + shape.getX())/32f;
+                        vertices[i+1] = (shape.getVertices()[i+1] + shape.getY())/32f;
                         i++;
                     }
 

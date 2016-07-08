@@ -7,8 +7,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.interfaces.IDoor;
 import com.nostalgi.engine.interfaces.ILevel;
 import com.nostalgi.engine.interfaces.ISpawner;
@@ -25,18 +23,21 @@ public abstract class BaseLevel implements ILevel {
     private TiledMapTileLayer mainLayer;
     private int originX;
     private int originY;
-    private final String boundsLayer;
+    private final String boundsLayerName;
+    private final String mainLayerName;
+    private boolean mapInitialized = false;
 
     private ArrayList<Polygon> mapBounds;
 
     public BaseLevel(int originX, int originY) {
-        this(originX, originY, "Bounds");
+        this(originX, originY, "Main", "Bounds");
     }
 
-    public BaseLevel(int originX, int originY, String boundsLayer) {
+    public BaseLevel(int originX, int originY, String mainLayer, String boundsLayer) {
         this.originX = originX;
         this.originY = originY;
-        this.boundsLayer = boundsLayer;
+        this.mainLayerName = mainLayer;
+        this.boundsLayerName = boundsLayer;
     }
 
     @Override
@@ -57,8 +58,6 @@ public abstract class BaseLevel implements ILevel {
     @Override
     public void setMap(TiledMap map) {
         this.map = map;
-        this.setMainLayer();
-        this.setMapBounds();
     }
 
     @Override
@@ -73,22 +72,22 @@ public abstract class BaseLevel implements ILevel {
 
     @Override
     public int getWidth() {
-        if (this.mainLayer != null)
-            return mainLayer.getWidth();
+        if (this.getMainLayer() != null)
+            return this.getMainLayer().getWidth();
         return 0;
     }
 
     @Override
     public int getHeight() {
-        if(this.mainLayer != null)
-            return mainLayer.getHeight();
+        if(this.getMainLayer() != null)
+            return this.getMainLayer().getHeight();
 
         return 0;
     }
 
     public int getTileSize() {
-        if(this.mainLayer != null)
-            return (int) mainLayer.getTileWidth();
+        if(this.getMainLayer() != null)
+            return (int) this.getMainLayer().getTileWidth();
 
         return 0;
     }
@@ -104,6 +103,9 @@ public abstract class BaseLevel implements ILevel {
     }
 
     public ArrayList<Polygon> getMapBounds() {
+        if(this.mapBounds == null)
+            initMapBounds();
+
         return this.mapBounds;
     }
 
@@ -111,15 +113,17 @@ public abstract class BaseLevel implements ILevel {
         this.map.dispose();
     }
 
-    protected void setMainLayer() {
-        if(this.map != null) {
-            this.mainLayer = (TiledMapTileLayer)this.map.getLayers().get(0);
+    public TiledMapTileLayer getMainLayer() {
+        if(this.mainLayer == null) {
+            this.mainLayer = (TiledMapTileLayer)this.map.getLayers().get(this.mainLayerName);
         }
+
+        return this.mainLayer;
     }
 
-    protected void setMapBounds() {
+    protected void initMapBounds() {
         mapBounds = new ArrayList<Polygon>();
-        MapLayer boundsLayer = map.getLayers().get(this.boundsLayer);
+        MapLayer boundsLayer = map.getLayers().get(this.boundsLayerName);
         if(boundsLayer != null) {
             for (MapObject object :boundsLayer.getObjects()){
 

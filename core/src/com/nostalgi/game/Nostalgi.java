@@ -17,6 +17,7 @@ import com.nostalgi.engine.BaseHud;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
+import com.nostalgi.engine.NostalgiOrthogonalTiledMapRenderer;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
@@ -38,12 +39,14 @@ public class Nostalgi extends ApplicationAdapter {
 	IGameState gameState;
 	IGameEngine gameEngine;
 
+	boolean headless = false;
 
-	protected World world;
+	public Nostalgi(boolean headless) {
+		this.headless = headless;
+	}
 
 	@Override
 	public void create () {
-		world = new World(new Vector2(0, 0), true);
 		this.gameState = new BaseGameState(
 				new GrassLandLevel(new TmxMapLoader()),
 				new BasePlayerCharacter());
@@ -66,7 +69,7 @@ public class Nostalgi extends ApplicationAdapter {
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		this.tiledMapRenderer = new OrthogonalTiledMapRenderer(
+		this.tiledMapRenderer = new NostalgiOrthogonalTiledMapRenderer(
 				gameState.getCurrentLevel().getMap(),
 				1 / (float)gameState.getCurrentLevel().getTileSize());
 

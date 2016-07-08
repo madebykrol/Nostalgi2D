@@ -14,6 +14,10 @@ public class GrassLandLevel extends BaseLevel {
         this.setMap(mapLoader.load("grasslands.tmx"));
     }
 
+    @Override
+    public void initMap() {
+
+    }
 
     @Override
     public Vector2 getCameraInitLocation() {

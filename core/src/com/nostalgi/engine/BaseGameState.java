@@ -1,5 +1,6 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.IGameState;
@@ -58,5 +59,10 @@ public class BaseGameState implements IGameState {
     @Override
     public float getGameTime() {
         return this.gameTime;
+    }
+
+    @Override
+    public Vector2 getGravity() {
+        return new Vector2(0,0);
     }
 }
