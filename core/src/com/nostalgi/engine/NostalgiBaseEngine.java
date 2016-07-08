@@ -5,10 +5,15 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -30,7 +35,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     protected IHud hud;
     protected SpriteBatch batch;
     protected OrthographicCamera currentCamera;
-    protected MapRenderer mapRenderer;
+    protected TiledMapRenderer mapRenderer;
     protected InputMultiplexer inputProcessor;
 
     protected World world;
@@ -39,7 +44,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         world = new World(gravity, true);
     }
 
-    public NostalgiBaseEngine(IGameState state, IGameMode mode, MapRenderer mapRenderer) {
+    public NostalgiBaseEngine(IGameState state, IGameMode mode, TiledMapRenderer mapRenderer) {
         this(state.getGravity());
         this.state = state;
         this.mode = mode;
@@ -74,30 +79,49 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void render() {
-        this.mapRenderer.render();
+
+        // Render level.
+        for(MapLayer layer : this.getGameState().getCurrentLevel().getMap().getLayers()) {
+            if (layer instanceof TiledMapTileLayer) {
+               this.mapRenderer.renderTileLayer((TiledMapTileLayer) layer);
+                if (layer.getName().equals("Ground")) {
+
+                    mapRenderer.getBatch().draw(new Texture(Gdx.files.internal("badlogic.jpg")), 1.5f, 1.5f, 1.5f, 1.5f);
+
+                }
+            } else {
+                for (MapObject object : layer.getObjects()) {
+                    renderObject(object);
+                }
+            }
+        }
+
+
+
         if(hud != null) {
             hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
         ArrayList<Polygon> boundingBoxes = getGameState().getCurrentLevel().getMapBounds();
+
         ShapeRenderer batch = new ShapeRenderer();
         batch.setProjectionMatrix(this.currentCamera.combined);
         batch.setAutoShapeType(true);
         batch.begin();
-            batch.setColor(1,0,0,1);
 
-            for(Polygon shape : boundingBoxes) {
-                float[] vertices = new float[shape.getVertices().length];
-                if(vertices.length > 2) {
+        batch.setColor(1,0,0,1);
 
-                    for(int i = 0; i < vertices.length; i++) {
-                        vertices[i] = (shape.getVertices()[i] + shape.getX())/32f;
-                        vertices[i+1] = (shape.getVertices()[i+1] + shape.getY())/32f;
-                        i++;
-                    }
-
-                    batch.polygon(vertices);
+        for(Polygon shape : boundingBoxes) {
+            float[] vertices = new float[shape.getVertices().length];
+            if(vertices.length > 2) {
+                for(int i = 0; i < vertices.length; i++) {
+                    vertices[i] = (shape.getVertices()[i] + shape.getX())/this.state.getCurrentLevel().getTileSize();
+                    vertices[i+1] = (shape.getVertices()[i+1] + shape.getY())/this.state.getCurrentLevel().getTileSize();
+                    i++;
                 }
+
+                batch.polygon(vertices);
             }
+        }
 
         batch.end();
         batch.dispose();

@@ -5,9 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseController;
@@ -17,7 +14,7 @@ import com.nostalgi.engine.BaseHud;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
-import com.nostalgi.engine.NostalgiOrthogonalTiledMapRenderer;
+import com.nostalgi.engine.NostalgiMapRenderer;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
@@ -69,8 +66,8 @@ public class Nostalgi extends ApplicationAdapter {
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		this.tiledMapRenderer = new NostalgiOrthogonalTiledMapRenderer(
-				gameState.getCurrentLevel().getMap(),
+		this.tiledMapRenderer = new NostalgiMapRenderer(
+				gameState.getCurrentLevel(),
 				1 / (float)gameState.getCurrentLevel().getTileSize());
 
 		this.gameEngine = new NostalgiBaseEngine(this.gameState, this.gameMode, tiledMapRenderer);
@@ -96,7 +93,6 @@ public class Nostalgi extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		gameEngine.update();
-
 		gameEngine.render();
 	}
 
