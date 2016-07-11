@@ -11,7 +11,6 @@ public interface IGameState {
     void setCurrentLevel(ILevel level);
 
     ICharacter getPlayerCharacter();
-    void setPlayerCharacter(ICharacter character);
 
     void setCurrentGameMode(IGameMode mode);
     IGameMode getCurrentGameMode();

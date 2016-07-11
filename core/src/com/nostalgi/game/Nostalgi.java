@@ -15,6 +15,7 @@ import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
+import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
@@ -44,9 +45,11 @@ public class Nostalgi extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+
+		ICharacter character = new BasePlayerCharacter(new Vector2(10,58));
+
 		this.gameState = new BaseGameState(
-				new GrassLandLevel(new TmxMapLoader()),
-				new BasePlayerCharacter(new Vector2(10,58)));
+				new GrassLandLevel(new TmxMapLoader()));
 
 		camera = new NostalgiCamera(
 				1024, 768,
@@ -61,7 +64,7 @@ public class Nostalgi extends ApplicationAdapter {
 
 		this.gameState.setCurrentController(this.playerController);
 
-		this.playerController.possessCharacter(gameState.getPlayerCharacter());
+		this.playerController.possessCharacter(character);
 
 		this.gameMode = new BaseGameMode(this.gameState);
 

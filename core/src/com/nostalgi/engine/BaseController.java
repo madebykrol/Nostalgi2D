@@ -23,7 +23,6 @@ public class BaseController implements IController, InputProcessor {
     protected boolean upIsPressed = false;
     protected boolean downIsPressed = false;
 
-    protected boolean hasHitObsticle = true;
     protected Vector2 lastPosition;
 
     public BaseController () {
@@ -54,38 +53,23 @@ public class BaseController implements IController, InputProcessor {
     @Override
     public void update(float dTime) {
 
+        this.currentPossessedCharacter.getVelocity().x = 0;
+        this.currentPossessedCharacter.getVelocity().y = 0;
+
         if (this.currentPossessedCharacter != null) {
             if (leftIsPressed) {
-                if (this.currentPossessedCharacter.getPhysicsBody() != null)
-                    this.currentPossessedCharacter.getPhysicsBody().getPosition().x -= (0.1);
-                else
-                    this.currentPossessedCharacter.getPosition().x -= (0.1);
+                this.currentPossessedCharacter.getVelocity().x -= 5f;
             }
             if (rightIsPressed) {
-                if (this.currentPossessedCharacter.getPhysicsBody() != null)
-                    this.currentPossessedCharacter.getPhysicsBody().getPosition().x += (0.1);
-                else
-                    this.currentPossessedCharacter.getPosition().x += (0.1);
+                this.currentPossessedCharacter.getVelocity().x = 5f;
             }
             if (upIsPressed) {
-                    if (this.currentPossessedCharacter.getPhysicsBody() != null)
-                        this.currentPossessedCharacter.getPhysicsBody().getPosition().y += (0.1);
-                    else
-                        this.currentPossessedCharacter.getPosition().y += (0.1);
+                this.currentPossessedCharacter.getVelocity().y = 5f;
             }
             if (downIsPressed) {
-                if (this.currentPossessedCharacter.getPhysicsBody() != null)
-                    this.currentPossessedCharacter.getPhysicsBody().getPosition().y -= (0.1);
-                else
-                    this.currentPossessedCharacter.getPosition().y -= (0.1);
-
-            }
-
-            if (this.currentPossessedCharacter.getPhysicsBody() != null) {
-                this.currentPossessedCharacter.setPosition(this.currentPossessedCharacter.getPhysicsBody().getPosition());
+                this.currentPossessedCharacter.getVelocity().y -= 5f;
             }
         }
-
     }
 
 
@@ -149,15 +133,4 @@ public class BaseController implements IController, InputProcessor {
         return false;
     }
 
-    @Override
-    public boolean hasHitWall(boolean hasHit) {
-        this.hasHitObsticle = hasHit;
-
-        return this.hasHitObsticle;
-    }
-
-    @Override
-    public boolean hasHitWall() {
-        return this.hasHitObsticle;
-    }
 }

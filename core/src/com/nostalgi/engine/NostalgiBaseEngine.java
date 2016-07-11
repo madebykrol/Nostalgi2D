@@ -45,10 +45,11 @@ public class NostalgiBaseEngine implements IGameEngine {
     protected IGameState state;
     protected IGameMode mode;
     protected IHud hud;
-    protected SpriteBatch batch;
+
     protected NostalgiCamera currentCamera;
     protected NostalgiRenderer mapRenderer;
     protected InputMultiplexer inputProcessor;
+
     protected ArrayList<Body> walls = new ArrayList<Body>();
     protected Body playerBody;
 
@@ -64,25 +65,30 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.state = state;
         this.mode = mode;
 
-        this.batch = new SpriteBatch();
         this.mapRenderer = mapRenderer;
         this.debug = new Box2DDebugRenderer();
     }
 
     @Override
     public void init() {
+        // Set input processor to multiplexer
         inputProcessor = new InputMultiplexer();
 
+        // Get and set all input processors.
+
+        // Hud input
         if(this.hud.getInputProcessor() != null)
             inputProcessor.addProcessor(this.hud.getInputProcessor());
 
-        if (this.state.getPlayerCharacter().getCurrentController().getGestureListener() != null)
+        // Set gesture input processor
+        if (this.state.getCurrentController().getGestureListener() != null)
             inputProcessor.addProcessor(new GestureDetector(
-                    state.getPlayerCharacter().getCurrentController().getGestureListener()));
+                    state.getCurrentController().getGestureListener()));
 
-        if(this.state.getPlayerCharacter().getCurrentController().getInputProcessor() != null)
+        // Set standard input processor from controller
+        if(this.state.getCurrentController().getInputProcessor() != null)
             inputProcessor.addProcessor(
-                    state.getPlayerCharacter().getCurrentController().getInputProcessor());
+                    state.getCurrentController().getInputProcessor());
 
 
         world.setContactListener(new ContactListener() {
@@ -90,7 +96,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             public void beginContact(Contact contact) {
                 if (walls.contains(contact.getFixtureA().getBody())) {
                     if (playerBody.equals(contact.getFixtureB().getBody())) {
-                        state.getCurrentController().hasHitWall(true);
+                        System.out.println("COLLISION DETECTED");
                     }
                 }
             }
@@ -99,7 +105,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             public void endContact(Contact contact) {
                 if (walls.contains(contact.getFixtureA().getBody())) {
                     if (playerBody.equals(contact.getFixtureB().getBody())) {
-                        state.getCurrentController().hasHitWall(false);
+
                     }
                 }
             }
@@ -116,7 +122,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         });
 
         // Update playerbounds
-        updatePlayerBounds();
+        initPlayerBounds();
         this.getGameState().getPlayerCharacter().setPhysicsBody(playerBody);
 
         // Update terrain / map bounds
@@ -129,17 +135,20 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void update() {
 
         world.step(1f / 60f, 6, 2);
-
-        updatePlayerBounds();
-
         // Update NPC / Monster bounds
+
+        playerBody.setLinearVelocity(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getVelocity());
+        this.getGameState().getCurrentController().getCurrentPossessedCharacter().setPosition(new Vector2(playerBody.getPosition().x-0.5f, playerBody.getPosition().y-0.5f));
 
         // Update state.
         this.state.update(Gdx.graphics.getDeltaTime());
 
         // Update camera
         if(this.currentCamera instanceof IFollowCamera) {
-            this.currentCamera.setPositionSafe(this.getGameState().getPlayerCharacter().getPosition());
+            this.currentCamera.setPositionSafe(this.getGameState()
+                    .getCurrentController()
+                    .getCurrentPossessedCharacter()
+                    .getPosition());
         }
         this.currentCamera.update();
 
@@ -151,14 +160,14 @@ public class NostalgiBaseEngine implements IGameEngine {
     @Override
     public void render() {
 
-        this.mapRenderer.setCurrentPlayerCharacter(this.getGameState().getPlayerCharacter());
+        this.mapRenderer.setCurrentPlayerCharacter(this.getGameState().getCurrentController().getCurrentPossessedCharacter());
         this.mapRenderer.render();
 
         if(hud != null) {
             hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
 
-        debug.render(world, currentCamera.combined);
+        //debug.render(world, currentCamera.combined);
     }
 
     @Override
@@ -214,29 +223,30 @@ public class NostalgiBaseEngine implements IGameEngine {
         return inputProcessor;
     }
 
-    private void updatePlayerBounds() {
+    private void initPlayerBounds() {
         // Update player bounds
-        BodyDef playerBodyDef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-
-        playerBodyDef.position.x = (this.state.getPlayerCharacter().getPosition().x+0.75f);
-        playerBodyDef.position.y = (this.state.getPlayerCharacter().getPosition().y+0.75f);
-        playerBodyDef.type = BodyDef.BodyType.DynamicBody;
-
-        shape.setAsBox(1*0.75f,1*0.75f);
-
-        FixtureDef blockingBounds = new FixtureDef();
-
-        blockingBounds.density = 1f;
-        blockingBounds.friction = 1f;
-        blockingBounds.shape = shape;
-        blockingBounds.filter.maskBits = CollisionCategories.MASK_PLAYER;
-        blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_PLAYER;
 
         if(playerBody == null) {
+            BodyDef playerBodyDef = new BodyDef();
+            PolygonShape shape = new PolygonShape();
+            playerBodyDef.fixedRotation = true;
+            playerBodyDef.position.x = getGameState().getPlayerCharacter().getPosition().x;
+            playerBodyDef.position.y = getGameState().getPlayerCharacter().getPosition().y;
+
+            playerBodyDef.type = BodyDef.BodyType.DynamicBody;
+
+            shape.setAsBox(1*0.5f,1*0.5f);
+
+            FixtureDef blockingBounds = new FixtureDef();
+
+            blockingBounds.density = 1f;
+            blockingBounds.friction = 0f;
+            blockingBounds.shape = shape;
+            blockingBounds.filter.maskBits = CollisionCategories.MASK_PLAYER;
+            blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_PLAYER;
             playerBody = world.createBody(playerBodyDef);
+            playerBody.createFixture(blockingBounds);
         }
-        playerBody.createFixture(blockingBounds);
     }
 
     private void updateTerrainAndMapBounds() {
@@ -278,7 +288,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         FixtureDef blockingBounds = new FixtureDef();
 
         blockingBounds.density = 100f;
-        blockingBounds.friction = 1f;
+        blockingBounds.friction = 0f;
         blockingBounds.shape = boundShape;
         blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_WALLS;
         blockingBounds.filter.maskBits = CollisionCategories.MASK_SCENERY;

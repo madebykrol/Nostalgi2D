@@ -41,9 +41,13 @@ public interface ICharacter extends Disposable{
     Sprite getStaticSprite(float deltaT);
 
     void moveForward(float velocity);
+    void moveForward(float velocity, Vector2 direction);
 
     void setPhysicsBody(Body body);
     Body getPhysicsBody();
+
+    void setVelocity(Vector2 velocity);
+    Vector2 getVelocity();
 
 
 

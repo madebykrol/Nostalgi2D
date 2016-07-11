@@ -19,7 +19,6 @@ public class BasePlayerCharacter implements ICharacter {
 
     protected Animation currentAnimation;
     protected IController currentController;
-    protected IGameState gameState;
 
     protected Vector2 position;
     protected Map<Integer, Animation> animations;
@@ -35,6 +34,8 @@ public class BasePlayerCharacter implements ICharacter {
         this.position = position;
     }
     protected Body physicsBody;
+
+    protected Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
 
     @Override
     public Animation getCurrentAnimation() {
@@ -132,6 +133,11 @@ public class BasePlayerCharacter implements ICharacter {
     }
 
     @Override
+    public void moveForward(float velocity, Vector2 direction) {
+
+    }
+
+    @Override
     public void setPhysicsBody(Body body) {
         this.physicsBody = body;
     }
@@ -167,6 +173,15 @@ public class BasePlayerCharacter implements ICharacter {
         return this.height;
     }
 
+    @Override
+    public Vector2 getVelocity() {
+        return this.currentVelocity;
+    }
+
+    @Override
+    public void setVelocity(Vector2 velocity) {
+        this.currentVelocity = velocity;
+    }
 
     @Override
     public void dispose() {
