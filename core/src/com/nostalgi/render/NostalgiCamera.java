@@ -5,16 +5,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.nostalgi.engine.LevelCameraBounds;
+import com.nostalgi.engine.interfaces.IFollowCamera;
 
 /**
  * Created by Kristoffer on 2016-06-26.
  */
-public class NostalgiCamera extends OrthographicCamera {
+public class NostalgiCamera extends OrthographicCamera implements IFollowCamera {
     int left, right, bottom, top, unitScale;
 
     float camViewportHalfWidth = 0;
     float camViewportHalfHeight = 0;
-
 
     public NostalgiCamera(float w, float h, LevelCameraBounds bounds, int unitScale) {
         super(w, h);
@@ -48,6 +48,10 @@ public class NostalgiCamera extends OrthographicCamera {
 
         setPositionSafe(worldPos.x, worldPos.y);
     }
+    
+    public void setPositionSafe(Vector2 pos) {
+        this.setPositionSafe(pos.x, pos.y);
+    }
 
     public void setPositionSafe(float x, float y) {
 
@@ -60,5 +64,10 @@ public class NostalgiCamera extends OrthographicCamera {
         // Set these positions
         this.position.set(x1, y1, 0);
         update();
+    }
+
+    @Override
+    public boolean followPlayerCharacter() {
+        return true;
     }
 }

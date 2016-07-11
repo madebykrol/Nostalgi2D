@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.Stat;
 
@@ -39,4 +40,23 @@ public interface ICharacter extends Disposable{
 
     Sprite getStaticSprite(float deltaT);
 
+    void moveForward(float velocity);
+
+    void setPhysicsBody(Body body);
+    Body getPhysicsBody();
+
+
+
+    /**
+     * Set dimensions of character sprite in unitspace.
+     * @param width
+     * @param height
+     */
+    void setDimensions(float width, float height);
+
+    void setWidth(float width);
+    void setHeight(float height);
+
+    float getWidth();
+    float getHeight();
 }

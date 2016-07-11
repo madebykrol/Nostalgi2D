@@ -1,9 +1,9 @@
 package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapRenderer;
+import com.nostalgi.engine.NostalgiRenderer;
+import com.nostalgi.render.NostalgiCamera;
 
 /**
  * Created by Kristoffer on 2016-06-29.
@@ -21,11 +21,11 @@ public interface IGameEngine {
     IHud getHud();
     void setHud(IHud hud);
 
-    void setCurrentCamera(OrthographicCamera camera);
-    OrthographicCamera getCurrentCamera();
+    void setCurrentCamera(NostalgiCamera camera);
+    NostalgiCamera getCurrentCamera();
 
-    void setMapRenderer(MapRenderer renderer);
-    MapRenderer getMapRenderer();
+    void setMapRenderer(NostalgiRenderer renderer);
+    NostalgiRenderer getMapRenderer();
 
     InputProcessor getInputProcessor();
 }

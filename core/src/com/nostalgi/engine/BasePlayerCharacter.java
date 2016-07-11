@@ -2,6 +2,7 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameState;
@@ -22,6 +23,18 @@ public class BasePlayerCharacter implements ICharacter {
 
     protected Vector2 position;
     protected Map<Integer, Animation> animations;
+
+    protected float width  = 1f;
+    protected float height = 1f;
+    protected Vector2 forwardVector = new Vector2(0,1);
+
+    public BasePlayerCharacter() {
+        this.position = new Vector2();
+    }
+    public BasePlayerCharacter(Vector2 position) {
+        this.position = position;
+    }
+    protected Body physicsBody;
 
     @Override
     public Animation getCurrentAnimation() {
@@ -112,6 +125,48 @@ public class BasePlayerCharacter implements ICharacter {
     public Sprite getStaticSprite(float deltaT) {
         return null;
     }
+
+    @Override
+    public void moveForward(float velocity) {
+
+    }
+
+    @Override
+    public void setPhysicsBody(Body body) {
+        this.physicsBody = body;
+    }
+
+    @Override
+    public Body getPhysicsBody() {
+        return this.physicsBody;
+    }
+
+    @Override
+    public void setDimensions(float width, float height) {
+        setHeight(height);
+        setWidth(width);
+    }
+
+    @Override
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    @Override
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    @Override
+    public float getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public float getHeight() {
+        return this.height;
+    }
+
 
     @Override
     public void dispose() {

@@ -12,5 +12,8 @@ public interface IController {
 
     GestureDetector.GestureListener getGestureListener();
     InputProcessor getInputProcessor();
+    void update(float dTime);
 
+    boolean hasHitWall(boolean hasHit);
+    boolean hasHitWall();
 }

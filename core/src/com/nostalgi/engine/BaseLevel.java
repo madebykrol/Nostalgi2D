@@ -141,7 +141,6 @@ public abstract class BaseLevel implements ILevel {
                 }
 
                 mapBounds.add(pShape);
-                System.out.println("Polygon yay: " + object.toString());
             }
         }
     }

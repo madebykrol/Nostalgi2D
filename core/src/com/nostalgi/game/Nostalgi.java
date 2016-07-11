@@ -3,8 +3,8 @@ package com.nostalgi.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseController;
@@ -14,7 +14,7 @@ import com.nostalgi.engine.BaseHud;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
-import com.nostalgi.engine.NostalgiMapRenderer;
+import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
@@ -25,7 +25,7 @@ import com.nostalgi.render.NostalgiCamera;
 public class Nostalgi extends ApplicationAdapter {
 
 	NostalgiCamera camera;
-	TiledMapRenderer tiledMapRenderer;
+	NostalgiRenderer tiledMapRenderer;
 	IController playerController;
 	Viewport viewport;
 
@@ -46,7 +46,7 @@ public class Nostalgi extends ApplicationAdapter {
 	public void create () {
 		this.gameState = new BaseGameState(
 				new GrassLandLevel(new TmxMapLoader()),
-				new BasePlayerCharacter());
+				new BasePlayerCharacter(new Vector2(10,58)));
 
 		camera = new NostalgiCamera(
 				1024, 768,
@@ -57,7 +57,9 @@ public class Nostalgi extends ApplicationAdapter {
 				gameState.getCurrentLevel().getCameraInitLocation().x,
 				gameState.getCurrentLevel().getCameraInitLocation().y);
 
-		this.playerController = new BaseController(camera);
+		this.playerController = new BaseController();
+
+		this.gameState.setCurrentController(this.playerController);
 
 		this.playerController.possessCharacter(gameState.getPlayerCharacter());
 
@@ -66,9 +68,10 @@ public class Nostalgi extends ApplicationAdapter {
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		this.tiledMapRenderer = new NostalgiMapRenderer(
+		this.tiledMapRenderer = new NostalgiRenderer(
 				gameState.getCurrentLevel(),
 				1 / (float)gameState.getCurrentLevel().getTileSize());
+
 
 		this.gameEngine = new NostalgiBaseEngine(this.gameState, this.gameMode, tiledMapRenderer);
 
@@ -76,14 +79,16 @@ public class Nostalgi extends ApplicationAdapter {
 		hud.init();
 
 		this.gameEngine.setHud(hud);
-		this.gameEngine.init();
-
-
 		this.gameEngine.setCurrentCamera(camera);
+
+		this.gameEngine.init();
 
 		viewport = new StretchViewport(768, 1024, camera);
 
 		Gdx.input.setInputProcessor(gameEngine.getInputProcessor());
+
+
+
 	}
 
 	@Override
