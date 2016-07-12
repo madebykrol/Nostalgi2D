@@ -1,4 +1,4 @@
-package com.nostalgi.engine.interfaces;
+package com.nostalgi.engine.interfaces.World;
 
 import com.badlogic.gdx.physics.box2d.Body;
 

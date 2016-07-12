@@ -1,22 +1,17 @@
 package com.nostalgi.engine;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.nostalgi.engine.States.AnimationStates;
-import com.nostalgi.engine.interfaces.IAnimationFactory;
-import com.nostalgi.engine.interfaces.ICharacter;
+import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
-import com.nostalgi.engine.interfaces.IGameState;
-import com.nostalgi.engine.interfaces.IItem;
+import com.nostalgi.engine.interfaces.World.IItem;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by ksdkrol on 2016-07-04.

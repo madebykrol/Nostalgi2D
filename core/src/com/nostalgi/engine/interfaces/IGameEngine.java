@@ -1,7 +1,6 @@
 package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.render.NostalgiCamera;
 
@@ -15,11 +14,11 @@ public interface IGameEngine {
     void render();
     void dispose();
 
-    IGameState getGameState();
+    com.nostalgi.engine.interfaces.States.IGameState getGameState();
     IGameMode getGameMode();
 
-    IHud getHud();
-    void setHud(IHud hud);
+    com.nostalgi.engine.interfaces.Hud.IHud getHud();
+    void setHud(com.nostalgi.engine.interfaces.Hud.IHud hud);
 
     void setCurrentCamera(NostalgiCamera camera);
     NostalgiCamera getCurrentCamera();

@@ -1,4 +1,4 @@
-package com.nostalgi.engine.interfaces;
+package com.nostalgi.engine.interfaces.Factories;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;

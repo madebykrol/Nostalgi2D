@@ -5,8 +5,8 @@ package com.nostalgi.engine.interfaces;
  */
 public interface IGameMode {
 
-    public IGameState getGameState();
-    public void setGameState(IGameState gameState);
+    public com.nostalgi.engine.interfaces.States.IGameState getGameState();
+    public void setGameState(com.nostalgi.engine.interfaces.States.IGameState gameState);
 
 
 }

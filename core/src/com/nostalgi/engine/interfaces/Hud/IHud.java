@@ -1,4 +1,4 @@
-package com.nostalgi.engine.interfaces;
+package com.nostalgi.engine.interfaces.Hud;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,8 +10,10 @@ import com.badlogic.gdx.utils.Disposable;
  */
 public interface IHud extends Disposable {
     void init();
-    void update(float delta);
-    void draw(float delta);
+    void addModule(String name, IHudModule module);
+    IHudModule getModule(String name);
+    void update(float dTime);
+    void draw(float dTime);
     void setScreenWidth(int width);
     void setScreenHeight(int height);
     void setScreenDimensions(int width, int height);

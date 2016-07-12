@@ -1,7 +1,7 @@
 package com.nostalgi.engine;
 
 import com.nostalgi.engine.interfaces.IGameMode;
-import com.nostalgi.engine.interfaces.IGameState;
+import com.nostalgi.engine.interfaces.States.IGameState;
 
 /**
  * Created by ksdkrol on 2016-07-04.

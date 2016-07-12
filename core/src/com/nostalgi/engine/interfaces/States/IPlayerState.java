@@ -1,4 +1,4 @@
-package com.nostalgi.engine.interfaces;
+package com.nostalgi.engine.interfaces.States;
 
 /**
  * Created by ksdkrol on 2016-07-11.

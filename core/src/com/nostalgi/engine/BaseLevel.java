@@ -7,10 +7,10 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
-import com.nostalgi.engine.interfaces.IDoor;
-import com.nostalgi.engine.interfaces.ILevel;
-import com.nostalgi.engine.interfaces.ISpawner;
-import com.nostalgi.engine.interfaces.IWall;
+import com.nostalgi.engine.interfaces.World.IDoor;
+import com.nostalgi.engine.interfaces.World.ILevel;
+import com.nostalgi.engine.interfaces.World.ISpawner;
+import com.nostalgi.engine.interfaces.World.IWall;
 
 import java.util.ArrayList;
 

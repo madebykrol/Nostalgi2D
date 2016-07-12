@@ -15,12 +15,12 @@ import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
-import com.nostalgi.engine.interfaces.ICharacter;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
-import com.nostalgi.engine.interfaces.IGameState;
-import com.nostalgi.engine.interfaces.IHud;
+import com.nostalgi.engine.interfaces.States.IGameState;
+import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.render.NostalgiCamera;
 
 public class Nostalgi extends ApplicationAdapter {
@@ -87,11 +87,6 @@ public class Nostalgi extends ApplicationAdapter {
 		this.gameEngine.init();
 
 		viewport = new StretchViewport(768, 1024, camera);
-
-		Gdx.input.setInputProcessor(gameEngine.getInputProcessor());
-
-
-
 	}
 
 	@Override

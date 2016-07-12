@@ -3,35 +3,25 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.nostalgi.engine.States.Wall;
+import com.nostalgi.engine.Hud.DemoHudModule;
 import com.nostalgi.engine.interfaces.IFollowCamera;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
-import com.nostalgi.engine.interfaces.IGameState;
-import com.nostalgi.engine.interfaces.IHud;
-import com.nostalgi.engine.interfaces.IWall;
+import com.nostalgi.engine.interfaces.States.IGameState;
+import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.render.NostalgiCamera;
 
@@ -71,26 +61,9 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void init() {
-        // Set input processor to multiplexer
-        inputProcessor = new InputMultiplexer();
-
-        // Get and set all input processors.
-
-        // Hud input
-        if(this.hud.getInputProcessor() != null)
-            inputProcessor.addProcessor(this.hud.getInputProcessor());
-
-        // Set gesture input processor
-        if (this.state.getCurrentController().getGestureListener() != null)
-            inputProcessor.addProcessor(new GestureDetector(
-                    state.getCurrentController().getGestureListener()));
-
-        // Set standard input processor from controller
-        if(this.state.getCurrentController().getInputProcessor() != null)
-            inputProcessor.addProcessor(
-                    state.getCurrentController().getInputProcessor());
-
-
+        // init input
+        this.initInput();
+        this.hud.addModule("Demo", new DemoHudModule());
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -248,6 +221,30 @@ public class NostalgiBaseEngine implements IGameEngine {
             playerBody = world.createBody(playerBodyDef);
             playerBody.createFixture(blockingBounds);
         }
+    }
+
+    private void initInput() {
+
+        // Set input processor to multiplexer
+        inputProcessor = new InputMultiplexer();
+
+        // Get and set all input processors.
+
+        // Hud input
+        if(this.hud.getInputProcessor() != null)
+            inputProcessor.addProcessor(this.hud.getInputProcessor());
+
+        // Set gesture input processor
+        if (this.state.getCurrentController().getGestureListener() != null)
+            inputProcessor.addProcessor(new GestureDetector(
+                    state.getCurrentController().getGestureListener()));
+
+        // Set standard input processor from controller
+        if(this.state.getCurrentController().getInputProcessor() != null)
+            inputProcessor.addProcessor(
+                    state.getCurrentController().getInputProcessor());
+
+        Gdx.input.setInputProcessor(inputProcessor);
     }
 
     private void updateTerrainAndMapBounds() {

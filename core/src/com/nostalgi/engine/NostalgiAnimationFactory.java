@@ -3,11 +3,9 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.nostalgi.engine.interfaces.IAnimationFactory;
+import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

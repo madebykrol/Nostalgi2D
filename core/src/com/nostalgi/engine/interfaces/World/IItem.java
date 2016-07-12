@@ -1,6 +1,7 @@
-package com.nostalgi.engine.interfaces;
+package com.nostalgi.engine.interfaces.World;
 
 import com.nostalgi.engine.Stat;
+import com.nostalgi.engine.interfaces.*;
 
 /**
  * Created by Kristoffer on 2016-06-30.

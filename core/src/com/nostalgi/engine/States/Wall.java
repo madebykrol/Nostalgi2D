@@ -1,7 +1,7 @@
 package com.nostalgi.engine.States;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.nostalgi.engine.interfaces.IWall;
+import com.nostalgi.engine.interfaces.World.IWall;
 
 /**
  * Created by Kristoffer on 2016-07-10.
