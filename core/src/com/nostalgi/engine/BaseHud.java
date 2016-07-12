@@ -59,6 +59,7 @@ public class BaseHud implements IHud {
         this.batch = new SpriteBatch();
         this.font = new BitmapFont();
 
+        
     }
 
     @Override
