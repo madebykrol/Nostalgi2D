@@ -1,8 +1,12 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.interfaces.IAnimationFactory;
 import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameState;
@@ -10,6 +14,8 @@ import com.nostalgi.engine.interfaces.IItem;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -21,17 +27,46 @@ public class BasePlayerCharacter implements ICharacter {
     protected IController currentController;
 
     protected Vector2 position;
-    protected Map<Integer, Animation> animations;
+    protected HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
 
     protected float width  = 1f;
-    protected float height = 1f;
+    protected float height = 2f;
     protected Vector2 forwardVector = new Vector2(0,1);
+    protected IAnimationFactory animationFactory;
 
-    public BasePlayerCharacter() {
-        this.position = new Vector2();
-    }
+    public BasePlayerCharacter() {this(new Vector2());}
+
     public BasePlayerCharacter(Vector2 position) {
         this.position = position;
+
+        this.animationFactory = new NostalgiAnimationFactory();
+
+        animations.put(AnimationStates.WalkingEastAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_east.png",
+                        32, 64, 1, 2, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        animations.put(AnimationStates.WalkingWestAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_west.png",
+                        32, 64, 1, 2, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        animations.put(AnimationStates.WalkingNorthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_north.png",
+                        32, 64, 1, 5, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        animations.put(AnimationStates.WalkingSouthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_south.png",
+                        32, 64, 1, 5, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        animations.put(AnimationStates.IdleAnimation,
+                animationFactory.createAnimation("Spritesheet/char_idle.png",
+                        32, 64, 1, 1, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+
     }
     protected Body physicsBody;
 
@@ -185,6 +220,6 @@ public class BasePlayerCharacter implements ICharacter {
 
     @Override
     public void dispose() {
-
+        this.animationFactory.dispose();
     }
 }

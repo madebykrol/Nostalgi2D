@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.interfaces.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.render.NostalgiCamera;
@@ -24,6 +25,8 @@ public class BaseController implements IController, InputProcessor {
     protected boolean downIsPressed = false;
 
     protected Vector2 lastPosition;
+
+    int walkingState = AnimationStates.IdleAnimation;
 
     public BaseController () {
 
@@ -53,23 +56,34 @@ public class BaseController implements IController, InputProcessor {
     @Override
     public void update(float dTime) {
 
-        this.currentPossessedCharacter.getVelocity().x = 0;
         this.currentPossessedCharacter.getVelocity().y = 0;
+        this.currentPossessedCharacter.getVelocity().x = 0;
+        this.walkingState = AnimationStates.IdleAnimation;
+
 
         if (this.currentPossessedCharacter != null) {
             if (leftIsPressed) {
                 this.currentPossessedCharacter.getVelocity().x -= 5f;
+                this.walkingState = AnimationStates.WalkingWestAnimation;
             }
             if (rightIsPressed) {
                 this.currentPossessedCharacter.getVelocity().x = 5f;
+                this.walkingState = AnimationStates.WalkingEastAnimation;
             }
             if (upIsPressed) {
                 this.currentPossessedCharacter.getVelocity().y = 5f;
+                this.walkingState = AnimationStates.WalkingNorthAnimation;
             }
             if (downIsPressed) {
                 this.currentPossessedCharacter.getVelocity().y -= 5f;
+                this.walkingState = AnimationStates.WalkingSouthAnimation;
             }
         }
+    }
+
+    @Override
+    public int getCurrentWalkingState() {
+        return this.walkingState;
     }
 
 

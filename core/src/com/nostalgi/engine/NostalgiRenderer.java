@@ -3,6 +3,7 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -33,6 +34,7 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
     private ArrayList<IMonster> monsters;
     private ArrayList<IChest> chests;
 
+    private float timeElapsed;
 
     public NostalgiRenderer(ILevel level, float unitScale) {
         this(level, unitScale, "Ground");
@@ -49,8 +51,8 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
         return this.batch;
     }
 
-    @Override
-    public void render() {
+    public void render(float timeDelta) {
+        timeElapsed+=timeDelta;
         beginRender();
 
         for (MapLayer layer : map.getLayers()) {
@@ -59,11 +61,14 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
 
                 if (layer.getName().equals(groundLayer)) {
                     if(this.currentPlayer != null) {
-                        this.getBatch().draw(new Texture(Gdx.files.internal("badlogic.jpg")),
-                                this.currentPlayer.getPosition().x,
-                                this.currentPlayer.getPosition().y,
-                                this.currentPlayer.getHeight(),
-                                this.currentPlayer.getWidth());
+                        TextureRegion tr = this.currentPlayer.getAnimation(this.currentPlayer.getCurrentController().getCurrentWalkingState()).getKeyFrame(timeElapsed);
+                        if(tr != null) {
+                            this.getBatch().draw(tr,
+                                    this.currentPlayer.getPosition().x,
+                                    this.currentPlayer.getPosition().y,
+                                    32/32f,
+                                    64/32f);
+                        }
                     }
                 }
             } else {

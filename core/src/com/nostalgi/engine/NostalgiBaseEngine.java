@@ -138,7 +138,8 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Update NPC / Monster bounds
 
         playerBody.setLinearVelocity(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getVelocity());
-        this.getGameState().getCurrentController().getCurrentPossessedCharacter().setPosition(new Vector2(playerBody.getPosition().x-0.5f, playerBody.getPosition().y-0.5f));
+        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().x = playerBody.getPosition().x-0.5f;
+        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().y = playerBody.getPosition().y-0.5f;
 
         // Update state.
         this.state.update(Gdx.graphics.getDeltaTime());
@@ -161,7 +162,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void render() {
 
         this.mapRenderer.setCurrentPlayerCharacter(this.getGameState().getCurrentController().getCurrentPossessedCharacter());
-        this.mapRenderer.render();
+        this.mapRenderer.render(Gdx.graphics.getDeltaTime());
 
         if(hud != null) {
             hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
