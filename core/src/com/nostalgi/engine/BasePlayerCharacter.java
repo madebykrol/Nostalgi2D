@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
@@ -16,100 +17,29 @@ import java.util.HashMap;
 /**
  * Created by ksdkrol on 2016-07-04.
  */
-public class BasePlayerCharacter implements ICharacter {
+public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
-    protected Animation currentAnimation;
+
     protected IController currentController;
-
-    protected Vector2 position;
-    protected HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
 
     protected float width  = 1f;
     protected float height = 2f;
-    protected Vector2 forwardVector = new Vector2(0,1);
-    protected IAnimationFactory animationFactory;
+
+    protected Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
+
+    protected Direction facing;
+
+    protected int floor = 1;
 
     public BasePlayerCharacter() {this(new Vector2());}
 
     public BasePlayerCharacter(Vector2 position) {
         this.position = position;
-
-        this.animationFactory = new NostalgiAnimationFactory();
-
-        animations.put(AnimationStates.WalkingEastAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_east.png",
-                        32, 64, 1, 2, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        animations.put(AnimationStates.WalkingWestAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_west.png",
-                        32, 64, 1, 2, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        animations.put(AnimationStates.WalkingNorthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_north.png",
-                        32, 64, 1, 5, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        animations.put(AnimationStates.WalkingSouthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_south.png",
-                        32, 64, 1, 5, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        animations.put(AnimationStates.IdleAnimation,
-                animationFactory.createAnimation("Spritesheet/char_idle.png",
-                        32, 64, 1, 1, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-
-    }
-    protected Body physicsBody;
-
-    protected Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
-
-    @Override
-    public Animation getCurrentAnimation() {
-        return this.currentAnimation;
-    }
-
-    @Override
-    public void setCurrentAnimation(Animation animation) {
-        this.currentAnimation = animation;
-    }
-
-    @Override
-    public void setCurrentAnimation(int state) {
-        if(animations.containsKey(state))
-            this.currentAnimation = animations.get(state);
-
-    }
-
-    @Override
-    public void addAnimation(int state, Animation animation) {
-        this.animations.put(state, animation);
-    }
-
-    @Override
-    public Animation getAnimation(int state) {
-        if(animations.containsKey(state))
-            return animations.get(state);
-
-        return null;
     }
 
     @Override
     public boolean isAnimated() {
         return true;
-    }
-
-    @Override
-    public Vector2 getPosition() {
-        return this.position;
-    }
-
-    @Override
-    public void setPosition(Vector2 position) {
-        this.position = position;
     }
 
     @Override
@@ -158,23 +88,13 @@ public class BasePlayerCharacter implements ICharacter {
     }
 
     @Override
-    public void moveForward(float velocity) {
-
+    public void setFacingDirection(Direction dir) {
+        this.facing = dir;
     }
 
     @Override
-    public void moveForward(float velocity, Vector2 direction) {
-
-    }
-
-    @Override
-    public void setPhysicsBody(Body body) {
-        this.physicsBody = body;
-    }
-
-    @Override
-    public Body getPhysicsBody() {
-        return this.physicsBody;
+    public Direction getFacingDirection() {
+        return this.facing;
     }
 
     @Override
@@ -204,17 +124,38 @@ public class BasePlayerCharacter implements ICharacter {
     }
 
     @Override
+    public int getFloorLevel() {
+        return this.floor;
+    }
+
+    @Override
+    public void setFloorLevel(int floor) {
+        this.floor = floor;
+    }
+
+    @Override
     public Vector2 getVelocity() {
         return this.currentVelocity;
     }
 
     @Override
-    public void setVelocity(Vector2 velocity) {
+    public void moveForward(Vector2 velocity) {
         this.currentVelocity = velocity;
     }
 
     @Override
-    public void dispose() {
-        this.animationFactory.dispose();
+    public void stop() {
+        this.currentVelocity.x = 0;
+        this.currentVelocity.y = 0;
     }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+      public String getName() {
+        return "BasePlayer";
+    }
+
 }

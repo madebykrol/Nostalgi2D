@@ -26,7 +26,7 @@ public class BaseController implements IController, InputProcessor {
 
     protected Vector2 lastPosition;
 
-    int walkingState = AnimationStates.IdleAnimation;
+    int walkingState = AnimationStates.IdleFaceSouthAnimation;
 
     public BaseController () {
 
@@ -56,10 +56,20 @@ public class BaseController implements IController, InputProcessor {
     @Override
     public void update(float dTime) {
 
-        this.currentPossessedCharacter.getVelocity().y = 0;
-        this.currentPossessedCharacter.getVelocity().x = 0;
-        this.walkingState = AnimationStates.IdleAnimation;
+        this.currentPossessedCharacter.stop();
+        this.walkingState = AnimationStates.IdleFaceSouthAnimation;
 
+        if(this.currentPossessedCharacter.getFacingDirection() == Direction.SOUTH)
+            this.walkingState = AnimationStates.IdleFaceSouthAnimation;
+
+        if(this.currentPossessedCharacter.getFacingDirection() == Direction.EAST)
+            this.walkingState = AnimationStates.IdleFaceEastAnimation;
+
+        if(this.currentPossessedCharacter.getFacingDirection() == Direction.WEST)
+            this.walkingState = AnimationStates.IdleFaceWestAnimation;
+
+        if(this.currentPossessedCharacter.getFacingDirection() == Direction.NORTH)
+            this.walkingState = AnimationStates.IdleFaceNorthAnimation;
 
         if (this.currentPossessedCharacter != null) {
             if (leftIsPressed) {
@@ -90,14 +100,22 @@ public class BaseController implements IController, InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
 
-        if(keycode == Input.Keys.LEFT)
-           this.leftIsPressed = true;
-        if(keycode == Input.Keys.RIGHT)
-           this.rightIsPressed = true;
-        if(keycode == Input.Keys.UP)
+        if(keycode == Input.Keys.LEFT) {
+            this.leftIsPressed = true;
+            this.currentPossessedCharacter.setFacingDirection(Direction.WEST);
+        }
+        if(keycode == Input.Keys.RIGHT) {
+            this.rightIsPressed = true;
+            this.currentPossessedCharacter.setFacingDirection(Direction.EAST);
+        }
+        if(keycode == Input.Keys.UP) {
             this.upIsPressed = true;
-        if(keycode == Input.Keys.DOWN)
+            this.currentPossessedCharacter.setFacingDirection(Direction.NORTH);
+        }
+        if(keycode == Input.Keys.DOWN) {
             this.downIsPressed = true;
+            this.currentPossessedCharacter.setFacingDirection(Direction.SOUTH);
+        }
 
         return true;
     }

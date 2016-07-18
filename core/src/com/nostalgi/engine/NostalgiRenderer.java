@@ -58,7 +58,12 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
                 renderTileLayer((TiledMapTileLayer) layer);
 
                 if (layer.getName().equals(groundLayer)) {
-                    if(this.currentPlayer != null) {
+                    int floor = 0;
+                    Object floorProp = layer.getProperties().get("floor");
+                    if(floorProp != null) {
+                        floor = Integer.parseInt((String)floorProp);
+                    }
+                    if(this.currentPlayer != null && floor == this.currentPlayer.getFloorLevel()) {
                         TextureRegion tr = this.currentPlayer.getAnimation(this.currentPlayer.getCurrentController().getCurrentWalkingState()).getKeyFrame(timeElapsed);
                         if(tr != null) {
                             this.getBatch().draw(tr,

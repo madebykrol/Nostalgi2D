@@ -5,26 +5,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
+import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Stat;
 import com.nostalgi.engine.interfaces.IController;
 
 /**
  * Created by Kristoffer on 2016-06-30.
  */
-public interface ICharacter extends Disposable{
-
-    Animation getCurrentAnimation();
-
-    void setCurrentAnimation(Animation animation);
-    void setCurrentAnimation(int state);
-
-    void addAnimation(int state, Animation animation);
-    Animation getAnimation(int state);
-
-    boolean isAnimated();
-
-    Vector2 getPosition();
-    void setPosition(Vector2 position);
+public interface ICharacter extends IActor, Disposable{
 
     Stat getStat(int mod);
     void setStat(int mod, Stat stat);
@@ -39,16 +27,13 @@ public interface ICharacter extends Disposable{
     IController getCurrentController();
 
     Sprite getStaticSprite(float deltaT);
+    void setFacingDirection(Direction dir);
+    Direction getFacingDirection();
 
-    void moveForward(float velocity);
-    void moveForward(float velocity, Vector2 direction);
 
-    void setPhysicsBody(Body body);
-    Body getPhysicsBody();
-
-    void setVelocity(Vector2 velocity);
+    void moveForward(Vector2 velocityVector);
+    void stop();
     Vector2 getVelocity();
-
 
 
     /**
@@ -63,4 +48,7 @@ public interface ICharacter extends Disposable{
 
     float getWidth();
     float getHeight();
+
+    int getFloorLevel();
+    void setFloorLevel(int floor);
 }

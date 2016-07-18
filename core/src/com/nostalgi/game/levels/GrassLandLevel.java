@@ -1,8 +1,9 @@
-package com.nostalgi.engine;
+package com.nostalgi.game.levels;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.BaseLevel;
 
 /**
  * Created by ksdkrol on 2016-07-03.

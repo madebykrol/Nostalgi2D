@@ -18,17 +18,16 @@ import com.nostalgi.engine.interfaces.Hud.IHudModule;
  */
 public class DemoHudModule implements IHudModule {
     private Skin skin;
-    @Override
-    public void update(float dTime) {
 
-    }
-
-    @Override
-    public void draw(float dTime, Stage stage) {
+    public DemoHudModule () {
         // A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
         // recommended solely for the convenience of getting a texture, region, etc as a drawable, tinted drawable, etc.
         skin = new Skin();
 
+    }
+
+    @Override
+    public void init(Stage stage) {
         // Generate a 1x1 white texture and store it in the skin named "white".
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -46,7 +45,6 @@ public class DemoHudModule implements IHudModule {
         textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
-
         // Create a table that fills the screen. Everything else will go inside this table.
         Table table = new Table();
         table.setFillParent(true);
@@ -69,5 +67,10 @@ public class DemoHudModule implements IHudModule {
 
         // Add an image actor. Have to set the size, else it would be the size of the drawable (which is the 1x1 texture).
         table.add(new Image(skin.newDrawable("white", Color.RED))).size(64);
+    }
+
+    @Override
+    public void update(float dTime) {
+
     }
 }

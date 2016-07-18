@@ -18,6 +18,5 @@ public interface IHud extends Disposable {
     void setScreenHeight(int height);
     void setScreenDimensions(int width, int height);
     void setStage(Stage stage);
-    void setFont(BitmapFont font);
     InputProcessor getInputProcessor();
 }

@@ -12,7 +12,10 @@ public class AnimationStates {
     /**
      * 0
      */
-    public static final int IdleAnimation = 0;
+    public static final int IdleFaceSouthAnimation = 0;
+    public static final int IdleFaceEastAnimation = 1;
+    public static final int IdleFaceNorthAnimation = 2;
+    public static final int IdleFaceWestAnimation = 3;
 
     /**
      * 10

@@ -7,7 +7,13 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
-import com.nostalgi.engine.interfaces.World.IDoor;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.nostalgi.engine.Factories.NostalgiActorFactory;
+import com.nostalgi.engine.interfaces.Factories.IActorFactory;
+import com.nostalgi.engine.interfaces.Factories.IWallFactory;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.ISpawner;
 import com.nostalgi.engine.interfaces.World.IWall;
@@ -23,21 +29,23 @@ public abstract class BaseLevel implements ILevel {
     private TiledMapTileLayer mainLayer;
     private int originX;
     private int originY;
-    private final String boundsLayerName;
+    private final String wallsLayerName;
     private final String mainLayerName;
-    private boolean mapInitialized = false;
+    private final String actorsLayerName;
 
-    private ArrayList<Polygon> mapBounds;
+    private ArrayList<IWall> mapBounds;
+    private ArrayList<IActor> actors;
 
     public BaseLevel(int originX, int originY) {
-        this(originX, originY, "Main", "Bounds");
+        this(originX, originY, "Main", "Walls", "Actors");
     }
 
-    public BaseLevel(int originX, int originY, String mainLayer, String boundsLayer) {
+    public BaseLevel(int originX, int originY, String mainLayer, String wallsLayer, String actorsLayer) {
         this.originX = originX;
         this.originY = originY;
         this.mainLayerName = mainLayer;
-        this.boundsLayerName = boundsLayer;
+        this.wallsLayerName = wallsLayer;
+        this.actorsLayerName = actorsLayer;
     }
 
     @Override
@@ -58,16 +66,6 @@ public abstract class BaseLevel implements ILevel {
     @Override
     public void setMap(TiledMap map) {
         this.map = map;
-    }
-
-    @Override
-    public IWall[] getWalls() {
-        return new IWall[0];
-    }
-
-    @Override
-    public IDoor[] getDoors() {
-        return new IDoor[0];
     }
 
     @Override
@@ -102,11 +100,17 @@ public abstract class BaseLevel implements ILevel {
 
     }
 
-    public ArrayList<Polygon> getMapBounds() {
+    public ArrayList<IWall> getWalls(IWallFactory factory) {
         if(this.mapBounds == null)
-            initMapBounds();
+            initMapWalls(factory);
 
         return this.mapBounds;
+    }
+
+    public ArrayList<IActor> getActors(IActorFactory factory) {
+        if(this.actors == null)
+            initMapActors(factory);
+        return this.actors;
     }
 
     public void dispose() {
@@ -121,26 +125,23 @@ public abstract class BaseLevel implements ILevel {
         return this.mainLayer;
     }
 
-    protected void initMapBounds() {
-        mapBounds = new ArrayList<Polygon>();
-        MapLayer boundsLayer = map.getLayers().get(this.boundsLayerName);
+    protected void initMapActors(IActorFactory factory) {
+        actors = new ArrayList<IActor>();
+        MapLayer actorsLayer = map.getLayers().get(this.actorsLayerName);
+        if(actorsLayer != null) {
+            for(MapObject object : actorsLayer.getObjects()) {
+               actors.add(factory.fromMapObject(object));
+            }
+        }
+    }
+
+    protected void initMapWalls(IWallFactory factory) {
+        mapBounds = new ArrayList<IWall>();
+        MapLayer boundsLayer = map.getLayers().get(this.wallsLayerName);
         if(boundsLayer != null) {
             for (MapObject object :boundsLayer.getObjects()){
 
-                Polygon pShape = new Polygon();
-
-                if(object instanceof RectangleMapObject) {
-                    RectangleMapObject obj = (RectangleMapObject)object;
-
-                    // Derp
-                } else if( object instanceof PolygonMapObject) {
-                    PolygonMapObject obj = (PolygonMapObject) object;
-
-                    pShape = obj.getPolygon();
-                    // Herp
-                }
-
-                mapBounds.add(pShape);
+                mapBounds.add(factory.fromMapObject(object));
             }
         }
     }

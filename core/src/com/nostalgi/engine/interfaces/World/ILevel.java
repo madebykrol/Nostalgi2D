@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.LevelCameraBounds;
+import com.nostalgi.engine.interfaces.Factories.IActorFactory;
+import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 
 import java.util.ArrayList;
 
@@ -27,10 +29,6 @@ public interface ILevel extends Disposable {
     TiledMap getMap();
     void setMap(TiledMap map);
 
-    IWall[] getWalls();
-
-    IDoor[] getDoors();
-
     int getWidth();
     int getHeight();
 
@@ -38,5 +36,6 @@ public interface ILevel extends Disposable {
 
     TiledMapTileLayer getMainLayer();
 
-    ArrayList<Polygon> getMapBounds();
+    ArrayList<IWall> getWalls(IWallFactory factory);
+    ArrayList<IActor> getActors(IActorFactory factory);
 }

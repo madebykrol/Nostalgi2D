@@ -1,4 +1,4 @@
-package com.nostalgi.engine;
+package com.nostalgi.engine.Factories;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -53,7 +53,7 @@ public class NostalgiAnimationFactory implements IAnimationFactory {
     public void dispose() {
         for(Map.Entry<String, Texture> entry : this.texturePool.entrySet()) {
             entry.getValue().dispose();
-            this.texturePool.remove(entry.getKey());
         }
+        this.texturePool.clear();
     }
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -12,16 +11,22 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.nostalgi.engine.Hud.DemoHudModule;
+import com.nostalgi.engine.Factories.NostalgiActorFactory;
+import com.nostalgi.engine.Factories.NostalgiWallFactory;
+import com.nostalgi.engine.interfaces.Factories.IActorFactory;
+import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.IFollowCamera;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
+import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.render.NostalgiCamera;
 
@@ -40,14 +45,20 @@ public class NostalgiBaseEngine implements IGameEngine {
     protected NostalgiRenderer mapRenderer;
     protected InputMultiplexer inputProcessor;
 
-    protected ArrayList<Body> walls = new ArrayList<Body>();
+    protected ArrayList<IWall> walls = new ArrayList<IWall>();
     protected Body playerBody;
 
     protected World world;
+
+    protected IWallFactory wallFactory;
+    protected IActorFactory actorFactory;
+
     private Box2DDebugRenderer debug;
 
     public NostalgiBaseEngine(Vector2 gravity) {
         world = new World(gravity, true);
+        wallFactory = new NostalgiWallFactory(world, 32f);
+        actorFactory = new NostalgiActorFactory(world, 32f);
     }
 
     public NostalgiBaseEngine(IGameState state, IGameMode mode, NostalgiRenderer mapRenderer) {
@@ -63,24 +74,31 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void init() {
         // init input
         this.initInput();
-        this.hud.addModule("Demo", new DemoHudModule());
+
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                if (walls.contains(contact.getFixtureA().getBody())) {
-                    if (playerBody.equals(contact.getFixtureB().getBody())) {
-                        System.out.println("COLLISION DETECTED");
+
+                try {
+                    Fixture a = contact.getFixtureA();
+                    Fixture b = contact.getFixtureB();
+
+                    IActor actorA = (IActor) a.getBody().getUserData();
+                    IActor actorB = (IActor) b.getBody().getUserData();
+
+                    if (actorA != null && actorB != null) {
+                        actorA.onOverlapBegin(actorB);
+                        actorB.onOverlapBegin(actorA);
                     }
+                } catch (ClassCastException e) {
+
                 }
+
             }
 
             @Override
             public void endContact(Contact contact) {
-                if (walls.contains(contact.getFixtureA().getBody())) {
-                    if (playerBody.equals(contact.getFixtureB().getBody())) {
 
-                    }
-                }
             }
 
             @Override
@@ -96,11 +114,12 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Update playerbounds
         initPlayerBounds();
-        this.getGameState().getPlayerCharacter().setPhysicsBody(playerBody);
 
         // Update terrain / map bounds
+        initMapWalls();
 
-        updateTerrainAndMapBounds();
+        // Init map objects. like triggers, chests doors.
+        initMapActors();
 
     }
 
@@ -114,6 +133,23 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().x = playerBody.getPosition().x-0.5f;
         this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().y = playerBody.getPosition().y-0.5f;
 
+        switch(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getFloorLevel()) {
+            case 1 :
+                changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
+                break;
+            case 2 :
+                changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_2));
+                break;
+            case 3 :
+                changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_3));
+                break;
+            case 4 :
+                changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_4));
+                break;
+            default :
+                changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
+                break;
+        }
         // Update state.
         this.state.update(Gdx.graphics.getDeltaTime());
 
@@ -150,7 +186,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.world.dispose();
         this.walls.clear();
     }
-
 
     @Override
     public IGameState getGameState() {
@@ -216,11 +251,38 @@ public class NostalgiBaseEngine implements IGameEngine {
             blockingBounds.density = 1f;
             blockingBounds.friction = 0f;
             blockingBounds.shape = shape;
-            blockingBounds.filter.maskBits = CollisionCategories.MASK_PLAYER;
             blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_PLAYER;
+            blockingBounds.filter.maskBits = CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1;
             playerBody = world.createBody(playerBodyDef);
+            playerBody.setUserData(this.getGameState().getPlayerCharacter());
             playerBody.createFixture(blockingBounds);
         }
+
+        this.getGameState().getPlayerCharacter().setPhysicsBody(playerBody);
+    }
+
+    private void changePlayerFixture(short playerMask) {
+        BodyDef playerBodyDef = new BodyDef();
+        PolygonShape shape = new PolygonShape();
+        playerBodyDef.fixedRotation = true;
+        playerBodyDef.position.x = getGameState().getPlayerCharacter().getPosition().x;
+        playerBodyDef.position.y = getGameState().getPlayerCharacter().getPosition().y;
+
+        Fixture fix = playerBody.getFixtureList().get(0);
+        playerBody.destroyFixture(fix);
+
+        playerBodyDef.type = BodyDef.BodyType.DynamicBody;
+
+        shape.setAsBox(1*0.5f,1*0.5f);
+
+        FixtureDef blockingBounds = new FixtureDef();
+
+        blockingBounds.density = 1f;
+        blockingBounds.friction = 0f;
+        blockingBounds.shape = shape;
+        blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_PLAYER;
+        blockingBounds.filter.maskBits = playerMask;
+        playerBody.createFixture(blockingBounds);
     }
 
     private void initInput() {
@@ -247,35 +309,58 @@ public class NostalgiBaseEngine implements IGameEngine {
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
-    private void updateTerrainAndMapBounds() {
+    private void initMapActors() {
+
+
+        ArrayList<IActor> actors = this.getGameState().getCurrentLevel().getActors(this.actorFactory);
+
+    }
+
+    private void initMapWalls() {
         // get bounds
 
-        for(Body wall : walls) {
-            world.destroyBody(wall);
+        for(IWall wall : walls) {
+            world.destroyBody(wall.getPhysicsBody());
         }
 
         walls.clear();
 
-        ArrayList<Polygon> currentLevelBounds = getGameState().getCurrentLevel().getMapBounds();
+        ArrayList<IWall> currentLevelBounds = getGameState().getCurrentLevel().getWalls(this.wallFactory);
 
         // Set def.
         BodyDef shapeDef = new BodyDef();
         // go through our bounding blocks
-        for(Polygon shape : currentLevelBounds) {
-            float[] vertices = shape.getVertices();
+        for(IWall wall : currentLevelBounds) {
+            float[] vertices = wall.getVertices();
+
+            short floor = CollisionCategories.CATEGORY_NIL;
+            if(wall.isOnFloor(1)) {
+                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_1);
+            } if(wall.isOnFloor(2)) {
+                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_2);
+            } if(wall.isOnFloor(3)) {
+                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_3);
+            } if(wall.isOnFloor(4)) {
+                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_4);
+            }
 
             for(int i = 0; i < vertices.length; i++) {
                 vertices[i] /=32f;
             }
 
             if(vertices.length > 2) {
-                addBoundingBox(shapeDef, vertices, new Vector2(shape.getX()/32f,shape.getY()/32f));
+                wall.setPhysicsBody(addBoundingBox(shapeDef,
+                        vertices,
+                        new Vector2(wall.getX()/32f,wall.getY()/32f),
+                        floor,
+                        wall));
             }
+
+            walls.add(wall);
         }
     }
 
-    private void addBoundingBox(BodyDef shapeDef, float[] vertices, Vector2 pos) {
-
+    private Body addBoundingBox(BodyDef shapeDef, float[] vertices, Vector2 pos, short floor, IWall wall) {
         PolygonShape boundShape = new PolygonShape();
         boundShape.set(vertices);
         shapeDef.position.set(pos.x, pos.y);
@@ -283,15 +368,17 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         Body b = world.createBody(shapeDef);
 
+        b.setUserData(wall);
+
         FixtureDef blockingBounds = new FixtureDef();
 
         blockingBounds.density = 100f;
         blockingBounds.friction = 0f;
         blockingBounds.shape = boundShape;
-        blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_WALLS;
-        blockingBounds.filter.maskBits = CollisionCategories.MASK_SCENERY;
+        blockingBounds.filter.categoryBits = floor;
+        blockingBounds.filter.maskBits = CollisionCategories.CATEGORY_PLAYER;
         b.createFixture(blockingBounds);
 
-        walls.add(b);
+        return b;
     }
 }

@@ -17,16 +17,4 @@ public class NostalgiPhysicsBody extends Body {
     protected NostalgiPhysicsBody(World world, long addr) {
         super(world, addr);
     }
-
-    public boolean equals(Object o) {
-        if(o instanceof Body) {
-            Body b = (Body)o;
-            return this.equals(b);
-        } else if(o instanceof IWall) {
-            IWall w = (IWall)o;
-            return this.equals(w.getBody());
-        }
-
-        return false;
-    }
 }
