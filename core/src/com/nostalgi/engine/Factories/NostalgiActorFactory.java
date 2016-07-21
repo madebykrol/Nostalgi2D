@@ -12,7 +12,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 /**
  * Created by Kristoffer on 2016-07-16.
@@ -22,16 +24,27 @@ public class NostalgiActorFactory implements IActorFactory {
     private World world;
     private float unitScale;
 
+    private static final String DENSITY = "Density";
+    private static final String SENSOR = "IsSensor";
+    private static final String STATIC = "IsStatic";
+    private static final String TYPE = "Type";
+    private static final String FLOOR = "Floor";
+    private static final String FRICTION = "Friction";
+
+    private static final String COLLISION_CATEGORY = "CollisionCategory";
+    private static final String COLLISION_MASK = "CollisionMask";
+
     public NostalgiActorFactory(World world, float unitScale) {
         this.world = world;
         this.unitScale = unitScale;
     }
 
     @Override
-    public IActor fromMapObject(MapObject object) {
-        String type = getObjectProperty(object, "Type");
-        String name = object.getName();
+    public IActor fromMapObject(MapObject object, IActor parent) {
+        String type = getObjectProperty(object, TYPE);
+        String floor = getObjectProperty(object, FLOOR);
 
+        String name = object.getName();
 
         float[] vertices = new float[0];
         Vector2 position = new Vector2(0,0);
@@ -48,23 +61,27 @@ public class NostalgiActorFactory implements IActorFactory {
             position = new Vector2(obj.getPolygon().getX(), obj.getPolygon().getY());
         }
 
-        IActor actor = this.createActor(type, name);
-        actor.setPhysicsBody(createPhysicsBody(
-                vertices,
-                position,
-                CollisionCategories.CATEGORY_TRIGGER, actor));
+        IActor actor = this.createActor(type, name, createBoundingVolume(object, vertices));
+
+        if(floor != null) {
+            actor.setFloorLevel(Integer.parseInt(floor));
+        }
         actor.setPosition(position);
+        actor.setParent(parent);
+
+        createPhysicsBody(actor);
+
 
         return actor;
     }
 
-    @Override
-    public IActor createActor(String type, String id) {
+    protected IActor createActor(String type, String id, BoundingVolume bv) {
 
         try {
             Class c = Class.forName(type);
 
             IActor actor = (IActor)c.newInstance();
+            actor.setBoundingVolume(bv);
             actor.setName(id);
 
             return actor;
@@ -104,17 +121,72 @@ public class NostalgiActorFactory implements IActorFactory {
         return result;
     }
 
-    private Body createPhysicsBody(float[] vertices, Vector2 pos, short floor, IActor actor) {
-        BodyDef shapeDef = new BodyDef();
+    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices) {
+        BoundingVolume bv = new BoundingVolume();
         PolygonShape boundShape = new PolygonShape();
 
         for(int i = 0; i < vertices.length; i++) {
-            vertices[i] /=32f;
+            vertices[i] /= unitScale;
         }
 
         boundShape.set(vertices);
-        shapeDef.position.set(pos.x/32f, pos.y/32f);
-        shapeDef.type = BodyDef.BodyType.StaticBody;
+        bv.setShape(boundShape);
+
+        // Set density
+        String density = getObjectProperty(object, DENSITY);
+        if(density != null) {
+            bv.setDensity(Float.parseFloat(density));
+        }
+
+        String friction = getObjectProperty(object, FRICTION);
+        if(friction != null) {
+            bv.setFriction(Float.parseFloat(friction));
+        }
+
+        // set is Sensor
+        String isSensor = getObjectProperty(object, SENSOR);
+        if(isSensor != null) {
+            bv.isSensor(Boolean.parseBoolean(isSensor));
+        }
+
+        // set is Static
+        String isStatic = getObjectProperty(object, STATIC);
+        if(isStatic != null) {
+            bv.isStatic(Boolean.parseBoolean(isStatic));
+        }
+
+        short category = 0;
+        short mask = 0;
+
+        String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
+        if(collisionCategory != null) {
+            if(collisionCategory.equals("Trigger")) {
+                category = CollisionCategories.CATEGORY_TRIGGER;
+            }
+        }
+
+        String collisionMask = getObjectProperty(object, COLLISION_MASK);
+        if(collisionMask != null) {
+
+        }
+
+        bv.setCollisionCategory(CollisionCategories.CATEGORY_TRIGGER);
+        bv.setCollisionMask(CollisionCategories.MASK_TRIGGER);
+
+        return bv;
+    }
+
+    private Body createPhysicsBody(IActor actor) {
+        BodyDef shapeDef = new BodyDef();
+        BoundingVolume bv = actor.getBoundingVolume();
+        PolygonShape boundShape = bv.getShape();
+
+        shapeDef.position.set(actor.getPosition().x/unitScale, actor.getPosition().y/unitScale);
+        if(bv.isStatic()) {
+            shapeDef.type = BodyDef.BodyType.StaticBody;
+        } else {
+            shapeDef.type = BodyDef.BodyType.DynamicBody;
+        }
 
         Body b = world.createBody(shapeDef);
 
@@ -122,14 +194,14 @@ public class NostalgiActorFactory implements IActorFactory {
 
         FixtureDef blockingBounds = new FixtureDef();
 
-        blockingBounds.density = 100f;
-        blockingBounds.friction = 0f;
-        blockingBounds.isSensor = true;
+        blockingBounds.density = bv.getDensity();
+        blockingBounds.friction = bv.getFriction();
+        blockingBounds.isSensor = bv.isSensor();
         blockingBounds.shape = boundShape;
-        blockingBounds.filter.categoryBits = floor;
-        blockingBounds.filter.maskBits = CollisionCategories.CATEGORY_PLAYER;
+        blockingBounds.filter.categoryBits = bv.getCollisionCategory();
+        blockingBounds.filter.maskBits = bv.getCollisionMask();
         b.createFixture(blockingBounds);
-
+        bv.setPhysicsBody(b);
         return b;
     }
 }

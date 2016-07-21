@@ -3,6 +3,8 @@ package com.nostalgi.engine.interfaces.World;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 
 import java.util.HashMap;
 
@@ -16,14 +18,15 @@ public interface IActor {
 
     HashMap<String, IActor> getChildren();
     IActor getChild(String name);
-    void setChildren(IActor[] children);
-    void setChildren(HashMap<String, IActor> children);
+    void addChildren(IActor[] children);
+    void addChildren(HashMap<String, IActor> children);
+    void addChild(IActor actor);
 
     void setName(String name);
     String getName();
 
     boolean canEverTick();
-    void tick();
+    void tick(float delta);
 
     Animation getCurrentAnimation();
 
@@ -35,12 +38,28 @@ public interface IActor {
 
     boolean isAnimated();
 
+    /**
+     * Get world position, relative to parent
+     * @return
+     */
     Vector2 getPosition();
+
+    /**
+     * Get absolute position relative to origin (0,0)
+     * @return
+     */
+    Vector2 getWorldPosition();
+
     void setPosition(Vector2 position);
 
-    void setPhysicsBody(Body body);
-    Body getPhysicsBody();
+    void setBoundingVolume(BoundingVolume body);
+    BoundingVolume getBoundingVolume();
 
     void onOverlapBegin(IActor overlapper);
     void onOverlapEnd(IActor overlapper);
+
+    int getFloorLevel();
+    void setFloorLevel(int floor);
+
+    void setWorld(World world);
 }

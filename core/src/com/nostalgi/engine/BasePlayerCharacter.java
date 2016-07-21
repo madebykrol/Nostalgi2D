@@ -2,23 +2,15 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.nostalgi.engine.States.AnimationStates;
-import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
-import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.World.BaseActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
-
-import com.badlogic.gdx.graphics.g2d.Animation;
-
-import java.util.HashMap;
 
 /**
  * Created by ksdkrol on 2016-07-04.
  */
 public class BasePlayerCharacter extends BaseActor implements ICharacter {
-
 
     protected IController currentController;
 
@@ -26,10 +18,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     protected float height = 2f;
 
     protected Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
-
     protected Direction facing;
-
-    protected int floor = 1;
 
     public BasePlayerCharacter() {this(new Vector2());}
 
@@ -50,6 +39,16 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public void setStat(int mod, Stat stat) {
 
+    }
+
+    @Override
+    public boolean canEverTick() {
+        return true;
+    }
+
+    @Override
+    public void tick(float delta) {
+        System.out.println("Tick");
     }
 
     @Override
@@ -121,16 +120,6 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public float getHeight() {
         return this.height;
-    }
-
-    @Override
-    public int getFloorLevel() {
-        return this.floor;
-    }
-
-    @Override
-    public void setFloorLevel(int floor) {
-        this.floor = floor;
     }
 
     @Override

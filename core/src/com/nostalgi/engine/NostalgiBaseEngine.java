@@ -26,11 +26,10 @@ import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.render.NostalgiCamera;
-
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -45,7 +44,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     protected NostalgiRenderer mapRenderer;
     protected InputMultiplexer inputProcessor;
 
-    protected ArrayList<IWall> walls = new ArrayList<IWall>();
     protected Body playerBody;
 
     protected World world;
@@ -78,7 +76,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-
                 try {
                     Fixture a = contact.getFixtureA();
                     Fixture b = contact.getFixtureB();
@@ -93,12 +90,24 @@ public class NostalgiBaseEngine implements IGameEngine {
                 } catch (ClassCastException e) {
 
                 }
-
             }
 
             @Override
             public void endContact(Contact contact) {
+                try {
+                    Fixture a = contact.getFixtureA();
+                    Fixture b = contact.getFixtureB();
 
+                    IActor actorA = (IActor) a.getBody().getUserData();
+                    IActor actorB = (IActor) b.getBody().getUserData();
+
+                    if (actorA != null && actorB != null) {
+                        actorA.onOverlapEnd(actorB);
+                        actorB.onOverlapEnd(actorA);
+                    }
+                } catch (ClassCastException e) {
+
+                }
             }
 
             @Override
@@ -120,7 +129,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Init map objects. like triggers, chests doors.
         initMapActors();
-
     }
 
     @Override
@@ -128,10 +136,16 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         world.step(1f / 60f, 6, 2);
         // Update NPC / Monster bounds
+        if(getGameState().getCurrentController().getCurrentPossessedCharacter().canEverTick()) {
+            getGameState().getCurrentController().getCurrentPossessedCharacter().tick(Gdx.graphics.getDeltaTime());
+        }
+
+        HashMap<String, IActor> actors =  getGameState().getCurrentLevel().getActors();
+        tickActors(actors);
 
         playerBody.setLinearVelocity(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getVelocity());
-        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().x = playerBody.getPosition().x-0.5f;
-        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getPosition().y = playerBody.getPosition().y-0.5f;
+        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().x = playerBody.getPosition().x-0.5f;
+        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().y = playerBody.getPosition().y-0.5f;
 
         switch(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getFloorLevel()) {
             case 1 :
@@ -164,7 +178,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Set view
         this.mapRenderer.setView(this.currentCamera);
-
     }
 
     @Override
@@ -177,14 +190,13 @@ public class NostalgiBaseEngine implements IGameEngine {
             hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
 
-        //debug.render(world, currentCamera.combined);
+        debug.render(world, currentCamera.combined);
     }
 
     @Override
     public void dispose() {
         this.hud.dispose();
         this.world.dispose();
-        this.walls.clear();
     }
 
     @Override
@@ -232,6 +244,17 @@ public class NostalgiBaseEngine implements IGameEngine {
         return inputProcessor;
     }
 
+    private void tickActors(HashMap<String, IActor> actors) {
+        for(Map.Entry<String, IActor> entry : actors.entrySet()) {
+            String name = entry.getKey();
+            IActor actor = entry.getValue();
+
+            if(actor.canEverTick()) {
+                actor.tick(Gdx.graphics.getDeltaTime());
+            }
+        }
+    }
+
     private void initPlayerBounds() {
         // Update player bounds
 
@@ -257,8 +280,6 @@ public class NostalgiBaseEngine implements IGameEngine {
             playerBody.setUserData(this.getGameState().getPlayerCharacter());
             playerBody.createFixture(blockingBounds);
         }
-
-        this.getGameState().getPlayerCharacter().setPhysicsBody(playerBody);
     }
 
     private void changePlayerFixture(short playerMask) {
@@ -310,75 +331,13 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     private void initMapActors() {
-
-
-        ArrayList<IActor> actors = this.getGameState().getCurrentLevel().getActors(this.actorFactory);
-
+        this.getGameState().getCurrentLevel().initActors(this.actorFactory);
     }
 
-    private void initMapWalls() {
-        // get bounds
-
-        for(IWall wall : walls) {
-            world.destroyBody(wall.getPhysicsBody());
-        }
-
-        walls.clear();
-
-        ArrayList<IWall> currentLevelBounds = getGameState().getCurrentLevel().getWalls(this.wallFactory);
-
-        // Set def.
-        BodyDef shapeDef = new BodyDef();
-        // go through our bounding blocks
-        for(IWall wall : currentLevelBounds) {
-            float[] vertices = wall.getVertices();
-
-            short floor = CollisionCategories.CATEGORY_NIL;
-            if(wall.isOnFloor(1)) {
-                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_1);
-            } if(wall.isOnFloor(2)) {
-                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_2);
-            } if(wall.isOnFloor(3)) {
-                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_3);
-            } if(wall.isOnFloor(4)) {
-                floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_4);
-            }
-
-            for(int i = 0; i < vertices.length; i++) {
-                vertices[i] /=32f;
-            }
-
-            if(vertices.length > 2) {
-                wall.setPhysicsBody(addBoundingBox(shapeDef,
-                        vertices,
-                        new Vector2(wall.getX()/32f,wall.getY()/32f),
-                        floor,
-                        wall));
-            }
-
-            walls.add(wall);
-        }
+    private void initMapWalls () {
+        this.getGameState().getCurrentLevel().initWalls(this.wallFactory);
     }
 
-    private Body addBoundingBox(BodyDef shapeDef, float[] vertices, Vector2 pos, short floor, IWall wall) {
-        PolygonShape boundShape = new PolygonShape();
-        boundShape.set(vertices);
-        shapeDef.position.set(pos.x, pos.y);
-        shapeDef.type = BodyDef.BodyType.StaticBody;
 
-        Body b = world.createBody(shapeDef);
 
-        b.setUserData(wall);
-
-        FixtureDef blockingBounds = new FixtureDef();
-
-        blockingBounds.density = 100f;
-        blockingBounds.friction = 0f;
-        blockingBounds.shape = boundShape;
-        blockingBounds.filter.categoryBits = floor;
-        blockingBounds.filter.maskBits = CollisionCategories.CATEGORY_PLAYER;
-        b.createFixture(blockingBounds);
-
-        return b;
-    }
 }

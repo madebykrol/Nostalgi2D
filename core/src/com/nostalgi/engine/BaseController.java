@@ -135,7 +135,6 @@ public class BaseController implements IController, InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-
         return false;
     }
 

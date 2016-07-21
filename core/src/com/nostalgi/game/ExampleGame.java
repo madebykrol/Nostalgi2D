@@ -17,6 +17,7 @@ import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Hud.DebugHudModule;
 import com.nostalgi.engine.Hud.DemoHudModule;
 import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.game.levels.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
@@ -106,6 +107,7 @@ public class ExampleGame extends ApplicationAdapter {
 
 	private ICharacter createPlayerCharacter() {
 		ICharacter playerCharacter = new BasePlayerCharacter(new Vector2(10,58));
+		playerCharacter.setParent(new RootActor());
 		animationFactory = new NostalgiAnimationFactory();
 
 		playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,

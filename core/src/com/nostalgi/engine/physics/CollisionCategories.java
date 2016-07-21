@@ -30,4 +30,6 @@ public class CollisionCategories {
             CATEGORY_PROJECTILES |
             CATEGORY_NPC;
     public static final short MASK_WALLS = CATEGORY_PROJECTILES;
+
+    public static final short MASK_TRIGGER = CATEGORY_PLAYER |CATEGORY_NPC |CATEGORY_MONSTER;
 }

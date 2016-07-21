@@ -5,10 +5,15 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Wall;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IWall;
+import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
  * Created by Kristoffer on 2016-07-16.
@@ -24,7 +29,7 @@ public class NostalgiWallFactory implements IWallFactory {
     }
 
     @Override
-    public IWall fromMapObject(MapObject object) {
+    public IWall fromMapObject(MapObject object, Vector2 mapOrigin) {
 
         String f = getObjectProperty(object, "Floor");
         int[] floors = new int[]{1};
@@ -51,7 +56,11 @@ public class NostalgiWallFactory implements IWallFactory {
             position = new Vector2(obj.getPolygon().getX(), obj.getPolygon().getY());
         }
 
-        return createWall(floors, position, vertices);
+        IWall wall = createWall(floors, position, vertices);
+
+        createPhysicsBody(wall, mapOrigin);
+
+        return wall;
     }
 
     @Override
@@ -84,5 +93,57 @@ public class NostalgiWallFactory implements IWallFactory {
         result[7] = y + height;
 
         return result;
+    }
+
+    private void createPhysicsBody (IWall wall, Vector2 mapOrigin) {
+        // Set def.
+        BodyDef shapeDef = new BodyDef();
+        // go through our bounding blocks
+        float[] vertices = wall.getVertices();
+
+        short floor = CollisionCategories.CATEGORY_NIL;
+        if(wall.isOnFloor(1)) {
+            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_1);
+        } if(wall.isOnFloor(2)) {
+            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_2);
+        } if(wall.isOnFloor(3)) {
+            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_3);
+        } if(wall.isOnFloor(4)) {
+            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_4);
+        }
+
+        for(int i = 0; i < vertices.length; i++) {
+            vertices[i] /=32f;
+        }
+
+        if(vertices.length > 2) {
+            wall.setPhysicsBody(addBoundingBox(shapeDef,
+                    vertices,
+                    new Vector2(wall.getX()/32f+mapOrigin.x,wall.getY()/32f+mapOrigin.y),
+                    floor,
+                    wall));
+        }
+    }
+
+    private Body addBoundingBox(BodyDef shapeDef, float[] vertices, Vector2 pos, short floor, IWall wall) {
+        PolygonShape boundShape = new PolygonShape();
+        boundShape.set(vertices);
+        shapeDef.position.set(pos.x, pos.y);
+        shapeDef.type = BodyDef.BodyType.StaticBody;
+
+        Body b = world.createBody(shapeDef);
+
+        b.setUserData(wall);
+
+        FixtureDef blockingBounds = new FixtureDef();
+
+        blockingBounds.density = 100f;
+        blockingBounds.friction = 0f;
+        blockingBounds.shape = boundShape;
+        blockingBounds.filter.categoryBits = floor;
+        blockingBounds.filter.maskBits = CollisionCategories.CATEGORY_PLAYER;
+        b.createFixture(blockingBounds);
+
+        return b;
     }
 }

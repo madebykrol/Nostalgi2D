@@ -10,6 +10,7 @@ import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ksdkrol on 2016-07-03.
@@ -18,11 +19,11 @@ public interface ILevel extends Disposable {
 
     void initMap();
 
+    Vector2 getPosition();
+    void setPosition(Vector2 position);
+
     LevelCameraBounds getCameraBounds();
     void setCameraBounds(LevelCameraBounds bounds);
-
-    ISpawner[] getNpcSpawns();
-    ISpawner[] getMonsterSpawns();
 
     Vector2 getCameraInitLocation();
 
@@ -36,6 +37,9 @@ public interface ILevel extends Disposable {
 
     TiledMapTileLayer getMainLayer();
 
-    ArrayList<IWall> getWalls(IWallFactory factory);
-    ArrayList<IActor> getActors(IActorFactory factory);
+    ArrayList<IWall> getWalls();
+    HashMap<String, IActor> getActors();
+
+    void initWalls(IWallFactory factory);
+    void initActors(IActorFactory factory);
 }

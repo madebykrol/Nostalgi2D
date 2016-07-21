@@ -1,28 +1,32 @@
-package com.nostalgi.engine;
+package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Kristoffer on 2016-07-15.
  */
 public abstract class BaseActor implements IActor {
 
+    protected int floor = 1;
+
     protected IActor parent;
-    protected HashMap<String, IActor> children;
-    protected Body boundingBody;
+    protected HashMap<String, IActor> children = new HashMap<String, IActor>();
 
     protected Vector2 position;
 
-    protected Body physicsBody;
+    protected BoundingVolume boundingVolume;
 
     protected Animation currentAnimation;
     protected HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
-    protected String name = "BaseActor"+this.hashCode();
+    protected String name = "Actor"+this.hashCode();
+    protected World world;
 
 
     @Override
@@ -39,17 +43,46 @@ public abstract class BaseActor implements IActor {
     public IActor getChild(String name) {
         return this.children.get(name);
     }
-    public void setChildren(IActor[] children) {
 
-    }
-    public void setChildren(HashMap<String, IActor> children) {
-        this.children = children;
+    public void addChildren(IActor[] children) {
+        for(int i = 0; i < children.length; i++) {
+            this.addChild(children[i]);
+        }
     }
 
+    public void addChildren(HashMap<String, IActor> children) {
+
+        Iterator it = children.entrySet().iterator();
+
+        while(it.hasNext()) {
+            IActor actor = (IActor)it.next();
+            this.addChild(actor);
+        }
+    }
+
+    public void addChild(IActor actor) {
+        this.children.put(actor.getName(), actor);
+        actor.setParent(this);
+    }
 
     @Override
-    public Vector2 getPosition() {
+    public Vector2 getWorldPosition() {
         return this.position;
+    }
+
+    public Vector2 getPosition() {
+
+        // This needs to be cached for optimization.
+
+        if(this.parent != null) {
+            Vector2 worldPosition = new Vector2();
+            worldPosition.x = this.position.x + this.parent.getPosition().x;
+            worldPosition.y = this.position.y + this.parent.getPosition().y;
+
+            return worldPosition;
+        } else {
+            return this.position;
+        }
     }
 
     @Override
@@ -59,24 +92,20 @@ public abstract class BaseActor implements IActor {
 
 
     @Override
-    public void setPhysicsBody(Body body) {
-        this.physicsBody = body;
+    public void setBoundingVolume(BoundingVolume volume) {
+        this.boundingVolume = volume;
     }
 
     @Override
-    public Body getPhysicsBody() {
-        return this.physicsBody;
+    public BoundingVolume getBoundingVolume() {
+        return this.boundingVolume;
     }
 
     @Override
-    public void onOverlapBegin(IActor overlapper) {
-
-    }
+    public void onOverlapBegin(IActor overlapper) {}
 
     @Override
-    public void onOverlapEnd(IActor overlapper) {
-
-    }
+    public void onOverlapEnd(IActor overlapper) { }
 
     @Override
     public com.badlogic.gdx.graphics.g2d.Animation getCurrentAnimation() {
@@ -129,8 +158,23 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void tick() {
+    public void tick(float delta) {
 
+    }
+
+    @Override
+    public int getFloorLevel() {
+        return this.floor;
+    }
+
+    @Override
+    public void setFloorLevel(int floor) {
+        this.floor = floor;
+    }
+
+    @Override
+    public void setWorld(World world) {
+        this.world = world;
     }
 
 }

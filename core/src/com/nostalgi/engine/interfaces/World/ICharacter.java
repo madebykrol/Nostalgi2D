@@ -48,7 +48,4 @@ public interface ICharacter extends IActor, Disposable{
 
     float getWidth();
     float getHeight();
-
-    int getFloorLevel();
-    void setFloorLevel(int floor);
 }

@@ -1,5 +1,6 @@
 package com.nostalgi.engine.interfaces.physics;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 /**
@@ -7,7 +8,30 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
  */
 public class BoundingVolume {
     private boolean isStatic = false;
+    private boolean isSensor = false;
     private PolygonShape shape;
+    private short collisionMask;
+    private short collisionCategory;
+    private float density;
+    private float friction;
+    private Body physicsBody;
+
+
+    public short getCollisionCategory() {
+        return collisionCategory;
+    }
+
+    public void setCollisionCategory(short collisionCategory) {
+        this.collisionCategory = collisionCategory;
+    }
+
+    public short getCollisionMask() {
+        return collisionMask;
+    }
+
+    public void setCollisionMask(short collisionMask) {
+        this.collisionMask = collisionMask;
+    }
 
     public boolean isStatic() {
         return this.isStatic;
@@ -23,5 +47,37 @@ public class BoundingVolume {
 
     public void setShape(PolygonShape shape) {
         this.shape = shape;
+    }
+
+    public boolean isSensor() {
+        return isSensor;
+    }
+
+    public void isSensor(boolean isSensor) {
+        this.isSensor = isSensor;
+    }
+
+    public float getDensity() {
+        return density;
+    }
+
+    public void setDensity(float density) {
+        this.density = density;
+    }
+
+    public float getFriction() {
+        return friction;
+    }
+
+    public void setFriction(float friction) {
+        this.friction = friction;
+    }
+
+    public Body getPhysicsBody() {
+        return physicsBody;
+    }
+
+    public void setPhysicsBody(Body physicsBody) {
+        this.physicsBody = physicsBody;
     }
 }

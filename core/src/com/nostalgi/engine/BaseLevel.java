@@ -2,15 +2,10 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.nostalgi.engine.Factories.NostalgiActorFactory;
+import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -19,6 +14,7 @@ import com.nostalgi.engine.interfaces.World.ISpawner;
 import com.nostalgi.engine.interfaces.World.IWall;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ksdkrol on 2016-07-03.
@@ -27,35 +23,26 @@ public abstract class BaseLevel implements ILevel {
 
     protected TiledMap map;
     private TiledMapTileLayer mainLayer;
-    private int originX;
-    private int originY;
     private final String wallsLayerName;
     private final String mainLayerName;
     private final String actorsLayerName;
 
-    private ArrayList<IWall> mapBounds;
-    private ArrayList<IActor> actors;
+    private Vector2 mapPosition;
+
+    protected ArrayList<IWall> walls = new ArrayList<IWall>();
+
+    private IActor mapRoot = new RootActor();
 
     public BaseLevel(int originX, int originY) {
         this(originX, originY, "Main", "Walls", "Actors");
     }
 
     public BaseLevel(int originX, int originY, String mainLayer, String wallsLayer, String actorsLayer) {
-        this.originX = originX;
-        this.originY = originY;
+        this.mapPosition = new Vector2(originX, originY);
         this.mainLayerName = mainLayer;
         this.wallsLayerName = wallsLayer;
         this.actorsLayerName = actorsLayer;
-    }
-
-    @Override
-    public ISpawner[] getNpcSpawns() {
-        return new ISpawner[0];
-    }
-
-    @Override
-    public ISpawner[] getMonsterSpawns() {
-        return new ISpawner[0];
+        this.mapRoot.setPosition(this.mapPosition);
     }
 
     @Override
@@ -92,7 +79,7 @@ public abstract class BaseLevel implements ILevel {
 
     @Override
     public LevelCameraBounds getCameraBounds() {
-        return new LevelCameraBounds(originX,originY,getWidth(), getHeight());
+        return new LevelCameraBounds((int)(this.getPosition().x*this.getMainLayer().getTileWidth()),(int)(this.getPosition().y*this.getMainLayer().getTileHeight()),getWidth(), getHeight());
     }
 
     @Override
@@ -100,17 +87,22 @@ public abstract class BaseLevel implements ILevel {
 
     }
 
-    public ArrayList<IWall> getWalls(IWallFactory factory) {
-        if(this.mapBounds == null)
-            initMapWalls(factory);
-
-        return this.mapBounds;
+    @Override
+    public Vector2 getPosition () {
+        return this.mapPosition;
     }
 
-    public ArrayList<IActor> getActors(IActorFactory factory) {
-        if(this.actors == null)
-            initMapActors(factory);
-        return this.actors;
+    @Override
+    public void setPosition(Vector2 position) {
+        this.mapPosition = position;
+    }
+
+    public ArrayList<IWall> getWalls() {
+        return this.walls;
+    }
+
+    public HashMap<String, IActor> getActors() {
+        return this.mapRoot.getChildren();
     }
 
     public void dispose() {
@@ -125,23 +117,22 @@ public abstract class BaseLevel implements ILevel {
         return this.mainLayer;
     }
 
-    protected void initMapActors(IActorFactory factory) {
-        actors = new ArrayList<IActor>();
+    public void initActors(IActorFactory factory) {
         MapLayer actorsLayer = map.getLayers().get(this.actorsLayerName);
         if(actorsLayer != null) {
             for(MapObject object : actorsLayer.getObjects()) {
-               actors.add(factory.fromMapObject(object));
+               mapRoot.addChild(factory.fromMapObject(object, this.mapRoot));
             }
         }
     }
 
-    protected void initMapWalls(IWallFactory factory) {
-        mapBounds = new ArrayList<IWall>();
+    public void initWalls(IWallFactory factory) {
+        walls = new ArrayList<IWall>();
         MapLayer boundsLayer = map.getLayers().get(this.wallsLayerName);
         if(boundsLayer != null) {
             for (MapObject object :boundsLayer.getObjects()){
 
-                mapBounds.add(factory.fromMapObject(object));
+                walls.add(factory.fromMapObject(object, mapPosition));
             }
         }
     }
