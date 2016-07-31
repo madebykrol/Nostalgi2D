@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -20,14 +19,14 @@ import com.nostalgi.engine.Factories.NostalgiActorFactory;
 import com.nostalgi.engine.Factories.NostalgiWallFactory;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
-import com.nostalgi.engine.interfaces.IFollowCamera;
+import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.physics.CollisionCategories;
-import com.nostalgi.render.NostalgiCamera;
+import com.nostalgi.engine.Render.NostalgiCamera;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,35 +34,22 @@ import java.util.Map;
  * Created by ksdkrol on 2016-07-04.
  */
 public class NostalgiBaseEngine implements IGameEngine {
+    private IGameMode mode;
 
-    protected IGameState state;
-    protected IGameMode mode;
-    protected IHud hud;
+    private NostalgiCamera currentCamera;
+    private NostalgiRenderer mapRenderer;
+    private InputMultiplexer inputProcessor;
 
-    protected NostalgiCamera currentCamera;
-    protected NostalgiRenderer mapRenderer;
-    protected InputMultiplexer inputProcessor;
+    private Body playerBody;
 
-    protected Body playerBody;
-
-    protected World world;
-
-    protected IWallFactory wallFactory;
-    protected IActorFactory actorFactory;
+    private World world;
 
     private Box2DDebugRenderer debug;
 
-    public NostalgiBaseEngine(Vector2 gravity) {
-        world = new World(gravity, true);
-        wallFactory = new NostalgiWallFactory(world, 32f);
-        actorFactory = new NostalgiActorFactory(world, 32f);
-    }
-
-    public NostalgiBaseEngine(IGameState state, IGameMode mode, NostalgiRenderer mapRenderer) {
-        this(state.getGravity());
-        this.state = state;
+    public NostalgiBaseEngine(World world, NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameMode mode) {
+        this.world = world;
+        this.currentCamera = camera;
         this.mode = mode;
-
         this.mapRenderer = mapRenderer;
         this.debug = new Box2DDebugRenderer();
     }
@@ -133,21 +119,26 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void update() {
+        float dTime = Gdx.graphics.getDeltaTime();
 
-        world.step(1f / 60f, 6, 2);
+        // Update game mode.
+        this.getGameMode().update(dTime);
+
         // Update NPC / Monster bounds
-        if(getGameState().getCurrentController().getCurrentPossessedCharacter().canEverTick()) {
-            getGameState().getCurrentController().getCurrentPossessedCharacter().tick(Gdx.graphics.getDeltaTime());
+        if(this.getGameMode().getCurrentController().getCurrentPossessedCharacter().canEverTick()) {
+            this.getGameMode().getCurrentController().getCurrentPossessedCharacter().tick(Gdx.graphics.getDeltaTime());
         }
 
-        HashMap<String, IActor> actors =  getGameState().getCurrentLevel().getActors();
+        this.getGameMode().getCurrentController().update(dTime);
+
+        HashMap<String, IActor> actors =  this.getGameMode().getGameState().getCurrentLevel().getActors();
         tickActors(actors);
 
-        playerBody.setLinearVelocity(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getVelocity());
-        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().x = playerBody.getPosition().x-0.5f;
-        this.getGameState().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().y = playerBody.getPosition().y-0.5f;
+        playerBody.setLinearVelocity(this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getVelocity());
+        this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().x = playerBody.getPosition().x-0.5f;
+        this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getWorldPosition().y = playerBody.getPosition().y-0.5f;
 
-        switch(this.getGameState().getCurrentController().getCurrentPossessedCharacter().getFloorLevel()) {
+        switch(getGameMode().getCurrentController().getCurrentPossessedCharacter().getFloorLevel()) {
             case 1 :
                 changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
                 break;
@@ -164,16 +155,16 @@ public class NostalgiBaseEngine implements IGameEngine {
                 changePlayerFixture((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
                 break;
         }
-        // Update state.
-        this.state.update(Gdx.graphics.getDeltaTime());
 
         // Update camera
-        if(this.currentCamera instanceof IFollowCamera) {
-            this.currentCamera.setPositionSafe(this.getGameState()
-                    .getCurrentController()
+        if(this.currentCamera != null) {
+            this.currentCamera.setPositionSafe(getGameMode().getCurrentController()
                     .getCurrentPossessedCharacter()
                     .getPosition());
         }
+
+        world.step(1f / 60f, 6, 2);
+
         this.currentCamera.update();
 
         // Set view
@@ -183,11 +174,11 @@ public class NostalgiBaseEngine implements IGameEngine {
     @Override
     public void render() {
 
-        this.mapRenderer.setCurrentPlayerCharacter(this.getGameState().getCurrentController().getCurrentPossessedCharacter());
+        this.mapRenderer.setCurrentPlayerCharacter(getGameMode().getCurrentController().getCurrentPossessedCharacter());
         this.mapRenderer.render(Gdx.graphics.getDeltaTime());
 
-        if(hud != null) {
-            hud.draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        if(this.getGameMode().getHud() != null) {
+            this.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
 
         debug.render(world, currentCamera.combined);
@@ -195,13 +186,8 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void dispose() {
-        this.hud.dispose();
+        this.getGameMode().dispose();
         this.world.dispose();
-    }
-
-    @Override
-    public IGameState getGameState() {
-        return this.state;
     }
 
     @Override
@@ -210,13 +196,8 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     @Override
-    public IHud getHud() {
-        return this.hud;
-    }
-
-    @Override
-    public void setHud(IHud hud) {
-        this.hud = hud;
+    public World getWorld() {
+        return this.world;
     }
 
     @Override
@@ -246,13 +227,15 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private void tickActors(HashMap<String, IActor> actors) {
         for(Map.Entry<String, IActor> entry : actors.entrySet()) {
-            String name = entry.getKey();
             IActor actor = entry.getValue();
 
             if(actor.canEverTick()) {
                 actor.tick(Gdx.graphics.getDeltaTime());
+                if(actor.getChildren() != null)
+                    this.tickActors(actor.getChildren());
             }
         }
+
     }
 
     private void initPlayerBounds() {
@@ -262,8 +245,10 @@ public class NostalgiBaseEngine implements IGameEngine {
             BodyDef playerBodyDef = new BodyDef();
             PolygonShape shape = new PolygonShape();
             playerBodyDef.fixedRotation = true;
-            playerBodyDef.position.x = getGameState().getPlayerCharacter().getPosition().x;
-            playerBodyDef.position.y = getGameState().getPlayerCharacter().getPosition().y;
+            playerBodyDef.position.x = getGameMode().getCurrentController()
+                    .getCurrentPossessedCharacter().getPosition().x;
+            playerBodyDef.position.y = getGameMode().getCurrentController()
+                    .getCurrentPossessedCharacter().getPosition().y;
 
             playerBodyDef.type = BodyDef.BodyType.DynamicBody;
 
@@ -277,7 +262,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             blockingBounds.filter.categoryBits = CollisionCategories.CATEGORY_PLAYER;
             blockingBounds.filter.maskBits = CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1;
             playerBody = world.createBody(playerBodyDef);
-            playerBody.setUserData(this.getGameState().getPlayerCharacter());
+            playerBody.setUserData(getGameMode().getCurrentController().getCurrentPossessedCharacter());
             playerBody.createFixture(blockingBounds);
         }
     }
@@ -286,8 +271,10 @@ public class NostalgiBaseEngine implements IGameEngine {
         BodyDef playerBodyDef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         playerBodyDef.fixedRotation = true;
-        playerBodyDef.position.x = getGameState().getPlayerCharacter().getPosition().x;
-        playerBodyDef.position.y = getGameState().getPlayerCharacter().getPosition().y;
+        playerBodyDef.position.x = getGameMode().getCurrentController()
+                .getCurrentPossessedCharacter().getPosition().x;
+        playerBodyDef.position.y = getGameMode().getCurrentController()
+                .getCurrentPossessedCharacter().getPosition().y;
 
         Fixture fix = playerBody.getFixtureList().get(0);
         playerBody.destroyFixture(fix);
@@ -314,30 +301,27 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Get and set all input processors.
 
         // Hud input
-        if(this.hud.getInputProcessor() != null)
-            inputProcessor.addProcessor(this.hud.getInputProcessor());
+        if(this.getGameMode().getHud().getInputProcessor() != null)
+            inputProcessor.addProcessor(this.getGameMode().getHud().getInputProcessor());
 
         // Set gesture input processor
-        if (this.state.getCurrentController().getGestureListener() != null)
+        if (getGameMode().getCurrentController().getGestureListener() != null)
             inputProcessor.addProcessor(new GestureDetector(
-                    state.getCurrentController().getGestureListener()));
+                    getGameMode().getCurrentController().getGestureListener()));
 
         // Set standard input processor from controller
-        if(this.state.getCurrentController().getInputProcessor() != null)
+        if(getGameMode().getCurrentController().getInputProcessor() != null)
             inputProcessor.addProcessor(
-                    state.getCurrentController().getInputProcessor());
+                    getGameMode().getCurrentController().getInputProcessor());
 
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
     private void initMapActors() {
-        this.getGameState().getCurrentLevel().initActors(this.actorFactory);
+        this.getGameMode().getGameState().getCurrentLevel().initActors();
     }
 
     private void initMapWalls () {
-        this.getGameState().getCurrentLevel().initWalls(this.wallFactory);
+        this.getGameMode().getGameState().getCurrentLevel().initWalls();
     }
-
-
-
 }

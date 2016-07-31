@@ -4,10 +4,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
-import com.nostalgi.render.NostalgiCamera;
+import com.nostalgi.engine.Render.NostalgiCamera;
+
+import java.util.ArrayList;
 
 
 /**
@@ -15,21 +19,17 @@ import com.nostalgi.render.NostalgiCamera;
  */
 public class BaseController implements IController, InputProcessor {
 
-    protected ICharacter currentPossessedCharacter;
-    protected GestureDetector.GestureListener gestureListener;
-    protected NostalgiCamera camera;
+    private ICharacter currentPossessedCharacter;
+    private GestureDetector.GestureListener gestureListener;
+    private NostalgiCamera camera;
 
-    protected boolean leftIsPressed = false;
-    protected boolean rightIsPressed = false;
-    protected boolean upIsPressed = false;
-    protected boolean downIsPressed = false;
+    private boolean leftIsPressed = false;
+    private boolean rightIsPressed = false;
+    private boolean upIsPressed = false;
+    private boolean downIsPressed = false;
 
-    protected Vector2 lastPosition;
-
-    int walkingState = AnimationStates.IdleFaceSouthAnimation;
-
-    public BaseController () {
-
+    public BaseController (NostalgiCamera camera) {
+        this.camera = camera;
     }
 
     @Override
@@ -57,64 +57,70 @@ public class BaseController implements IController, InputProcessor {
     public void update(float dTime) {
 
         this.currentPossessedCharacter.stop();
-        this.walkingState = AnimationStates.IdleFaceSouthAnimation;
+        this.currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
 
-        if(this.currentPossessedCharacter.getFacingDirection() == Direction.SOUTH)
-            this.walkingState = AnimationStates.IdleFaceSouthAnimation;
+        boolean moving = false;
+        float faceDirection = this.currentPossessedCharacter.getFacingDirection();
 
-        if(this.currentPossessedCharacter.getFacingDirection() == Direction.EAST)
-            this.walkingState = AnimationStates.IdleFaceEastAnimation;
+        if(faceDirection == Direction.SOUTH)
+            this.currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
 
-        if(this.currentPossessedCharacter.getFacingDirection() == Direction.WEST)
-            this.walkingState = AnimationStates.IdleFaceWestAnimation;
+        if(faceDirection == Direction.EAST)
+            this.currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
 
-        if(this.currentPossessedCharacter.getFacingDirection() == Direction.NORTH)
-            this.walkingState = AnimationStates.IdleFaceNorthAnimation;
+        if(faceDirection == Direction.WEST)
+            this.currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
+
+        if(faceDirection == Direction.NORTH)
+            this.currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
 
         if (this.currentPossessedCharacter != null) {
             if (leftIsPressed) {
-                this.currentPossessedCharacter.getVelocity().x -= 5f;
-                this.walkingState = AnimationStates.WalkingWestAnimation;
+                moving = true;
+                this.currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
             }
             if (rightIsPressed) {
-                this.currentPossessedCharacter.getVelocity().x = 5f;
-                this.walkingState = AnimationStates.WalkingEastAnimation;
+                moving = true;
+                this.currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
             }
             if (upIsPressed) {
-                this.currentPossessedCharacter.getVelocity().y = 5f;
-                this.walkingState = AnimationStates.WalkingNorthAnimation;
+                moving = true;
+                this.currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
             }
             if (downIsPressed) {
-                this.currentPossessedCharacter.getVelocity().y -= 5f;
-                this.walkingState = AnimationStates.WalkingSouthAnimation;
+                moving = true;
+                this.currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
             }
+
+            this.currentPossessedCharacter.face(new Vector2(32,32));
+
+            System.out.println(this.currentPossessedCharacter.getFacingDirection());
+
+            if((moving)) {
+                this.currentPossessedCharacter.moveForward(5);
+            }
+
         }
     }
-
-    @Override
-    public int getCurrentWalkingState() {
-        return this.walkingState;
-    }
-
 
     @Override
     public boolean keyDown(int keycode) {
 
         if(keycode == Input.Keys.LEFT) {
             this.leftIsPressed = true;
-            this.currentPossessedCharacter.setFacingDirection(Direction.WEST);
+            this.currentPossessedCharacter.face(Direction.WEST);
         }
         if(keycode == Input.Keys.RIGHT) {
             this.rightIsPressed = true;
-            this.currentPossessedCharacter.setFacingDirection(Direction.EAST);
+            this.currentPossessedCharacter.face(Direction.EAST);
         }
         if(keycode == Input.Keys.UP) {
             this.upIsPressed = true;
-            this.currentPossessedCharacter.setFacingDirection(Direction.NORTH);
+            this.currentPossessedCharacter.face(Direction.NORTH);
         }
         if(keycode == Input.Keys.DOWN) {
             this.downIsPressed = true;
-            this.currentPossessedCharacter.setFacingDirection(Direction.SOUTH);
+            this.currentPossessedCharacter.face(Direction.SOUTH);
         }
 
         return true;
@@ -140,7 +146,12 @@ public class BaseController implements IController, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        //camera.moveToWorldFromScreenLocation(screenX, screenY);
+        Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
+
+        Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+
+        ArrayList<IActor> actors = this.currentPossessedCharacter.actorsCloseToLocation(worldPos2D, 1f);
+
         return false;
     }
 

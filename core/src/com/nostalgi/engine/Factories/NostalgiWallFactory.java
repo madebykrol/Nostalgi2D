@@ -18,18 +18,21 @@ import com.nostalgi.engine.physics.CollisionCategories;
 /**
  * Created by Kristoffer on 2016-07-16.
  */
-public class NostalgiWallFactory implements IWallFactory {
+public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWallFactory {
 
     private World world;
-    private float unitScale;
 
-    public NostalgiWallFactory(World world, float unitScale) {
+    public NostalgiWallFactory(World world) {
         this.world = world;
-        this.unitScale = unitScale;
     }
 
     @Override
-    public IWall fromMapObject(MapObject object, Vector2 mapOrigin) {
+    public IWall fromMapObject(MapObject mapObject, Vector2 mapOrigin) {
+        return fromMapObject(mapObject, mapOrigin, 32f);
+    }
+
+    @Override
+    public IWall fromMapObject(MapObject object, Vector2 mapOrigin, float unitScale) {
 
         String f = getObjectProperty(object, "Floor");
         int[] floors = new int[]{1};
@@ -58,7 +61,7 @@ public class NostalgiWallFactory implements IWallFactory {
 
         IWall wall = createWall(floors, position, vertices);
 
-        createPhysicsBody(wall, mapOrigin);
+        createPhysicsBody(wall, mapOrigin, unitScale);
 
         return wall;
     }
@@ -68,6 +71,10 @@ public class NostalgiWallFactory implements IWallFactory {
         return new Wall(floors, position, vertices);
     }
 
+    @Override
+    public void destroyWall(IWall wall) {
+        world.destroyBody(wall.getPhysicsBody());
+    }
 
     protected String getObjectProperty(MapObject object, String prop) {
         Object p = object.getProperties().get(prop);
@@ -95,7 +102,7 @@ public class NostalgiWallFactory implements IWallFactory {
         return result;
     }
 
-    private void createPhysicsBody (IWall wall, Vector2 mapOrigin) {
+    private void createPhysicsBody (IWall wall, Vector2 mapOrigin, float unitScale) {
         // Set def.
         BodyDef shapeDef = new BodyDef();
         // go through our bounding blocks
@@ -113,13 +120,13 @@ public class NostalgiWallFactory implements IWallFactory {
         }
 
         for(int i = 0; i < vertices.length; i++) {
-            vertices[i] /=32f;
+            vertices[i] /=unitScale;
         }
 
         if(vertices.length > 2) {
             wall.setPhysicsBody(addBoundingBox(shapeDef,
                     vertices,
-                    new Vector2(wall.getX()/32f+mapOrigin.x,wall.getY()/32f+mapOrigin.y),
+                    new Vector2(wall.getX()/unitScale+mapOrigin.x,wall.getY()/unitScale+mapOrigin.y),
                     floor,
                     wall));
         }
@@ -145,5 +152,10 @@ public class NostalgiWallFactory implements IWallFactory {
         b.createFixture(blockingBounds);
 
         return b;
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }

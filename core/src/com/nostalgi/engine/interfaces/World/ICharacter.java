@@ -1,9 +1,7 @@
 package com.nostalgi.engine.interfaces.World;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Stat;
@@ -27,19 +25,23 @@ public interface ICharacter extends IActor, Disposable{
     IController getCurrentController();
 
     Sprite getStaticSprite(float deltaT);
-    void setFacingDirection(Direction dir);
-    Direction getFacingDirection();
+    void face(float direction);
+    void face(Vector2 target);
+    float getFacingDirection();
+
+    void setWalkingState(int state);
+    int getWalkingState();
 
 
-    void moveForward(Vector2 velocityVector);
+    void moveForward(float velocity);
     void stop();
     Vector2 getVelocity();
 
 
     /**
      * Set dimensions of character sprite in unitspace.
-     * @param width
-     * @param height
+     * @param width width of character
+     * @param height height of character
      */
     void setDimensions(float width, float height);
 

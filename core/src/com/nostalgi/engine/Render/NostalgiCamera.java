@@ -1,4 +1,4 @@
-package com.nostalgi.render;
+package com.nostalgi.engine.Render;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,10 +11,10 @@ import com.nostalgi.engine.interfaces.IFollowCamera;
  * Created by Kristoffer on 2016-06-26.
  */
 public class NostalgiCamera extends OrthographicCamera implements IFollowCamera {
-    int left, right, bottom, top, unitScale;
+    private int left, right, bottom, top, unitScale;
 
-    float camViewportHalfWidth = 0;
-    float camViewportHalfHeight = 0;
+    private float camViewportHalfWidth = 0;
+    private float camViewportHalfHeight = 0;
 
     public NostalgiCamera(float w, float h, LevelCameraBounds bounds, int unitScale) {
         super(w, h);

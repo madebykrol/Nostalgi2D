@@ -10,11 +10,12 @@ import com.nostalgi.engine.physics.CollisionCategories;
 public class TriggerActor extends BaseActor {
 
     public TriggerActor() {
-        boundingVolume = new BoundingVolume();
+        BoundingVolume boundingVolume = new BoundingVolume();
         boundingVolume.isStatic(true);
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_TRIGGER);
         boundingVolume.setCollisionMask(CollisionCategories.MASK_TRIGGER);
         boundingVolume.isSensor(true);
+        this.setBoundingVolume(boundingVolume);
     }
 
     @Override

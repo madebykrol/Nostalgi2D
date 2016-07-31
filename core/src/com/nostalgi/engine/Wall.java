@@ -9,10 +9,10 @@ import com.nostalgi.engine.interfaces.World.IWall;
  */
 public class Wall implements IWall {
 
-    protected float[] vertices;
-    protected int[] floors = new int[4];
-    protected Vector2 position;
-    protected Body body;
+    private float[] vertices;
+    private int[] floors = new int[4];
+    private Vector2 position;
+    private Body body;
 
     public Wall(int[] floors, Vector2 position, float[] vertices) {
         this.vertices = vertices;
@@ -80,8 +80,8 @@ public class Wall implements IWall {
 
     @Override
     public boolean isOnFloor(int floor) {
-        for(int i = 0; i < floors.length; i++) {
-            if(floors[i] == floor) {
+        for (int floor1 : floors) {
+            if (floor1 == floor) {
                 return true;
             }
         }

@@ -1,6 +1,8 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.World.BaseActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
@@ -12,19 +14,14 @@ import com.nostalgi.engine.interfaces.World.IItem;
  */
 public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
-    protected IController currentController;
+    private IController currentController;
 
-    protected float width  = 1f;
-    protected float height = 2f;
+    private float width  = 1f;
+    private float height = 2f;
 
-    protected Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
-    protected Direction facing;
-
-    public BasePlayerCharacter() {this(new Vector2());}
-
-    public BasePlayerCharacter(Vector2 position) {
-        this.position = position;
-    }
+    private Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
+    private float facing;
+    private int walkingState;
 
     @Override
     public boolean isAnimated() {
@@ -48,7 +45,6 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void tick(float delta) {
-        System.out.println("Tick");
     }
 
     @Override
@@ -87,13 +83,28 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     }
 
     @Override
-    public void setFacingDirection(Direction dir) {
+    public void face(float dir) {
         this.facing = dir;
     }
 
     @Override
-    public Direction getFacingDirection() {
+    public void face(Vector2 target) {
+        this.facing = (float)Math.acos(this.getPosition().dot(target));
+    }
+
+    @Override
+    public float getFacingDirection() {
         return this.facing;
+    }
+
+    @Override
+    public void setWalkingState(int state) {
+        this.walkingState = state;
+    }
+
+    @Override
+    public int getWalkingState() {
+        return this.walkingState;
     }
 
     @Override
@@ -128,8 +139,14 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     }
 
     @Override
-    public void moveForward(Vector2 velocity) {
-        this.currentVelocity = velocity;
+    public void moveForward(float velocity) {
+        Vector2 direction = new Vector2(
+                (float) Math.cos(Math.toRadians(this.getFacingDirection())),
+                (float) Math.sin(Math.toRadians(this.getFacingDirection())));
+
+        direction.scl(5);
+
+        this.currentVelocity = direction;
     }
 
     @Override
@@ -140,11 +157,24 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void dispose() {
+
     }
 
     @Override
-      public String getName() {
+    public String getName() {
         return "BasePlayer";
+    }
+
+    @Override
+    public void draw(Batch batch, float timeElapsed) {
+        TextureRegion tr = this.getAnimation(this.getWalkingState()).getKeyFrame(timeElapsed);
+        if(tr != null) {
+            batch.draw(tr,
+                    this.getPosition().x,
+                    this.getPosition().y,
+                    this.getWidth(),
+                    this.getHeight());
+        }
     }
 
 }

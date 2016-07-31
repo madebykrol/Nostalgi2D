@@ -1,5 +1,6 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IChest;
 import com.nostalgi.engine.interfaces.World.IDoor;
@@ -17,6 +19,7 @@ import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IMonster;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.C1;
 import static com.badlogic.gdx.graphics.g2d.Batch.C2;
@@ -44,27 +47,17 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
  */
 public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
 
-    private final String groundLayer;
     private ShapeRenderer shapeRenderer;
     private ILevel level;
 
     private ICharacter currentPlayer;
-    private ArrayList<IItem> items;
-    private ArrayList<ICharacter> NPCS;
-    private ArrayList<IDoor> doors;
-    private ArrayList<IMonster> monsters;
-    private ArrayList<IChest> chests;
 
     private float timeElapsed;
 
     public NostalgiRenderer(ILevel level, float unitScale) {
-        this(level, unitScale, "Ground");
-    }
-
-    public NostalgiRenderer(ILevel level, float unitScale, String groundLayer) {
         super(level.getMap(), unitScale);
         this.level = level;
-        this.groundLayer = groundLayer;
+
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -80,21 +73,17 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
             if (layer instanceof TiledMapTileLayer) {
                 renderTileLayer((TiledMapTileLayer) layer);
 
-                if (layer.getName().equals(groundLayer)) {
+                if (layer.getName().equals(level.getGroundLayerName())) {
                     int floor = 0;
                     Object floorProp = layer.getProperties().get("floor");
                     if(floorProp != null) {
                         floor = Integer.parseInt((String)floorProp);
                     }
                     if(this.currentPlayer != null && floor == this.currentPlayer.getFloorLevel()) {
-                        TextureRegion tr = this.currentPlayer.getAnimation(this.currentPlayer.getCurrentController().getCurrentWalkingState()).getKeyFrame(timeElapsed);
-                        if(tr != null) {
-                            this.getBatch().draw(tr,
-                                    this.currentPlayer.getPosition().x,
-                                    this.currentPlayer.getPosition().y,
-                                    32/32f,
-                                    64/32f);
-                        }
+                        this.currentPlayer.draw(this.getBatch(), timeElapsed);
+                    }
+                    for(Map.Entry<String, IActor> entry : level.getActors().entrySet()) {
+                        entry.getValue().draw(getBatch(), timeElapsed);
                     }
                 }
             } else {
@@ -255,23 +244,4 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
         this.currentPlayer = character;
     }
 
-    protected void renderPlayer() {
-
-    }
-
-    protected void renderNPCS() {
-
-    }
-
-    protected void renderMonsters() {
-
-    }
-
-    protected void renderItems() {
-
-    }
-
-    protected void renderChests() {
-
-    }
 }

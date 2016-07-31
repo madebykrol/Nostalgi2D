@@ -1,7 +1,6 @@
 package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.math.Vector2;
-import com.nostalgi.engine.interfaces.World.IActor;
 
 /**
  * Created by Kristoffer on 2016-07-19.
@@ -21,8 +20,6 @@ public class RootActor extends BaseActor {
 
     @Override
     public Vector2 getPosition() {
-        Vector2 worldPos = new Vector2(this.position.x * unitScale, this.position.y * unitScale);
-
-        return worldPos;
+        return new Vector2(super.getPosition().x * unitScale, super.getPosition().y * unitScale);
     }
 }

@@ -1,11 +1,16 @@
 package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -14,20 +19,20 @@ import java.util.Iterator;
  */
 public abstract class BaseActor implements IActor {
 
-    protected int floor = 1;
+    private int floor = 1;
 
-    protected IActor parent;
-    protected HashMap<String, IActor> children = new HashMap<String, IActor>();
+    private IActor parent;
+    private HashMap<String, IActor> children = new HashMap<String, IActor>();
 
-    protected Vector2 position;
+    private Vector2 position;
 
-    protected BoundingVolume boundingVolume;
+    private BoundingVolume boundingVolume;
 
-    protected Animation currentAnimation;
-    protected HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
-    protected String name = "Actor"+this.hashCode();
-    protected World world;
+    private Animation currentAnimation;
+    private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
+    private String name = "Actor"+this.hashCode();
 
+    private World world;
 
     @Override
     public IActor getParent() {
@@ -45,17 +50,15 @@ public abstract class BaseActor implements IActor {
     }
 
     public void addChildren(IActor[] children) {
-        for(int i = 0; i < children.length; i++) {
-            this.addChild(children[i]);
+        for (IActor aChildren : children) {
+            this.addChild(aChildren);
         }
     }
 
     public void addChildren(HashMap<String, IActor> children) {
 
-        Iterator it = children.entrySet().iterator();
-
-        while(it.hasNext()) {
-            IActor actor = (IActor)it.next();
+        for (Object o : children.entrySet()) {
+            IActor actor = (IActor) o;
             this.addChild(actor);
         }
     }
@@ -158,9 +161,7 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void tick(float delta) {
-
-    }
+    public void tick(float delta) {}
 
     @Override
     public int getFloorLevel() {
@@ -173,8 +174,38 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
+    public ArrayList<IActor> actorsCloseToLocation(Vector2 position, float distance) {
+
+        float x1 = (position.x) + (distance/2);
+        float x2 = (position.x) - (distance/2);
+
+        float y1 = (position.y) + (distance/2);
+        float y2 = (position.y) - (distance/2);
+
+        final ArrayList<IActor> actors = new ArrayList<IActor>();
+
+        world.QueryAABB(new QueryCallback() {
+                            @Override
+                            public boolean reportFixture(Fixture fixture) {
+                                Object o = fixture.getBody().getUserData();
+                                if (o instanceof IActor) {
+                                    actors.add((IActor) o);
+                                }
+                                return true;
+                            }
+                        },
+                x2, y2, x1, y1);
+
+        return actors;
+    }
+
+    @Override
     public void setWorld(World world) {
         this.world = world;
     }
 
+    @Override
+    public void draw(Batch batch, float timeElapsed) {
+
+    }
 }

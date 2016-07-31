@@ -7,13 +7,15 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
  * Created by Kristoffer on 2016-07-18.
  */
 public class BoundingVolume {
+
     private boolean isStatic = false;
     private boolean isSensor = false;
-    private PolygonShape shape;
-    private short collisionMask;
-    private short collisionCategory;
-    private float density;
-    private float friction;
+    private PolygonShape shape = new PolygonShape();
+    private short collisionMask = -1;
+    private short collisionCategory = 0;
+    private float density = 100f;
+    private float friction = 1f;
+    private boolean autoRotate = false;
     private Body physicsBody;
 
 
@@ -79,5 +81,13 @@ public class BoundingVolume {
 
     public void setPhysicsBody(Body physicsBody) {
         this.physicsBody = physicsBody;
+    }
+
+    public boolean autoRotate() {
+        return autoRotate;
+    }
+
+    public void autoRotate(boolean autoRotate) {
+        this.autoRotate = autoRotate;
     }
 }

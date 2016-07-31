@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseController;
@@ -13,12 +14,16 @@ import com.nostalgi.engine.BaseGameMode;
 import com.nostalgi.engine.BaseGameState;
 import com.nostalgi.engine.BaseHud;
 import com.nostalgi.engine.BasePlayerCharacter;
+import com.nostalgi.engine.Factories.NostalgiActorFactory;
 import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
+import com.nostalgi.engine.Factories.NostalgiWallFactory;
 import com.nostalgi.engine.Hud.DebugHudModule;
-import com.nostalgi.engine.Hud.DemoHudModule;
+import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
+import com.nostalgi.engine.interfaces.States.IPlayerState;
+import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.game.levels.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
@@ -28,7 +33,7 @@ import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
-import com.nostalgi.render.NostalgiCamera;
+import com.nostalgi.engine.Render.NostalgiCamera;
 
 public class ExampleGame extends ApplicationAdapter {
 
@@ -42,11 +47,13 @@ public class ExampleGame extends ApplicationAdapter {
 
 	IGameMode gameMode;
 	IGameState gameState;
+	IPlayerState playerState;
 	IGameEngine gameEngine;
 
 	boolean headless = false;
 
 	IAnimationFactory animationFactory;
+	World world;
 
 	public ExampleGame(boolean headless) {
 		this.headless = headless;
@@ -58,35 +65,46 @@ public class ExampleGame extends ApplicationAdapter {
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		this.gameState = new BaseGameState(
-				new GrassLandLevel(new TmxMapLoader()));
+		// setup Game state
+		this.gameState = new BaseGameState();
+
+		// setup Playerstate
+		this.playerState = new BasePlayerState();
+
+		// setup physics world
+		this.world = new World(this.gameState.getGravity(), true);
+
+		// Setup start level
+		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(this.world), new NostalgiWallFactory(this.world));
+
+		// setup map renderer.
+		this.tiledMapRenderer = new NostalgiRenderer(
+				grassland,
+				1 / (float)grassland.getTileSize());
+
+		this.gameState.setCurrentLevel(grassland);
 
 		camera = new NostalgiCamera(
 				w, h,
-				gameState.getCurrentLevel().getCameraBounds(),
-				gameState.getCurrentLevel().getTileSize());
-		camera.setPositionSafe(gameState.getCurrentLevel().getCameraInitLocation());
+				grassland.getCameraBounds(),
+				grassland.getTileSize());
+
+		camera.setPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
-		this.playerController = new BaseController();
-		this.playerController.possessCharacter(createPlayerCharacter());
-
-		this.gameState.setCurrentController(this.playerController);
-		this.gameMode = new BaseGameMode(this.gameState);
-
-		this.tiledMapRenderer = new NostalgiRenderer(
-				gameState.getCurrentLevel(),
-				1 / (float)gameState.getCurrentLevel().getTileSize());
-
-		this.gameEngine = new NostalgiBaseEngine(this.gameState, this.gameMode, tiledMapRenderer);
-		this.gameEngine.setCurrentCamera(camera);
+		this.playerController = new BaseController(camera);
 
 		IHud hud = new BaseHud(w/2, h/2, this.gameState);
 		//hud.addModule("Demo", new DemoHudModule());
 		hud.addModule("Debug", new DebugHudModule());
 		hud.init();
 
-		this.gameEngine.setHud(hud);
+		this.gameMode = new BaseGameMode(this.gameState, this.playerState, this.playerController, hud);
+
+		this.gameEngine = new NostalgiBaseEngine(this.world, camera, tiledMapRenderer, this.gameMode);
+
+		this.playerController.possessCharacter(createPlayerCharacter());
+
 		this.gameEngine.init();
 	}
 
@@ -106,8 +124,10 @@ public class ExampleGame extends ApplicationAdapter {
 	}
 
 	private ICharacter createPlayerCharacter() {
-		ICharacter playerCharacter = new BasePlayerCharacter(new Vector2(10,58));
+		ICharacter playerCharacter = new BasePlayerCharacter();
+		playerCharacter.setPosition(new Vector2(10, 52));
 		playerCharacter.setParent(new RootActor());
+		playerCharacter.setWorld(this.gameEngine.getWorld());
 		animationFactory = new NostalgiAnimationFactory();
 
 		playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,

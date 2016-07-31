@@ -14,15 +14,14 @@ import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 /**
  * Created by Kristoffer on 2016-07-16.
  */
-public class NostalgiActorFactory implements IActorFactory {
+public class NostalgiActorFactory extends BaseLevelObjectFactory implements IActorFactory {
 
+    // world
     private World world;
-    private float unitScale;
 
     private static final String DENSITY = "Density";
     private static final String SENSOR = "IsSensor";
@@ -34,13 +33,12 @@ public class NostalgiActorFactory implements IActorFactory {
     private static final String COLLISION_CATEGORY = "CollisionCategory";
     private static final String COLLISION_MASK = "CollisionMask";
 
-    public NostalgiActorFactory(World world, float unitScale) {
+    public NostalgiActorFactory(World world) {
         this.world = world;
-        this.unitScale = unitScale;
     }
 
     @Override
-    public IActor fromMapObject(MapObject object, IActor parent) {
+    public IActor fromMapObject(MapObject object, IActor parent, float unitScale) {
         String type = getObjectProperty(object, TYPE);
         String floor = getObjectProperty(object, FLOOR);
 
@@ -61,22 +59,32 @@ public class NostalgiActorFactory implements IActorFactory {
             position = new Vector2(obj.getPolygon().getX(), obj.getPolygon().getY());
         }
 
-        IActor actor = this.createActor(type, name, createBoundingVolume(object, vertices));
+        IActor actor = this.createActor(type, name, createBoundingVolume(object, vertices, unitScale));
 
         if(floor != null) {
             actor.setFloorLevel(Integer.parseInt(floor));
         }
         actor.setPosition(position);
         actor.setParent(parent);
+        actor.setWorld(world);
 
-        createPhysicsBody(actor);
-
+        createPhysicsBody(actor, unitScale);
 
         return actor;
     }
 
-    protected IActor createActor(String type, String id, BoundingVolume bv) {
+    @Override
+    public IActor fromMapObject(MapObject object, IActor parent) {
+        return fromMapObject(object, parent, 32f);
+    }
 
+    @Override
+    public void destroyActor(IActor actor) {
+        world.destroyBody(actor.getBoundingVolume().getPhysicsBody());
+
+    }
+
+    protected IActor createActor(String type, String id, BoundingVolume bv) {
         try {
             Class c = Class.forName(type);
 
@@ -121,7 +129,7 @@ public class NostalgiActorFactory implements IActorFactory {
         return result;
     }
 
-    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices) {
+    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices, float unitScale) {
         BoundingVolume bv = new BoundingVolume();
         PolygonShape boundShape = new PolygonShape();
 
@@ -138,6 +146,7 @@ public class NostalgiActorFactory implements IActorFactory {
             bv.setDensity(Float.parseFloat(density));
         }
 
+        // set friction
         String friction = getObjectProperty(object, FRICTION);
         if(friction != null) {
             bv.setFriction(Float.parseFloat(friction));
@@ -155,28 +164,47 @@ public class NostalgiActorFactory implements IActorFactory {
             bv.isStatic(Boolean.parseBoolean(isStatic));
         }
 
-        short category = 0;
-        short mask = 0;
-
-        String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
-        if(collisionCategory != null) {
-            if(collisionCategory.equals("Trigger")) {
-                category = CollisionCategories.CATEGORY_TRIGGER;
+        try {
+            // set collision category
+            String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
+            short category;
+            if (collisionCategory != null) {
+                try {
+                    category  = Short.parseShort(collisionCategory);
+                } catch (NumberFormatException e) {
+                    category = CollisionCategories.categoryFromString(collisionCategory);
+                }
+                bv.setCollisionCategory(category);
             }
+
+            // set Collision mask
+            String collisionMask = getObjectProperty(object, COLLISION_MASK);
+            short mask;
+            if (collisionMask != null) {
+                try {
+                    mask = Short.parseShort(collisionMask);
+                } catch (NumberFormatException e) {
+                    mask = CollisionCategories.maskFromString(collisionMask);
+                }
+                bv.setCollisionMask(mask);
+            }
+
+        } catch (ClassNotFoundException e) {
+
+        } catch (NoSuchFieldException e) {
+
+        } catch (IllegalAccessException e) {
+
         }
 
-        String collisionMask = getObjectProperty(object, COLLISION_MASK);
-        if(collisionMask != null) {
-
-        }
-
-        bv.setCollisionCategory(CollisionCategories.CATEGORY_TRIGGER);
-        bv.setCollisionMask(CollisionCategories.MASK_TRIGGER);
+        /**
+         * @TODO Fix this hardcoding.
+         */
 
         return bv;
     }
 
-    private Body createPhysicsBody(IActor actor) {
+    private Body createPhysicsBody(IActor actor, float unitScale) {
         BodyDef shapeDef = new BodyDef();
         BoundingVolume bv = actor.getBoundingVolume();
         PolygonShape boundShape = bv.getShape();
@@ -203,5 +231,10 @@ public class NostalgiActorFactory implements IActorFactory {
         b.createFixture(blockingBounds);
         bv.setPhysicsBody(b);
         return b;
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }

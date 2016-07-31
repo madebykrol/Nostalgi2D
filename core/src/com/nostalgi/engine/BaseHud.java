@@ -2,27 +2,15 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -31,19 +19,18 @@ import java.util.Map;
  */
 public class BaseHud implements IHud {
 
-    protected Stage stage;
-    protected Skin skin;
+    private Stage stage;
+    private Skin skin;
 
+    private int screenWidth;
+    private int screenHeight;
 
-    protected int screenWidth;
-    protected int screenHeight;
+    private boolean yDown;
+    private IGameState gameState;
 
-    protected boolean yDown;
-    protected IGameState gameState;
+    private OrthographicCamera HUDCamera;
 
-    protected OrthographicCamera HUDCamera;
-
-    protected HashMap<String, IHudModule> modules = new HashMap<String, IHudModule>();
+    private HashMap<String, IHudModule> modules = new HashMap<String, IHudModule>();
 
     public BaseHud(int width, int height, IGameState gameState) {
         this(width, height, gameState, new OrthographicCamera(width, height), false);
@@ -66,7 +53,6 @@ public class BaseHud implements IHud {
 
     @Override
     public void init() {
-
 
     }
 

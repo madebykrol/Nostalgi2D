@@ -13,6 +13,4 @@ public interface IController {
     GestureDetector.GestureListener getGestureListener();
     InputProcessor getInputProcessor();
     void update(float dTime);
-
-    int getCurrentWalkingState();
 }

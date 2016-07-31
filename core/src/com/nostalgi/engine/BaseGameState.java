@@ -12,13 +12,10 @@ import com.nostalgi.engine.interfaces.World.ILevel;
  */
 public class BaseGameState implements IGameState {
 
-    protected ILevel currentLevel;
-    protected IController currentController;
-    protected IGameMode currentGameMode;
-    protected float gameTime;
+    private ILevel currentLevel;
+    private float gameTime;
 
-    public BaseGameState(ILevel level) {
-        this.currentLevel = level;
+    public BaseGameState() {
     }
 
     @Override
@@ -32,34 +29,8 @@ public class BaseGameState implements IGameState {
     }
 
     @Override
-    public ICharacter getPlayerCharacter() {
-        return this.getCurrentController().getCurrentPossessedCharacter();
-    }
-
-    @Override
-    public void setCurrentGameMode(IGameMode mode) {
-        this.currentGameMode = mode;
-    }
-
-    @Override
-    public IGameMode getCurrentGameMode() {
-        return this.currentGameMode;
-    }
-
-    @Override
-    public void setCurrentController(IController controller) {
-        this.currentController = controller;
-    }
-
-    @Override
-    public IController getCurrentController() {
-        return this.currentController;
-    }
-
-    @Override
     public void update(float delta) {
         gameTime += delta;
-        this.currentController.update(delta);
     }
 
     @Override

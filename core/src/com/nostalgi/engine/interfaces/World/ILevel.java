@@ -2,7 +2,6 @@ package com.nostalgi.engine.interfaces.World;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.LevelCameraBounds;
@@ -35,11 +34,13 @@ public interface ILevel extends Disposable {
 
     int getTileSize();
 
+    String getGroundLayerName();
+
     TiledMapTileLayer getMainLayer();
 
     ArrayList<IWall> getWalls();
     HashMap<String, IActor> getActors();
 
-    void initWalls(IWallFactory factory);
-    void initActors(IActorFactory factory);
+    void initWalls();
+    void initActors();
 }

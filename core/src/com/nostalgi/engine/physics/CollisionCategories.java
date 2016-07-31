@@ -1,5 +1,7 @@
 package com.nostalgi.engine.physics;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by Kristoffer on 2016-07-08.
  */
@@ -18,6 +20,11 @@ public class CollisionCategories {
     public static final short CATEGORY_FLOOR_4 = 512;
     public static final short CATEGORY_TRIGGER = 1024;
 
+    public static final short CATEGORY_CUSTOM_1 = 2048;
+    public static final short CATEGORY_CUSTOM_2 = 4096;
+    public static final short CATEGORY_CUSTOM_3 = 8192;
+
+
     public static final short MASK_PLAYER = CATEGORY_MONSTER |
             CATEGORY_TRIGGER |
             CATEGORY_NPC |
@@ -31,5 +38,24 @@ public class CollisionCategories {
             CATEGORY_NPC;
     public static final short MASK_WALLS = CATEGORY_PROJECTILES;
 
+    public static final short MASK_NPC = CATEGORY_TRIGGER |
+            CATEGORY_MONSTER |
+            CATEGORY_WALL |
+            CATEGORY_PROJECTILES;
+
     public static final short MASK_TRIGGER = CATEGORY_PLAYER |CATEGORY_NPC |CATEGORY_MONSTER;
+
+    public static short categoryFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        return getFieldFromString("CATEGORY_"+s);
+    }
+
+    public static short maskFromString(String s)  throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        return getFieldFromString("MASK_"+s);
+    }
+
+    public static short getFieldFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        Class myClass = Class.forName("com.nostalgi.engine.physics.CollisionCategories");
+        Field myField = myClass.getDeclaredField(s.toUpperCase());
+        return myField.getShort(null);
+    }
 }

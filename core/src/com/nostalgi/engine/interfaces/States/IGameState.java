@@ -13,13 +13,6 @@ public interface IGameState {
     com.nostalgi.engine.interfaces.World.ILevel getCurrentLevel();
     void setCurrentLevel(ILevel level);
 
-    com.nostalgi.engine.interfaces.World.ICharacter getPlayerCharacter();
-
-    void setCurrentGameMode(IGameMode mode);
-    IGameMode getCurrentGameMode();
-
-    void setCurrentController(IController controller);
-    IController getCurrentController();
 
     void update(float delta);
 

@@ -7,25 +7,25 @@ import com.nostalgi.engine.Stat;
  */
 public interface IItem extends IActor {
 
-    public String getName();
-    public int getItemClass();
+    String getName();
+    int getItemClass();
 
-    public boolean isStackable();
-    public boolean isConsumable();
+    boolean isStackable();
+    boolean isConsumable();
 
-    public float getBuyPrice();
-    public float getSellPrice();
+    float getBuyPrice();
+    float getSellPrice();
 
-    public int getStackMaxSize();
-    public int getStackSize();
-    public Stat[] getStatModifiers();
+    int getStackMaxSize();
+    int getStackSize();
+    Stat[] getStatModifiers();
 
-    public int getRarity();
+    int getRarity();
 
 
     // events
-    public void onConsumed(ICharacter consumer);
-    public void onPickup(ICharacter picker);
-    public void onUse(ICharacter user);
+    void onConsumed(ICharacter consumer);
+    void onPickup(ICharacter picker);
+    void onUse(ICharacter user);
 
 }
