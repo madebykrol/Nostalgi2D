@@ -174,32 +174,6 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public ArrayList<IActor> actorsCloseToLocation(Vector2 position, float distance) {
-
-        float x1 = (position.x) + (distance/2);
-        float x2 = (position.x) - (distance/2);
-
-        float y1 = (position.y) + (distance/2);
-        float y2 = (position.y) - (distance/2);
-
-        final ArrayList<IActor> actors = new ArrayList<IActor>();
-
-        world.QueryAABB(new QueryCallback() {
-                            @Override
-                            public boolean reportFixture(Fixture fixture) {
-                                Object o = fixture.getBody().getUserData();
-                                if (o instanceof IActor) {
-                                    actors.add((IActor) o);
-                                }
-                                return true;
-                            }
-                        },
-                x2, y2, x1, y1);
-
-        return actors;
-    }
-
-    @Override
     public void setWorld(World world) {
         this.world = world;
     }

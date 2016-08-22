@@ -16,5 +16,4 @@ public class Direction {
     public static final int SOUTH = 270;
     public static final int SOUTH_EAST = 315;
 
-
 }

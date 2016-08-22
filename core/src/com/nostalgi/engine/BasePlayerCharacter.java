@@ -144,7 +144,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
                 (float) Math.cos(Math.toRadians(this.getFacingDirection())),
                 (float) Math.sin(Math.toRadians(this.getFacingDirection())));
 
-        direction.scl(5);
+        direction.scl(velocity);
 
         this.currentVelocity = direction;
     }

@@ -92,7 +92,7 @@ public class ExampleGame extends ApplicationAdapter {
 		camera.setPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
-		this.playerController = new BaseController(camera);
+		this.playerController = new BaseController(this.camera, this.world);
 
 		IHud hud = new BaseHud(w/2, h/2, this.gameState);
 		//hud.addModule("Demo", new DemoHudModule());

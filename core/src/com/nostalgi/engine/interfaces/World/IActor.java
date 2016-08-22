@@ -60,7 +60,6 @@ public interface IActor {
 
     int getFloorLevel();
     void setFloorLevel(int floor);
-    ArrayList<IActor> actorsCloseToLocation(Vector2 location, float distance);
 
     void setWorld(World world);
 
