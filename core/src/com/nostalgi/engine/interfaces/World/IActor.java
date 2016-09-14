@@ -50,6 +50,10 @@ public interface IActor {
      */
     Vector2 getWorldPosition();
 
+    /**
+     * Set relative position relative to parent
+     * @param position
+     */
     void setPosition(Vector2 position);
 
     void setBoundingVolume(BoundingVolume body);

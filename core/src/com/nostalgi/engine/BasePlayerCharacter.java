@@ -89,7 +89,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void face(Vector2 target) {
-        this.facing = (float)Math.acos(this.getPosition().dot(target));
+        this.facing = (float)Math.acos(this.getWorldPosition().dot(target));
     }
 
     @Override
@@ -170,8 +170,8 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         TextureRegion tr = this.getAnimation(this.getWalkingState()).getKeyFrame(timeElapsed);
         if(tr != null) {
             batch.draw(tr,
-                    this.getPosition().x,
-                    this.getPosition().y,
+                    this.getWorldPosition().x,
+                    this.getWorldPosition().y,
                     this.getWidth(),
                     this.getHeight());
         }

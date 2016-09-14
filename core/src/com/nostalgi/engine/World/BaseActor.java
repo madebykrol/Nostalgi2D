@@ -25,6 +25,7 @@ public abstract class BaseActor implements IActor {
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
 
     private Vector2 position;
+    private Vector2 worldPosition;
 
     private BoundingVolume boundingVolume;
 
@@ -33,6 +34,7 @@ public abstract class BaseActor implements IActor {
     private String name = "Actor"+this.hashCode();
 
     private World world;
+    private boolean transformationNeedsUpdate = true;
 
     @Override
     public IActor getParent() {
@@ -40,6 +42,7 @@ public abstract class BaseActor implements IActor {
     }
     public void setParent(IActor parent) {
         this.parent = parent;
+        this.transformationNeedsUpdate = true;
     }
 
     public HashMap<String, IActor> getChildren() {
@@ -70,29 +73,19 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public Vector2 getWorldPosition() {
-        return this.position;
+        this.doWorldTransformation();
+        return worldPosition;
     }
 
     public Vector2 getPosition() {
-
-        // This needs to be cached for optimization.
-
-        if(this.parent != null) {
-            Vector2 worldPosition = new Vector2();
-            worldPosition.x = this.position.x + this.parent.getPosition().x;
-            worldPosition.y = this.position.y + this.parent.getPosition().y;
-
-            return worldPosition;
-        } else {
-            return this.position;
-        }
+        return this.position;
     }
 
     @Override
     public void setPosition(Vector2 position) {
         this.position = position;
+        this.transformationNeedsUpdate = true;
     }
-
 
     @Override
     public void setBoundingVolume(BoundingVolume volume) {
@@ -181,5 +174,25 @@ public abstract class BaseActor implements IActor {
     @Override
     public void draw(Batch batch, float timeElapsed) {
 
+    }
+
+    public void transformationHasUpdated() {
+        this.transformationNeedsUpdate = true;
+    }
+
+    private void doWorldTransformation() {
+        if(this.transformationNeedsUpdate) {
+            if(this.parent != null) {
+                Vector2 worldPosition = new Vector2();
+                worldPosition.x = this.position.x + this.parent.getWorldPosition().x;
+                worldPosition.y = this.position.y + this.parent.getWorldPosition().y;
+
+                this.worldPosition = worldPosition;
+            }
+            else  {
+                this.worldPosition = this.position;
+            }
+            this.transformationNeedsUpdate = false;
+        }
     }
 }

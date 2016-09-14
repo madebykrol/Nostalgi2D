@@ -209,7 +209,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         BoundingVolume bv = actor.getBoundingVolume();
         PolygonShape boundShape = bv.getShape();
 
-        shapeDef.position.set(actor.getPosition().x/unitScale, actor.getPosition().y/unitScale);
+        shapeDef.position.set(actor.getWorldPosition().x/unitScale, actor.getWorldPosition().y/unitScale);
         if(bv.isStatic()) {
             shapeDef.type = BodyDef.BodyType.StaticBody;
         } else {

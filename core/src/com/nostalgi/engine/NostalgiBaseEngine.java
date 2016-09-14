@@ -160,7 +160,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(this.currentCamera != null) {
             this.currentCamera.setPositionSafe(getGameMode().getCurrentController()
                     .getCurrentPossessedCharacter()
-                    .getPosition());
+                    .getWorldPosition());
         }
 
         world.step(1f / 60f, 6, 2);
@@ -246,9 +246,9 @@ public class NostalgiBaseEngine implements IGameEngine {
             PolygonShape shape = new PolygonShape();
             playerBodyDef.fixedRotation = true;
             playerBodyDef.position.x = getGameMode().getCurrentController()
-                    .getCurrentPossessedCharacter().getPosition().x;
+                    .getCurrentPossessedCharacter().getWorldPosition().x;
             playerBodyDef.position.y = getGameMode().getCurrentController()
-                    .getCurrentPossessedCharacter().getPosition().y;
+                    .getCurrentPossessedCharacter().getWorldPosition().y;
 
             playerBodyDef.type = BodyDef.BodyType.DynamicBody;
 
@@ -272,9 +272,9 @@ public class NostalgiBaseEngine implements IGameEngine {
         PolygonShape shape = new PolygonShape();
         playerBodyDef.fixedRotation = true;
         playerBodyDef.position.x = getGameMode().getCurrentController()
-                .getCurrentPossessedCharacter().getPosition().x;
+                .getCurrentPossessedCharacter().getWorldPosition().x;
         playerBodyDef.position.y = getGameMode().getCurrentController()
-                .getCurrentPossessedCharacter().getPosition().y;
+                .getCurrentPossessedCharacter().getWorldPosition().y;
 
         Fixture fix = playerBody.getFixtureList().get(0);
         playerBody.destroyFixture(fix);
