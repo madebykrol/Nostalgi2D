@@ -1,6 +1,5 @@
 package com.nostalgi.engine;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,13 +11,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
-import com.nostalgi.engine.interfaces.World.IChest;
-import com.nostalgi.engine.interfaces.World.IDoor;
-import com.nostalgi.engine.interfaces.World.IItem;
 import com.nostalgi.engine.interfaces.World.ILevel;
-import com.nostalgi.engine.interfaces.World.IMonster;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.C1;

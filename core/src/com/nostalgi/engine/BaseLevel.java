@@ -33,8 +33,8 @@ public abstract class BaseLevel implements ILevel {
 
     private IActor mapRoot = new RootActor();
 
-    IWallFactory wallFactory;
-    IActorFactory actorFactory;
+    private IWallFactory wallFactory;
+    private IActorFactory actorFactory;
 
     public BaseLevel(Vector2 origin,
                      IWallFactory wallFactory,

@@ -3,7 +3,6 @@ package com.nostalgi.engine.interfaces.World;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Stat;
 import com.nostalgi.engine.interfaces.IController;
 

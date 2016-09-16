@@ -1,7 +1,5 @@
 package com.nostalgi.engine;
 
-import com.badlogic.gdx.math.Vector2;
-
 /**
  * Created by Kristoffer on 2016-07-14.
  */

@@ -3,8 +3,6 @@ package com.nostalgi.engine.interfaces;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.NostalgiRenderer;
-import com.nostalgi.engine.interfaces.Hud.IHud;
-import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.Render.NostalgiCamera;
 
 /**

@@ -5,8 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.LevelCameraBounds;
-import com.nostalgi.engine.interfaces.Factories.IActorFactory;
-import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

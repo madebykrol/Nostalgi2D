@@ -1,7 +1,6 @@
 package com.nostalgi.engine.interfaces.Factories;
 
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.interfaces.World.IActor;
 

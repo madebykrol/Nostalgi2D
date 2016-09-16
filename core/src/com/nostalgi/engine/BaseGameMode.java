@@ -5,7 +5,6 @@ import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
-import com.nostalgi.engine.interfaces.World.ICharacter;
 
 /**
  * Created by ksdkrol on 2016-07-04.
