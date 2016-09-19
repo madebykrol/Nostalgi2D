@@ -52,7 +52,7 @@ public class ExampleGame extends BaseGame {
 	World world;
 
 	public ExampleGame(boolean headless) {
-		super(headless);
+		super(headless, false);
 	}
 
 
@@ -63,7 +63,7 @@ public class ExampleGame extends BaseGame {
 		h = Gdx.graphics.getHeight();
 
 		// setup Game state
-		this.gameState = new BaseGameState();
+		this.gameState = new BaseGameState(this.isAuthority());
 
 		// setup Playerstate
 		this.playerState = new BasePlayerState();

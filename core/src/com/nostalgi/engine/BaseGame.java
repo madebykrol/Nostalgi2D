@@ -13,10 +13,16 @@ public abstract class BaseGame extends ApplicationAdapter {
     protected IGameEngine gameEngine;
 
     private boolean headless = false;
+    private boolean isListenServer = false;
     private boolean isAuthority = false;
 
-    public BaseGame(boolean headless) {
+    public BaseGame(boolean headless, boolean isListenServer) {
         this.headless = headless;
+    }
+
+
+    public boolean isAuthority() {
+        return this.isAuthority || this.isListenServer;
     }
 
     public void setGameEngine(IGameEngine engine) {
