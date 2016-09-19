@@ -12,6 +12,12 @@ public abstract class BaseGame extends ApplicationAdapter {
 
     protected IGameEngine gameEngine;
 
+    private boolean headless = false;
+    private boolean isAuthority = false;
+
+    public BaseGame(boolean headless) {
+        this.headless = headless;
+    }
 
     public void setGameEngine(IGameEngine engine) {
         this.gameEngine = engine;
@@ -23,12 +29,14 @@ public abstract class BaseGame extends ApplicationAdapter {
 
     @Override
     public void render () {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         gameEngine.update();
-        gameEngine.render();
+
+        if(!headless) {
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            gameEngine.render();
+        }
     }
 
     @Override

@@ -11,8 +11,10 @@ public class BaseGameState implements IGameState {
 
     private ILevel currentLevel;
     private float gameTime;
+    private boolean isAuthority;
 
-    public BaseGameState() {
+    public BaseGameState(boolean isAuthority) {
+        this.isAuthority = isAuthority;
     }
 
     @Override
@@ -23,6 +25,11 @@ public class BaseGameState implements IGameState {
     @Override
     public void setCurrentLevel(ILevel level) {
         this.currentLevel = level;
+    }
+
+    @Override
+    public boolean isAuthority() {
+        return isAuthority;
     }
 
     @Override

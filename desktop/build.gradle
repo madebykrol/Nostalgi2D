@@ -34,6 +34,9 @@ eclipse {
     }
 }
 
+dependencies {
+    compile project(path: ':server')
+}
 task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
   doLast {
     def classpath = new XmlParser().parse(file(".classpath"))

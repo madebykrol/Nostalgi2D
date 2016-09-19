@@ -47,14 +47,14 @@ public class ExampleGame extends BaseGame {
 	IGameState gameState;
 	IPlayerState playerState;
 
-	boolean headless = false;
 
 	IAnimationFactory animationFactory;
 	World world;
 
 	public ExampleGame(boolean headless) {
-		this.headless = headless;
+		super(headless);
 	}
+
 
 	@Override
 	public void create () {

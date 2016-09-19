@@ -11,6 +11,7 @@ public interface IGameState {
     com.nostalgi.engine.interfaces.World.ILevel getCurrentLevel();
     void setCurrentLevel(ILevel level);
 
+    boolean isAuthority();
 
     void update(float delta);
 

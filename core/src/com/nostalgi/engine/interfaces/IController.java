@@ -28,12 +28,26 @@ public interface IController {
 
     /**
      * Get the input processor, this handles all the key / mouse input.
-     * 
+     *
      * @return
      */
     InputProcessor getInputProcessor();
 
+    /**
+     * Return the current rendering camera.
+     * @return
+     */
     NostalgiCamera getCamera();
+
+    /**
+     * Set the current rendering camera.
+     * @param camera
+     */
     void setCamera(NostalgiCamera camera);
+
+    /**
+     * Update, this is called as often as possible.
+     * @param dTime
+     */
     void update(float dTime);
 }
