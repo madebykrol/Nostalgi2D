@@ -20,7 +20,6 @@ public abstract class BaseGame extends ApplicationAdapter {
         this.headless = headless;
     }
 
-
     public boolean isAuthority() {
         return this.isAuthority || this.isListenServer;
     }

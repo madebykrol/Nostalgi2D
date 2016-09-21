@@ -23,6 +23,5 @@ public class DesktopLauncher {
 		} else {
 			new LwjglApplication(new ExampleGame(false), config);
 		}
-
 	}
 }

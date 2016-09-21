@@ -7,8 +7,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'com.pixelwarriors.game.GdxDefinition'
-    devModules 'com.pixelwarriors.game.GdxDefinitionSuperdev'
+    modules 'com.nostalgi.game.GdxDefinition'
+    devModules 'com.nostalgi.game.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {

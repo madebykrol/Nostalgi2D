@@ -115,8 +115,8 @@ public class ExampleController extends BaseController {
 
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
-        if(keycode == Input.Keys.LEFT) {
-            this.leftIsPressed = true;
+        if(keycode == Input.Keys.LEFT) this.leftIsPressed = true;{
+
             currentPossessedCharacter.face(Direction.WEST);
         }
         if(keycode == Input.Keys.RIGHT) {
