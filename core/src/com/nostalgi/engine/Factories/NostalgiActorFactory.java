@@ -80,8 +80,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
     @Override
     public void destroyActor(IActor actor) {
-        world.destroyBody(actor.getBoundingVolume().getPhysicsBody());
-
+        world.destroyBody(actor.getPhysicsBody());
     }
 
     protected IActor createActor(String type, String id, BoundingVolume bv) {
@@ -196,41 +195,39 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         } catch (IllegalAccessException e) {
 
         }
-
-        /**
-         * @TODO Fix this hardcoding.
-         */
-
         return bv;
     }
 
     private Body createPhysicsBody(IActor actor, float unitScale) {
         BodyDef shapeDef = new BodyDef();
-        BoundingVolume bv = actor.getBoundingVolume();
-        PolygonShape boundShape = bv.getShape();
+        for(BoundingVolume bv : actor.getBoundingVolumes()) {
+            //BoundingVolume bv = actor.getBoundingVolume(0);
+            PolygonShape boundShape = bv.getShape();
 
-        shapeDef.position.set(actor.getWorldPosition().x/unitScale, actor.getWorldPosition().y/unitScale);
-        if(bv.isStatic()) {
-            shapeDef.type = BodyDef.BodyType.StaticBody;
-        } else {
-            shapeDef.type = BodyDef.BodyType.DynamicBody;
+            shapeDef.position.set((actor.getWorldPosition().x + bv.getRelativePosition().x) / unitScale, (actor.getWorldPosition().y + bv.getRelativePosition().y) / unitScale);
+            if (bv.isStatic()) {
+                shapeDef.type = BodyDef.BodyType.StaticBody;
+            } else {
+                shapeDef.type = BodyDef.BodyType.DynamicBody;
+            }
+
+            Body b = world.createBody(shapeDef);
+
+            b.setUserData(actor);
+
+            FixtureDef blockingBounds = new FixtureDef();
+
+            blockingBounds.density = bv.getDensity();
+            blockingBounds.friction = bv.getFriction();
+            blockingBounds.isSensor = bv.isSensor();
+            blockingBounds.shape = boundShape;
+            blockingBounds.filter.categoryBits = bv.getCollisionCategory();
+            blockingBounds.filter.maskBits = bv.getCollisionMask();
+            b.createFixture(blockingBounds);
+            actor.setPhysicsBody(b);
+
         }
-
-        Body b = world.createBody(shapeDef);
-
-        b.setUserData(actor);
-
-        FixtureDef blockingBounds = new FixtureDef();
-
-        blockingBounds.density = bv.getDensity();
-        blockingBounds.friction = bv.getFriction();
-        blockingBounds.isSensor = bv.isSensor();
-        blockingBounds.shape = boundShape;
-        blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-        blockingBounds.filter.maskBits = bv.getCollisionMask();
-        b.createFixture(blockingBounds);
-        bv.setPhysicsBody(b);
-        return b;
+        return null;
     }
 
     @Override

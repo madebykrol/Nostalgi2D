@@ -4,10 +4,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.World.BaseActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
+import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -22,6 +26,20 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
     private float facing;
     private int walkingState;
+
+    public BasePlayerCharacter () {
+        BoundingVolume boundingVolume = new BoundingVolume();
+        boundingVolume.isStatic(false);
+        boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
+        boundingVolume.setCollisionMask((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
+        boundingVolume.isSensor(false);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(1 * 0.5f, 1 * 0.5f);
+        boundingVolume.setShape(shape);
+
+        this.setBoundingVolume(boundingVolume);
+    }
 
     @Override
     public boolean isAnimated() {

@@ -3,10 +3,12 @@ package com.nostalgi.engine.World;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.physics.BoundingVolume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -22,7 +24,7 @@ public abstract class BaseActor implements IActor {
     private Vector2 position;
     private Vector2 worldPosition;
 
-    private BoundingVolume boundingVolume;
+    private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
 
     private Animation currentAnimation;
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
@@ -30,6 +32,8 @@ public abstract class BaseActor implements IActor {
 
     private World world;
     private boolean transformationNeedsUpdate = true;
+
+    private Body physicsBody;
 
     @Override
     public IActor getParent() {
@@ -84,13 +88,15 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public void setBoundingVolume(BoundingVolume volume) {
-        this.boundingVolume = volume;
+        this.boundingVolumes.add(volume);
     }
 
     @Override
-    public BoundingVolume getBoundingVolume() {
-        return this.boundingVolume;
+    public BoundingVolume getBoundingVolume(int index) {
+        return this.boundingVolumes.get(index);
     }
+
+    public ArrayList<BoundingVolume> getBoundingVolumes() {return this.boundingVolumes;}
 
     @Override
     public void onOverlapBegin(IActor overlapper) {}
@@ -169,6 +175,17 @@ public abstract class BaseActor implements IActor {
     @Override
     public void draw(Batch batch, float timeElapsed) {
 
+    }
+
+    @Override
+    public void setPhysicsBody(Body body) {
+        this.physicsBody = body;
+    }
+
+    @Override
+    public Body getPhysicsBody() {
+
+        return physicsBody;
     }
 
     public void transformationHasUpdated() {

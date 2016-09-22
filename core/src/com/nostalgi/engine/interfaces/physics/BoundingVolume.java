@@ -1,5 +1,7 @@
 package com.nostalgi.engine.interfaces.physics;
 
+import com.badlogic.gdx.math.Vector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -16,7 +18,7 @@ public class BoundingVolume {
     private float density = 100f;
     private float friction = 1f;
     private boolean autoRotate = false;
-    private Body physicsBody;
+    private Vector2 relativePosition = new Vector2();
 
 
     public short getCollisionCategory() {
@@ -75,14 +77,6 @@ public class BoundingVolume {
         this.friction = friction;
     }
 
-    public Body getPhysicsBody() {
-        return physicsBody;
-    }
-
-    public void setPhysicsBody(Body physicsBody) {
-        this.physicsBody = physicsBody;
-    }
-
     public boolean autoRotate() {
         return autoRotate;
     }
@@ -90,4 +84,8 @@ public class BoundingVolume {
     public void autoRotate(boolean autoRotate) {
         this.autoRotate = autoRotate;
     }
+
+    public void setRelativePosition(Vector2 relativePosition) { this.relativePosition = relativePosition; }
+
+    public Vector2 getRelativePosition() { return this.relativePosition; }
 }
