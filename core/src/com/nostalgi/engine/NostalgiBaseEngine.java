@@ -253,9 +253,9 @@ public class NostalgiBaseEngine implements IGameEngine {
 
                 playerBodyDef.fixedRotation = true;
                 playerBodyDef.position.x = getGameMode().getCurrentController()
-                        .getCurrentPossessedCharacter().getWorldPosition().x + bv.getRelativePosition().x;
+                        .getCurrentPossessedCharacter().getWorldPosition().x;
                 playerBodyDef.position.y = getGameMode().getCurrentController()
-                        .getCurrentPossessedCharacter().getWorldPosition().y + bv.getRelativePosition().y;
+                        .getCurrentPossessedCharacter().getWorldPosition().y;
 
                 playerBody = world.createBody(playerBodyDef);
                 playerBody.setUserData(getGameMode().getCurrentController().getCurrentPossessedCharacter());

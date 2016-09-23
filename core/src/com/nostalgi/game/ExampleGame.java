@@ -47,7 +47,6 @@ public class ExampleGame extends BaseGame {
 	IGameState gameState;
 	IPlayerState playerState;
 
-
 	IAnimationFactory animationFactory;
 	World world;
 
