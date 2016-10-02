@@ -1,7 +1,7 @@
 package com.nostalgi.engine.World;
 
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
@@ -11,7 +11,7 @@ public class TriggerActor extends BaseActor {
 
     public TriggerActor() {
         BoundingVolume boundingVolume = new BoundingVolume();
-        boundingVolume.isStatic(true);
+        this.isStatic(true);
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_TRIGGER);
         boundingVolume.setCollisionMask(CollisionCategories.MASK_TRIGGER);
         boundingVolume.isSensor(true);

@@ -1,4 +1,4 @@
-package com.nostalgi.engine.interfaces.physics;
+package com.nostalgi.engine.physics;
 
 import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
@@ -10,13 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
  */
 public class BoundingVolume {
 
-    private boolean isStatic = false;
     private boolean isSensor = false;
     private PolygonShape shape = new PolygonShape();
     private short collisionMask = -1;
     private short collisionCategory = 0;
-    private float density = 100f;
-    private float friction = 1f;
     private boolean autoRotate = false;
     private Vector2 relativePosition = new Vector2();
 
@@ -37,14 +34,6 @@ public class BoundingVolume {
         this.collisionMask = collisionMask;
     }
 
-    public boolean isStatic() {
-        return this.isStatic;
-    }
-
-    public void isStatic(boolean isStatic) {
-        this.isStatic = isStatic;
-    }
-
     public PolygonShape getShape() {
         return this.shape;
     }
@@ -59,22 +48,6 @@ public class BoundingVolume {
 
     public void isSensor(boolean isSensor) {
         this.isSensor = isSensor;
-    }
-
-    public float getDensity() {
-        return density;
-    }
-
-    public void setDensity(float density) {
-        this.density = density;
-    }
-
-    public float getFriction() {
-        return friction;
-    }
-
-    public void setFriction(float friction) {
-        this.friction = friction;
     }
 
     public boolean autoRotate() {

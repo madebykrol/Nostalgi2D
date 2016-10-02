@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
@@ -64,6 +64,25 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         if(floor != null) {
             actor.setFloorLevel(Integer.parseInt(floor));
         }
+
+        // Set density
+        String density = getObjectProperty(object, DENSITY);
+        if(density != null) {
+            actor.setDensity(Float.parseFloat(density));
+        }
+
+        // set friction
+        String friction = getObjectProperty(object, FRICTION);
+        if(friction != null) {
+            actor.setFriction(Float.parseFloat(friction));
+        }
+
+        // set is Static
+        String isStatic = getObjectProperty(object, STATIC);
+        if(isStatic != null) {
+            actor.isStatic(Boolean.parseBoolean(isStatic));
+        }
+
         actor.setPosition(position);
         actor.setParent(parent);
         actor.setWorld(world);
@@ -139,28 +158,10 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         boundShape.set(vertices);
         bv.setShape(boundShape);
 
-        // Set density
-        String density = getObjectProperty(object, DENSITY);
-        if(density != null) {
-            bv.setDensity(Float.parseFloat(density));
-        }
-
-        // set friction
-        String friction = getObjectProperty(object, FRICTION);
-        if(friction != null) {
-            bv.setFriction(Float.parseFloat(friction));
-        }
-
         // set is Sensor
         String isSensor = getObjectProperty(object, SENSOR);
         if(isSensor != null) {
             bv.isSensor(Boolean.parseBoolean(isSensor));
-        }
-
-        // set is Static
-        String isStatic = getObjectProperty(object, STATIC);
-        if(isStatic != null) {
-            bv.isStatic(Boolean.parseBoolean(isStatic));
         }
 
         try {
@@ -198,14 +199,14 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         return bv;
     }
 
-    private Body createPhysicsBody(IActor actor, float unitScale) {
+    private void createPhysicsBody(IActor actor, float unitScale) {
         BodyDef shapeDef = new BodyDef();
         for(BoundingVolume bv : actor.getBoundingVolumes()) {
             //BoundingVolume bv = actor.getBoundingVolume(0);
             PolygonShape boundShape = bv.getShape();
 
             shapeDef.position.set((actor.getWorldPosition().x + bv.getRelativePosition().x) / unitScale, (actor.getWorldPosition().y + bv.getRelativePosition().y) / unitScale);
-            if (bv.isStatic()) {
+            if (actor.isStatic()) {
                 shapeDef.type = BodyDef.BodyType.StaticBody;
             } else {
                 shapeDef.type = BodyDef.BodyType.DynamicBody;
@@ -217,8 +218,8 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
             FixtureDef blockingBounds = new FixtureDef();
 
-            blockingBounds.density = bv.getDensity();
-            blockingBounds.friction = bv.getFriction();
+            blockingBounds.density = actor.getDensity();
+            blockingBounds.friction = actor.getFriction();
             blockingBounds.isSensor = bv.isSensor();
             blockingBounds.shape = boundShape;
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
@@ -227,7 +228,6 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             actor.setPhysicsBody(b);
 
         }
-        return null;
     }
 
     @Override

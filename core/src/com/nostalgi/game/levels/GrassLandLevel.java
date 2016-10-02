@@ -23,6 +23,6 @@ public class GrassLandLevel extends BaseLevel {
 
     @Override
     public Vector2 getCameraInitLocation() {
-        return new Vector2(10, 52);
+        return new Vector2(8, 52);
     }
 }
