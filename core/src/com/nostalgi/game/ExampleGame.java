@@ -107,7 +107,7 @@ public class ExampleGame extends BaseGame {
 
 	private ICharacter createPlayerCharacter() {
 		ICharacter playerCharacter = new BasePlayerCharacter();
-		playerCharacter.setPosition(new Vector2(10, 52));
+		playerCharacter.setPosition(new Vector2(8, 52));
 		playerCharacter.setParent(new RootActor());
 		playerCharacter.setWorld(this.gameEngine.getWorld());
 		animationFactory = new NostalgiAnimationFactory();

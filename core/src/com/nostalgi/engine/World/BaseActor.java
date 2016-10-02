@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.BoundingVolume;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +34,11 @@ public abstract class BaseActor implements IActor {
     private boolean transformationNeedsUpdate = true;
 
     private Body physicsBody;
+
+    private float density = 100f;
+    private float friction = 1f;
+
+    private boolean isStatic = false;
 
     @Override
     public IActor getParent() {
@@ -178,6 +183,26 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
+    public float getDensity() {
+        return density;
+    }
+
+    @Override
+    public void setDensity(float density) {
+        this.density = density;
+    }
+
+    @Override
+    public float getFriction() {
+        return friction;
+    }
+
+    @Override
+    public void setFriction(float friction) {
+        this.friction = friction;
+    }
+
+    @Override
     public void setPhysicsBody(Body body) {
         this.physicsBody = body;
     }
@@ -186,6 +211,16 @@ public abstract class BaseActor implements IActor {
     public Body getPhysicsBody() {
 
         return physicsBody;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return this.isStatic;
+    }
+
+    @Override
+    public boolean  isStatic(boolean isStatic) {
+        return this.isStatic = isStatic;
     }
 
     public void transformationHasUpdated() {

@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.World.BaseActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
-import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
@@ -28,8 +27,9 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private int walkingState;
 
     public BasePlayerCharacter () {
+
+        this.isStatic(false);
         BoundingVolume boundingVolume = new BoundingVolume();
-        boundingVolume.isStatic(false);
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
         boundingVolume.setCollisionMask((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
         boundingVolume.isSensor(false);

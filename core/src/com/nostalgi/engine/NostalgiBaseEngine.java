@@ -19,11 +19,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.physics.BoundingVolume;
+import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.Render.NostalgiCamera;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -248,7 +247,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         Body playerBody = currentPlayer.getPhysicsBody();
         for(BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
 
-            if(playerBody != null) {
+            if(playerBody == null) {
                 BodyDef playerBodyDef = new BodyDef();
 
                 playerBodyDef.fixedRotation = true;
@@ -260,8 +259,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                 playerBody = world.createBody(playerBodyDef);
                 playerBody.setUserData(getGameMode().getCurrentController().getCurrentPossessedCharacter());
 
-
-                if (bv.isStatic()) {
+                if (currentPlayer.isStatic()) {
                     playerBodyDef.type = BodyDef.BodyType.StaticBody;
                 } else {
                     playerBodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -270,8 +268,8 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             FixtureDef blockingBounds = new FixtureDef();
 
-            blockingBounds.density = bv.getDensity();
-            blockingBounds.friction = bv.getFriction();
+            blockingBounds.density = currentPlayer.getDensity();
+            blockingBounds.friction = currentPlayer.getFriction();
             blockingBounds.shape = bv.getShape();
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
             blockingBounds.filter.maskBits = bv.getCollisionMask();
@@ -284,6 +282,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     private void changePlayerFixture(IActor currentPlayer, short playerMask) {
         PolygonShape shape = new PolygonShape();
 
+        Body playerBody =  currentPlayer.getPhysicsBody();
         Fixture fix = playerBody.getFixtureList().get(0);
         playerBody.destroyFixture(fix);
 
