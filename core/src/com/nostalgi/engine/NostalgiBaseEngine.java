@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.Render.NostalgiCamera;
@@ -41,6 +42,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     private World world;
 
     private Box2DDebugRenderer debug;
+    private HashMap<Integer, Short> floorMap = new HashMap<Integer, Short>();
 
     public NostalgiBaseEngine(World world, NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameMode mode) {
         this.world = world;
@@ -54,6 +56,11 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void init() {
         // init input
         this.initInput();
+
+        floorMap.put(1, CollisionCategories.CATEGORY_FLOOR_1);
+        floorMap.put(2, CollisionCategories.CATEGORY_FLOOR_2);
+        floorMap.put(3, CollisionCategories.CATEGORY_FLOOR_3);
+        floorMap.put(4, CollisionCategories.CATEGORY_FLOOR_4);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -120,9 +127,11 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Update game mode.
         this.getGameMode().update(dTime);
 
+        ICharacter currentCharacter = getGameMode().getCurrentController().getCurrentPossessedCharacter();
+
         // Update NPC / Monster bounds
-        if(this.getGameMode().getCurrentController().getCurrentPossessedCharacter().canEverTick()) {
-            this.getGameMode().getCurrentController().getCurrentPossessedCharacter().tick(Gdx.graphics.getDeltaTime());
+        if(currentCharacter.canEverTick()) {
+            currentCharacter.tick(Gdx.graphics.getDeltaTime());
         }
 
         this.getGameMode().getCurrentController().update(dTime);
@@ -130,44 +139,28 @@ public class NostalgiBaseEngine implements IGameEngine {
         HashMap<String, IActor> actors =  this.getGameMode().getGameState().getCurrentLevel().getActors();
         tickActors(actors, dTime);
 
-        Body playerBody = this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getPhysicsBody();
-        playerBody.setLinearVelocity(this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getVelocity());
+        Body playerBody = currentCharacter.getPhysicsBody();
+        playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
-        Vector2 playerPos = this.getGameMode().getCurrentController().getCurrentPossessedCharacter().getWorldPosition();
-        playerPos.x = playerBody.getPosition().x - 0.5f;
-        playerPos.y = playerBody.getPosition().y - 0.5f;
-
-        switch(getGameMode().getCurrentController().getCurrentPossessedCharacter().getFloorLevel()) {
-            case 1 :
-                changePlayerFixture(getGameMode().getCurrentController().getCurrentPossessedCharacter(),
-                        (short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
-                break;
-            case 2 :
-                changePlayerFixture(getGameMode().getCurrentController().getCurrentPossessedCharacter(),
-                        (short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_2));
-                break;
-            case 3 :
-                changePlayerFixture(getGameMode().getCurrentController().getCurrentPossessedCharacter(),
-                        (short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_3));
-                break;
-            case 4 :
-                changePlayerFixture(getGameMode().getCurrentController().getCurrentPossessedCharacter(),
-                        (short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_4));
-                break;
-            default :
-                changePlayerFixture(getGameMode().getCurrentController().getCurrentPossessedCharacter(),
-                        (short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
-                break;
-        }
-
-        // Update camera
-        if(this.currentCamera != null) {
-            this.currentCamera.setPositionSafe(getGameMode().getCurrentController()
-                    .getCurrentPossessedCharacter()
-                    .getWorldPosition());
+        if(currentCharacter.fixtureNeedsUpdate()) {
+            updatePlayerFixture(currentCharacter,
+                    (short) (CollisionCategories.MASK_PLAYER | floorMap.get(currentCharacter.getFloorLevel())));
         }
 
         world.step(1f / 60f, 6, 2);
+
+        Vector2 playerPos = currentCharacter.getWorldPosition();
+        playerPos.x = playerBody.getPosition().x - 0.5f;
+        playerPos.y = playerBody.getPosition().y - 0.5f;
+
+
+
+
+        // Update camera
+        if(this.currentCamera != null) {
+            this.currentCamera.setPositionSafe(currentCharacter.getWorldPosition());
+        }
+
 
         this.currentCamera.update();
 
@@ -256,14 +249,14 @@ public class NostalgiBaseEngine implements IGameEngine {
                 playerBodyDef.position.y = getGameMode().getCurrentController()
                         .getCurrentPossessedCharacter().getWorldPosition().y;
 
-                playerBody = world.createBody(playerBodyDef);
-                playerBody.setUserData(getGameMode().getCurrentController().getCurrentPossessedCharacter());
-
                 if (currentPlayer.isStatic()) {
                     playerBodyDef.type = BodyDef.BodyType.StaticBody;
                 } else {
                     playerBodyDef.type = BodyDef.BodyType.DynamicBody;
                 }
+
+                playerBody = world.createBody(playerBodyDef);
+                playerBody.setUserData(currentPlayer);
             }
 
             FixtureDef blockingBounds = new FixtureDef();
@@ -279,7 +272,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         currentPlayer.setPhysicsBody(playerBody);
     }
 
-    private void changePlayerFixture(IActor currentPlayer, short playerMask) {
+    private void updatePlayerFixture(IActor currentPlayer, short playerMask) {
         PolygonShape shape = new PolygonShape();
 
         Body playerBody =  currentPlayer.getPhysicsBody();

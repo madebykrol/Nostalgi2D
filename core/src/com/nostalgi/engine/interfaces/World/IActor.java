@@ -40,6 +40,9 @@ public interface IActor {
 
     boolean isAnimated();
 
+    boolean fixtureNeedsUpdate();
+    boolean fixtureNeedsUpdate(boolean update);
+
     /**
      * Get world position, relative to parent
      */

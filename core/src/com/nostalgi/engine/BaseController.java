@@ -87,7 +87,7 @@ public abstract class BaseController implements IController, InputProcessor {
 
         float factor = 2f;
         if(distance <= 0) {
-            factor = 1f;
+            factor = 0.5f;
         }
 
         float x1 = (position.x) + (distance / factor);

@@ -40,6 +40,8 @@ public abstract class BaseActor implements IActor {
 
     private boolean isStatic = false;
 
+    private boolean fixtureNeedsUpdate = false;
+
     @Override
     public IActor getParent() {
         return this.parent;
@@ -170,6 +172,16 @@ public abstract class BaseActor implements IActor {
     @Override
     public void setFloorLevel(int floor) {
         this.floor = floor;
+        this.fixtureNeedsUpdate = true;
+    }
+
+    public boolean fixtureNeedsUpdate() {
+        return this.fixtureNeedsUpdate;
+    }
+
+    public boolean fixtureNeedsUpdate(boolean update) {
+        this.fixtureNeedsUpdate = update;
+        return update;
     }
 
     @Override

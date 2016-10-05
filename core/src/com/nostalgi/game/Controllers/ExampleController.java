@@ -1,6 +1,7 @@
 package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
@@ -34,60 +35,52 @@ public class ExampleController extends BaseController {
 
         if (currentPossessedCharacter != null) {
             currentPossessedCharacter.stop();
-            currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
-
-            boolean moving = false;
-            float faceDirection = currentPossessedCharacter.getFacingDirection();
-
-            if(faceDirection == Direction.SOUTH)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
-
-            if(faceDirection == Direction.EAST)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
-
-            if(faceDirection == Direction.WEST)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
-
-            if(faceDirection == Direction.NORTH)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
 
             if(upIsPressed && rightIsPressed) {
                 currentPossessedCharacter.face(Direction.NORTH_EAST);
-            }
-
-            if(downIsPressed && rightIsPressed) {
-                currentPossessedCharacter.face(Direction.SOUTH_EAST);
-            }
-
-            if(upIsPressed && leftIsPressed) {
-                currentPossessedCharacter.face(Direction.NORTH_WEST);
-            }
-
-            if(downIsPressed && rightIsPressed) {
-                currentPossessedCharacter.face(Direction.SOUTH_WEST);
-            }
-
-            if (leftIsPressed) {
-                moving = true;
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
-            }
-            if (rightIsPressed) {
-                moving = true;
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
-            }
-            if (upIsPressed) {
-                moving = true;
                 currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
-            }
-            if (downIsPressed) {
-                moving = true;
+            } else if (upIsPressed && leftIsPressed) {
+                currentPossessedCharacter.face(Direction.NORTH_WEST);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+            } else if (downIsPressed && rightIsPressed) {
+                currentPossessedCharacter.face(Direction.SOUTH_EAST);
                 currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            } else if(downIsPressed && leftIsPressed) {
+                currentPossessedCharacter.face(Direction.SOUTH_WEST);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            } else if(downIsPressed) {
+                currentPossessedCharacter.face(Direction.SOUTH);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            } else if(upIsPressed) {
+                currentPossessedCharacter.face(Direction.NORTH);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+            } else if(leftIsPressed) {
+                currentPossessedCharacter.face(Direction.WEST);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
+            } else if(rightIsPressed) {
+                currentPossessedCharacter.face(Direction.EAST);
+                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
             }
 
             //this.currentPossessedCharacter.face(new Vector2(32,32));
 
-            if((moving)) {
+            if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {
                 currentPossessedCharacter.moveForward(5);
+            } else {
+                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+                float faceDirection = currentPossessedCharacter.getFacingDirection();
+
+                if(faceDirection == Direction.SOUTH)
+                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+
+                if(faceDirection == Direction.EAST)
+                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
+
+                if(faceDirection == Direction.WEST)
+                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
+
+                if(faceDirection == Direction.NORTH)
+                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
             }
         }
     }
