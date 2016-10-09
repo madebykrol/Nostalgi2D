@@ -17,6 +17,7 @@ import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Factories.NostalgiWallFactory;
 import com.nostalgi.engine.Hud.DebugHudModule;
 import com.nostalgi.engine.BasePlayerState;
+import com.nostalgi.engine.Hud.DemoHudModule;
 import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
@@ -88,12 +89,12 @@ public class ExampleGame extends BaseGame {
 		camera.setPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
-		this.playerController = new ExampleController(this.camera, this.world);
-
 		IHud hud = new BaseHud(w/2, h/2, this.gameState);
-		//hud.addModule("Demo", new DemoHudModule());
+		hud.addModule("Demo", new DemoHudModule());
 		hud.addModule("Debug", new DebugHudModule());
 		hud.init();
+
+		this.playerController = new ExampleController(this.camera, this.world, hud);
 
 		this.gameMode = new BaseGameMode(this.gameState, this.playerState, this.playerController, hud);
 

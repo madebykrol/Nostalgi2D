@@ -16,14 +16,14 @@ import com.nostalgi.engine.interfaces.Hud.IHudModule;
 /**
  * Created by ksdkrol on 2016-07-12.
  */
-public class DemoHudModule implements IHudModule {
+public class DemoHudModule extends BaseHudModule {
     private Skin skin;
+    private Table table;
 
     public DemoHudModule () {
         // A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
         // recommended solely for the convenience of getting a texture, region, etc as a drawable, tinted drawable, etc.
         skin = new Skin();
-
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DemoHudModule implements IHudModule {
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
         // Create a table that fills the screen. Everything else will go inside this table.
-        Table table = new Table();
+        table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
@@ -71,6 +71,6 @@ public class DemoHudModule implements IHudModule {
 
     @Override
     public void update(float dTime) {
-
+        table.setVisible(this.isVisible());
     }
 }

@@ -18,7 +18,7 @@ public class HudText extends Actor {
 
     public HudText(String text, float screenX, float screenY){
         font = new BitmapFont();
-        font.setColor(0.5f,0.4f,0,1);   //Brown is an underated Colour
+        font.setColor(0.5f,0.4f,0,1);   //Brown is an underrated Colour
         this.text = text;
         this.x = screenX;
         this.y = screenY;

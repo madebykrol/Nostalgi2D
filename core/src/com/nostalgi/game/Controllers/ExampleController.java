@@ -9,6 +9,8 @@ import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.interfaces.Hud.IHud;
+import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 
@@ -23,9 +25,12 @@ public class ExampleController extends BaseController {
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
+    private IHud hud;
 
-    public ExampleController(NostalgiCamera camera, World world) {
+    public ExampleController(NostalgiCamera camera, World world, IHud hud) {
         super(camera, world);
+
+        this.hud = hud;
     }
 
     @Override
@@ -96,6 +101,10 @@ public class ExampleController extends BaseController {
             IActor topActor = actors.get(0);
             if(topActor == this.getCurrentPossessedCharacter()) {
                 System.out.println("Clicked player - Open character wheel");
+                IHudModule module = hud.getModule("Debug");
+                if(module != null) {
+                    module.isVisible(!module.isVisible());
+                }
             }
         }
 

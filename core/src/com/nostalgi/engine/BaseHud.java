@@ -64,7 +64,7 @@ public class BaseHud implements IHud {
 
     @Override
     public IHudModule getModule(String name) {
-        return null;
+        return this.modules.get(name);
     }
 
     @Override
