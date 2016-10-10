@@ -88,4 +88,8 @@ public interface IActor {
 
     void draw(Batch batch, float timeElapsed);
 
+    void destroy();
+
+    void addOnDestroyListener();
+
 }

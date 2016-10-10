@@ -254,4 +254,8 @@ public abstract class BaseActor implements IActor {
             this.transformationNeedsUpdate = false;
         }
     }
+
+    public void destroy() {
+
+    }
 }
