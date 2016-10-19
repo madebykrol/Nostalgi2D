@@ -98,11 +98,11 @@ public class ExampleGame extends BaseGame {
 
 		this.gameMode = new BaseGameMode(this.gameState, this.playerState, this.playerController, hud);
 
-		this.setGameEngine(new NostalgiBaseEngine(this.world, camera, tiledMapRenderer, this.gameMode));
+		this.gameEngine = new NostalgiBaseEngine(this.world, camera, tiledMapRenderer, this.gameMode);
 
 		this.playerController.possessCharacter(createPlayerCharacter());
 
-		this.getGameEngine().init();
+		this.gameEngine.init();
 	}
 
 

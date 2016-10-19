@@ -164,48 +164,41 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             bv.isSensor(Boolean.parseBoolean(isSensor));
         }
 
-        try {
-            // set collision category
-            String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
-            short category;
-            if (collisionCategory != null) {
-                try {
-                    category  = Short.parseShort(collisionCategory);
-                } catch (NumberFormatException e) {
-                    category = CollisionCategories.categoryFromString(collisionCategory);
-                }
-                bv.setCollisionCategory(category);
+        // set collision category
+        String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
+        short category;
+        if (collisionCategory != null) {
+            try {
+                category  = Short.parseShort(collisionCategory);
+            } catch (NumberFormatException e) {
+                category = CollisionCategories.categoryFromString(collisionCategory);
             }
-
-            // set Collision mask
-            String collisionMask = getObjectProperty(object, COLLISION_MASK);
-            short mask;
-            if (collisionMask != null) {
-                try {
-                    mask = Short.parseShort(collisionMask);
-                } catch (NumberFormatException e) {
-                    mask = CollisionCategories.maskFromString(collisionMask);
-                }
-                bv.setCollisionMask(mask);
-            }
-
-        } catch (ClassNotFoundException e) {
-
-        } catch (NoSuchFieldException e) {
-
-        } catch (IllegalAccessException e) {
-
+            bv.setCollisionCategory(category);
         }
+
+        // set Collision mask
+        String collisionMask = getObjectProperty(object, COLLISION_MASK);
+        short mask;
+        if (collisionMask != null) {
+            try {
+                mask = Short.parseShort(collisionMask);
+            } catch (NumberFormatException e) {
+                mask = CollisionCategories.maskFromString(collisionMask);
+            }
+            bv.setCollisionMask(mask);
+        }
+
         return bv;
     }
 
     private void createPhysicsBody(IActor actor, float unitScale) {
         BodyDef shapeDef = new BodyDef();
         for(BoundingVolume bv : actor.getBoundingVolumes()) {
-            //BoundingVolume bv = actor.getBoundingVolume(0);
             PolygonShape boundShape = bv.getShape();
 
-            shapeDef.position.set((actor.getWorldPosition().x + bv.getRelativePosition().x) / unitScale, (actor.getWorldPosition().y + bv.getRelativePosition().y) / unitScale);
+            shapeDef.position.set(
+                    (actor.getWorldPosition().x + bv.getRelativePosition().x) / unitScale,
+                    (actor.getWorldPosition().y + bv.getRelativePosition().y) / unitScale);
             if (actor.isStatic()) {
                 shapeDef.type = BodyDef.BodyType.StaticBody;
             } else {
@@ -226,7 +219,6 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             blockingBounds.filter.maskBits = bv.getCollisionMask();
             b.createFixture(blockingBounds);
             actor.setPhysicsBody(b);
-
         }
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.physics.BoundingVolume;
+import com.nostalgi.engine.physics.CollisionCategories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -172,6 +173,9 @@ public abstract class BaseActor implements IActor {
     @Override
     public void setFloorLevel(int floor) {
         this.floor = floor;
+        if(!this.boundingVolumes.isEmpty()) {
+            this.boundingVolumes.get(0).setCollisionMask((short) (CollisionCategories.MASK_PLAYER | CollisionCategories.getFloor(floor)));
+        }
         this.fixtureNeedsUpdate = true;
     }
 

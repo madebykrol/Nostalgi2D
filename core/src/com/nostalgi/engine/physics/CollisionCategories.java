@@ -45,12 +45,28 @@ public class CollisionCategories {
 
     public static final short MASK_TRIGGER = CATEGORY_PLAYER |CATEGORY_NPC |CATEGORY_MONSTER;
 
-    public static short categoryFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        return getFieldFromString("CATEGORY_"+s);
+    public static short categoryFromString(String s) {
+        try {
+            return getFieldFromString("CATEGORY_" + s);
+        } catch(Exception e) {
+            return CATEGORY_NIL;
+        }
     }
 
-    public static short maskFromString(String s)  throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        return getFieldFromString("MASK_"+s);
+    public static short maskFromString(String s) {
+        try {
+            return getFieldFromString("MASK_" + s);
+        } catch(Exception e) {
+            return CATEGORY_NIL;
+        }
+    }
+
+    public static short getFloor(int floor) {
+        try {
+            return getFieldFromString("CATEGORY_FLOOR_"+Integer.toString(floor));
+        } catch(Exception e) {
+            return CATEGORY_NIL;
+        }
     }
 
     public static short getFieldFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {

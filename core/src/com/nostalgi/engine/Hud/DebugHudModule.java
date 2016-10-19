@@ -12,7 +12,6 @@ public class DebugHudModule extends BaseHudModule {
     HudText fpsText;
     HudText timeText;
 
-
     float timePassed = 0;
 
     @Override
