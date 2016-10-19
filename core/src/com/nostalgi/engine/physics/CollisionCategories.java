@@ -48,7 +48,11 @@ public class CollisionCategories {
     public static short categoryFromString(String s) {
         try {
             return getFieldFromString("CATEGORY_" + s);
-        } catch(Exception e) {
+        } catch (ClassNotFoundException e) {
+            return CATEGORY_NIL;
+        } catch (NoSuchFieldException e) {
+            return CATEGORY_NIL;
+        } catch (IllegalAccessException e) {
             return CATEGORY_NIL;
         }
     }
@@ -56,17 +60,17 @@ public class CollisionCategories {
     public static short maskFromString(String s) {
         try {
             return getFieldFromString("MASK_" + s);
-        } catch(Exception e) {
+        } catch (ClassNotFoundException e) {
+            return CATEGORY_NIL;
+        } catch (NoSuchFieldException e) {
+            return CATEGORY_NIL;
+        } catch (IllegalAccessException e) {
             return CATEGORY_NIL;
         }
     }
 
-    public static short getFloor(int floor) {
-        try {
-            return getFieldFromString("CATEGORY_FLOOR_"+Integer.toString(floor));
-        } catch(Exception e) {
-            return CATEGORY_NIL;
-        }
+    public static short floorFromInt(int floor) {
+        return categoryFromString("FLOOR_"+floor);
     }
 
     public static short getFieldFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {

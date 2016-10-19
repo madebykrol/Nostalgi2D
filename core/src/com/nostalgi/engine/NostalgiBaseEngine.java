@@ -124,22 +124,14 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         ICharacter currentCharacter = getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
-        // Update NPC / Monster bounds
-        if(currentCharacter.canEverTick()) {
-            currentCharacter.tick(Gdx.graphics.getDeltaTime());
-        }
+
 
         this.getGameMode().getCurrentController().update(dTime);
-
-        HashMap<String, IActor> actors =  this.getGameMode().getGameState().getCurrentLevel().getActors();
-        tickActors(actors, dTime);
 
         Body playerBody = currentCharacter.getPhysicsBody();
         playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
-        if(currentCharacter.fixtureNeedsUpdate()) {
-            updatePlayerFixture(currentCharacter);
-        }
+
 
         world.step(1f / 60f, 6, 2);
 
@@ -147,10 +139,23 @@ public class NostalgiBaseEngine implements IGameEngine {
         playerPos.x = playerBody.getPosition().x - 0.5f;
         playerPos.y = playerBody.getPosition().y - 0.5f;
 
+        HashMap<String, IActor> actors =  this.getGameMode().getGameState().getCurrentLevel().getActors();
+        tickActors(actors, dTime);
+
+        if(currentCharacter.fixtureNeedsUpdate()) {
+            updatePlayerFixture(currentCharacter);
+        }
+
+        // Update NPC / Monster bounds
+        if(currentCharacter.canEverTick()) {
+            currentCharacter.tick(Gdx.graphics.getDeltaTime());
+        }
+
         // Update camera
         if(this.currentCamera != null) {
             this.currentCamera.setPositionSafe(currentCharacter.getWorldPosition());
         }
+
 
         this.currentCamera.update();
 
@@ -227,51 +232,53 @@ public class NostalgiBaseEngine implements IGameEngine {
     private void initPlayerBounds(IActor currentPlayer) {
         // Update player bounds
 
-        if(currentPlayer != null) {
-            Body playerBody = currentPlayer.getPhysicsBody();
-            if (playerBody == null) {
-                BodyDef playerBodyDef = new BodyDef();
+        Body playerBody = currentPlayer.getPhysicsBody();
+        if(playerBody == null) {
+            BodyDef playerBodyDef = new BodyDef();
 
-                playerBodyDef.fixedRotation = true;
-                playerBodyDef.position.x = getGameMode().getCurrentController()
-                        .getCurrentPossessedCharacter().getWorldPosition().x;
-                playerBodyDef.position.y = getGameMode().getCurrentController()
-                        .getCurrentPossessedCharacter().getWorldPosition().y;
+            playerBodyDef.fixedRotation = true;
+            playerBodyDef.position.x = getGameMode().getCurrentController()
+                    .getCurrentPossessedCharacter().getWorldPosition().x;
+            playerBodyDef.position.y = getGameMode().getCurrentController()
+                    .getCurrentPossessedCharacter().getWorldPosition().y;
 
-                if (currentPlayer.isStatic()) {
-                    playerBodyDef.type = BodyDef.BodyType.StaticBody;
-                } else {
-                    playerBodyDef.type = BodyDef.BodyType.DynamicBody;
-                }
-
-                playerBody = world.createBody(playerBodyDef);
-                playerBody.setUserData(currentPlayer);
+            if (currentPlayer.isStatic()) {
+                playerBodyDef.type = BodyDef.BodyType.StaticBody;
+            } else {
+                playerBodyDef.type = BodyDef.BodyType.DynamicBody;
             }
-            for (BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
-                FixtureDef blockingBounds = new FixtureDef();
 
-                blockingBounds.density = currentPlayer.getDensity();
-                blockingBounds.friction = currentPlayer.getFriction();
-                blockingBounds.shape = bv.getShape();
-                blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-                blockingBounds.filter.maskBits = bv.getCollisionMask();
-
-                playerBody.createFixture(blockingBounds);
-            }
-            currentPlayer.setPhysicsBody(playerBody);
+            playerBody = world.createBody(playerBodyDef);
+            playerBody.setUserData(currentPlayer);
         }
+        int bvI = 0;
+        for(BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
+
+            FixtureDef blockingBounds = new FixtureDef();
+
+            blockingBounds.density = currentPlayer.getDensity();
+            blockingBounds.friction = currentPlayer.getFriction();
+            blockingBounds.shape = bv.getShape();
+            blockingBounds.filter.categoryBits = bv.getCollisionCategory();
+            blockingBounds.filter.maskBits = (short)(bv.getCollisionMask()|CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
+
+            playerBody.createFixture(blockingBounds);
+            bvI++;
+        }
+        currentPlayer.setPhysicsBody(playerBody);
     }
 
     private void updatePlayerFixture(IActor currentPlayer) {
 
         Body playerBody =  currentPlayer.getPhysicsBody();
         if(playerBody == null) {
-            this.initPlayerBounds(currentPlayer);
+            initPlayerBounds(currentPlayer);
         } else {
-            for(Fixture fix :  playerBody.getFixtureList()) {
+
+            for (Fixture fix : playerBody.getFixtureList()) {
                 playerBody.destroyFixture(fix);
             }
-
+            int bvI = 0;
             for (BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
                 FixtureDef blockingBounds = new FixtureDef();
 
@@ -279,9 +286,13 @@ public class NostalgiBaseEngine implements IGameEngine {
                 blockingBounds.friction = currentPlayer.getFriction();
                 blockingBounds.shape = bv.getShape();
                 blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-                blockingBounds.filter.maskBits = bv.getCollisionMask();
-
+                if(bvI == 0) {
+                    blockingBounds.filter.maskBits = (short)(bv.getCollisionMask() | CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
+                } else {
+                    blockingBounds.filter.maskBits = bv.getCollisionMask();
+                }
                 playerBody.createFixture(blockingBounds);
+                bvI++;
             }
         }
     }
