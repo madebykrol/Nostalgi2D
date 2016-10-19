@@ -1,10 +1,13 @@
 package com.nostalgi.engine;
 
+import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -13,14 +16,16 @@ public class BaseGameMode implements IGameMode {
 
     private IGameState gameState;
     private IPlayerState playerState;
-    private IController playerController;
+    private ArrayList<IController> playerControllers =  new ArrayList<IController>();
     private IHud hud;
+    private final NetworkRole isAuthority;
 
     public BaseGameMode (IGameState gameState, IPlayerState playerState, IController playerController, IHud hud) {
         this.gameState = gameState;
         this.playerState = playerState;
-        this.playerController = playerController;
+        this.playerControllers.add(playerController);
         this.hud = hud;
+        this.isAuthority = NetworkRole.ROLE_AUTHORITY;
     }
 
     @Override
@@ -49,13 +54,33 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
+    public NetworkRole getNetworkRole() {
+        return this.isAuthority;
+    }
+
+    @Override
     public IController getCurrentController() {
-        return this.playerController;
+        return this.playerControllers.get(0);
     }
 
     @Override
     public void setCurrentController(IController controller) {
-        this.playerController = controller;
+        this.playerControllers.set(0,controller);
+    }
+
+    @Override
+    public IController getController(int player) {
+        return this.playerControllers.get(player);
+    }
+
+    @Override
+    public void addController(IController controller) {
+        this.playerControllers.add(controller);
+    }
+
+    @Override
+    public ArrayList<IController> getControllers() {
+        return this.playerControllers;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
@@ -17,24 +18,35 @@ import java.util.HashMap;
  */
 public abstract class BaseActor implements IActor {
 
+    @Replicated
     private int floor = 1;
 
     private IActor parent;
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
 
+    @Replicated
     private Vector2 position;
+
+    @Replicated
     private Vector2 worldPosition;
 
+    @Replicated
+    private boolean transformationNeedsUpdate = true;
+
+    @Replicated
     private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
 
+    @Replicated
     private Animation currentAnimation;
+
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
     private String name = "Actor"+this.hashCode();
 
     private World world;
-    private boolean transformationNeedsUpdate = true;
 
     private Body physicsBody;
+
+    private boolean isReplicated = false;
 
     private float density = 100f;
     private float friction = 1f;
@@ -173,9 +185,6 @@ public abstract class BaseActor implements IActor {
     @Override
     public void setFloorLevel(int floor) {
         this.floor = floor;
-        if(!this.boundingVolumes.isEmpty()) {
-            this.boundingVolumes.get(0).setCollisionMask((short) (CollisionCategories.MASK_PLAYER | CollisionCategories.getFloor(floor)));
-        }
         this.fixtureNeedsUpdate = true;
     }
 
@@ -264,4 +273,8 @@ public abstract class BaseActor implements IActor {
     }
 
     public void addOnDestroyListener() {}
+
+    public boolean isReplicated() {
+        return this.isReplicated;
+    }
 }

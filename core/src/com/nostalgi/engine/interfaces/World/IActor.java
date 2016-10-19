@@ -91,4 +91,6 @@ public interface IActor {
     void destroy();
 
     void addOnDestroyListener();
+
+    boolean isReplicated();
 }

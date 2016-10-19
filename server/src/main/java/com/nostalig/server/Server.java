@@ -5,7 +5,8 @@ package com.nostalig.server;
  */
 public class Server {
 
-    public static void main(String args[]) {
+    public void replicateObject(Object object) {
 
     }
+
 }

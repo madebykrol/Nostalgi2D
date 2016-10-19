@@ -16,6 +16,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -36,8 +38,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     private NostalgiCamera currentCamera;
     private NostalgiRenderer mapRenderer;
     private InputMultiplexer inputProcessor;
-
-    private Body playerBody;
 
     private World world;
 
@@ -120,42 +120,56 @@ public class NostalgiBaseEngine implements IGameEngine {
         float dTime = Gdx.graphics.getDeltaTime();
 
         // Update game mode.
-        this.getGameMode().update(dTime);
-
         ICharacter currentCharacter = getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
+        if(this.getGameMode().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
+            this.getGameMode().update(dTime);
+            for(IController controller :  this.getGameMode().getControllers()) {
+                ICharacter character = controller.getCurrentPossessedCharacter();
 
-        this.getGameMode().getCurrentController().update(dTime);
+                Body playerBody = character.getPhysicsBody();
 
-        Body playerBody = currentCharacter.getPhysicsBody();
-        playerBody.setLinearVelocity(currentCharacter.getVelocity());
+                controller.update(dTime);
 
+                playerBody.setLinearVelocity(character .getVelocity());
 
+                if (character.fixtureNeedsUpdate()) {
+                    updatePlayerFixture(character );
+                }
 
-        world.step(1f / 60f, 6, 2);
+                // Update NPC / Monster bounds
+                if (character.canEverTick()) {
+                    character.tick(Gdx.graphics.getDeltaTime());
+                }
+            }
 
-        Vector2 playerPos = currentCharacter.getWorldPosition();
-        playerPos.x = playerBody.getPosition().x - 0.5f;
-        playerPos.y = playerBody.getPosition().y - 0.5f;
+            tickActors(this.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
 
-        HashMap<String, IActor> actors =  this.getGameMode().getGameState().getCurrentLevel().getActors();
-        tickActors(actors, dTime);
+            world.step(1f / 60f, 6, 2);
 
-        if(currentCharacter.fixtureNeedsUpdate()) {
-            updatePlayerFixture(currentCharacter);
+            for(IController controller : this.getGameMode().getControllers()) {
+                ICharacter character = controller.getCurrentPossessedCharacter();
+
+                Body playerBody = character.getPhysicsBody();
+
+                Vector2 playerPos = character.getWorldPosition();
+                playerPos.x = playerBody.getPosition().x - 0.5f;
+                playerPos.y = playerBody.getPosition().y - 0.5f;
+
+                // replicate player state.
+            }
+
+            replicateActors(this.getGameMode().getGameState().getCurrentLevel().getActors());
         }
+        else {
 
-        // Update NPC / Monster bounds
-        if(currentCharacter.canEverTick()) {
-            currentCharacter.tick(Gdx.graphics.getDeltaTime());
         }
 
         // Update camera
         if(this.currentCamera != null) {
             this.currentCamera.setPositionSafe(currentCharacter.getWorldPosition());
         }
-
 
         this.currentCamera.update();
 
@@ -215,6 +229,16 @@ public class NostalgiBaseEngine implements IGameEngine {
     @Override
     public InputProcessor getInputProcessor() {
         return inputProcessor;
+    }
+
+    private void replicateActors(HashMap<String, IActor> actors) {
+        for(IActor actor : actors.values()) {
+            if(actor.isReplicated()) {
+                if(actor.getChildren() != null) {
+                    replicateActors(actor.getChildren());
+                }
+            }
+        }
     }
 
     private void tickActors(HashMap<String, IActor> actors, float delta) {
