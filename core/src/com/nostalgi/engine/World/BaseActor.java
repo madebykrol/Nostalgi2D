@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.physics.BoundingVolume;
+import com.nostalgi.engine.physics.CollisionCategories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -256,6 +257,8 @@ public abstract class BaseActor implements IActor {
     }
 
     public void destroy() {
-
+        
     }
+
+    public void addOnDestroyListener() {}
 }

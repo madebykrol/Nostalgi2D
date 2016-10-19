@@ -11,6 +11,7 @@ public class FloorChangerActor extends BaseActor {
     @Override
     public void onOverlapBegin(IActor overlapper) {
        if(overlapper instanceof ICharacter) {
+           System.out.println(this.getFloorLevel());
            ICharacter character = (ICharacter)overlapper;
            character.setFloorLevel(this.getFloorLevel());
        }

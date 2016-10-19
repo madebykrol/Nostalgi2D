@@ -31,7 +31,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         this.isStatic(false);
         BoundingVolume boundingVolume = new BoundingVolume();
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
-        boundingVolume.setCollisionMask((short)(CollisionCategories.MASK_PLAYER | CollisionCategories.CATEGORY_FLOOR_1));
+        boundingVolume.setCollisionMask(CollisionCategories.MASK_PLAYER);
         boundingVolume.isSensor(false);
 
         PolygonShape shape = new PolygonShape();
@@ -163,6 +163,11 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public Vector2 getVelocity() {
         return this.currentVelocity;
+    }
+
+    @Override
+    public void setFloorLevel(int floor) {
+        super.setFloorLevel(floor);
     }
 
     @Override
