@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
@@ -38,6 +39,8 @@ public class NostalgiBaseEngine implements IGameEngine {
     private NostalgiCamera currentCamera;
     private NostalgiRenderer mapRenderer;
     private InputMultiplexer inputProcessor;
+
+    private INetworkLayer networkLayer;
 
     private World world;
 
@@ -163,6 +166,23 @@ public class NostalgiBaseEngine implements IGameEngine {
             replicateActors(this.getGameMode().getGameState().getCurrentLevel().getActors());
         }
         else {
+            Body playerBody = currentCharacter.getPhysicsBody();
+            // put input into simulation
+            getGameMode().getCurrentController().update(dTime);
+
+            playerBody.setLinearVelocity(currentCharacter.getVelocity());
+
+            // Send input to server.
+
+
+            // Run simulation
+            world.step(1f / 60f, 6, 2);
+
+            Vector2 playerPos = currentCharacter.getWorldPosition();
+            playerPos.x = playerBody.getPosition().x - 0.5f;
+            playerPos.y = playerBody.getPosition().y - 0.5f;
+
+
 
         }
 
@@ -284,7 +304,11 @@ public class NostalgiBaseEngine implements IGameEngine {
             blockingBounds.friction = currentPlayer.getFriction();
             blockingBounds.shape = bv.getShape();
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-            blockingBounds.filter.maskBits = (short)(bv.getCollisionMask()|CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
+            if(bvI == 0) {
+                blockingBounds.filter.maskBits = (short) (bv.getCollisionMask() | CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
+            } else {
+                blockingBounds.filter.maskBits = bv.getCollisionMask();
+            }
 
             playerBody.createFixture(blockingBounds);
             bvI++;

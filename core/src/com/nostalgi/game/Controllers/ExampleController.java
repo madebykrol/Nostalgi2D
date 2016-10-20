@@ -114,7 +114,7 @@ public class ExampleController extends BaseController {
 
     @Override
     public boolean keyDown(int keycode) {
-
+        super.keyDown(keycode);
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
         if(keycode == Input.Keys.LEFT) this.leftIsPressed = true;{
