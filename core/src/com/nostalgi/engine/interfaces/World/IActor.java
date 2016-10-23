@@ -78,6 +78,9 @@ public interface IActor {
     boolean isStatic();
     boolean isStatic(boolean isStatic);
 
+    boolean isSensor();
+    boolean isSensor(boolean isSenor);
+
     float getDensity();
 
     void setDensity(float density);

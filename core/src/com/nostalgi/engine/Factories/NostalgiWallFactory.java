@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Wall;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IWall;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
@@ -20,9 +21,9 @@ import com.nostalgi.engine.physics.CollisionCategories;
  */
 public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWallFactory {
 
-    private World world;
+    private IWorld world;
 
-    public NostalgiWallFactory(World world) {
+    public NostalgiWallFactory(IWorld world) {
         this.world = world;
     }
 
@@ -51,17 +52,17 @@ public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWall
             Rectangle obj = ((RectangleMapObject) object).getRectangle();
 
             vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
-            position = new Vector2(obj.getX(), obj.getY());
+            position = new Vector2(obj.getX()/unitScale+mapOrigin.x, obj.getY()/unitScale+mapOrigin.y);
         } else if( object instanceof PolygonMapObject) {
             PolygonMapObject obj = (PolygonMapObject) object;
 
             vertices = obj.getPolygon().getVertices();
-            position = new Vector2(obj.getPolygon().getX(), obj.getPolygon().getY());
+            position = new Vector2(obj.getPolygon().getX()/unitScale+mapOrigin.x, obj.getPolygon().getY()/unitScale+mapOrigin.y);
         }
 
         IWall wall = createWall(floors, position, vertices);
 
-        createPhysicsBody(wall, mapOrigin, unitScale);
+        world.createBody(wall, unitScale);
 
         return wall;
     }
@@ -102,57 +103,7 @@ public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWall
         return result;
     }
 
-    private void createPhysicsBody (IWall wall, Vector2 mapOrigin, float unitScale) {
-        // Set def.
-        BodyDef shapeDef = new BodyDef();
-        // go through our bounding blocks
-        float[] vertices = wall.getVertices();
 
-        short floor = CollisionCategories.CATEGORY_NIL;
-        if(wall.isOnFloor(1)) {
-            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_1);
-        } if(wall.isOnFloor(2)) {
-            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_2);
-        } if(wall.isOnFloor(3)) {
-            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_3);
-        } if(wall.isOnFloor(4)) {
-            floor = (short)(floor | CollisionCategories.CATEGORY_FLOOR_4);
-        }
-
-        for(int i = 0; i < vertices.length; i++) {
-            vertices[i] /=unitScale;
-        }
-
-        if(vertices.length > 2) {
-            wall.setPhysicsBody(addBoundingBox(shapeDef,
-                    vertices,
-                    new Vector2(wall.getX()/unitScale+mapOrigin.x,wall.getY()/unitScale+mapOrigin.y),
-                    floor,
-                    wall));
-        }
-    }
-
-    private Body addBoundingBox(BodyDef shapeDef, float[] vertices, Vector2 pos, short floor, IWall wall) {
-        PolygonShape boundShape = new PolygonShape();
-        boundShape.set(vertices);
-        shapeDef.position.set(pos.x, pos.y);
-        shapeDef.type = BodyDef.BodyType.StaticBody;
-
-        Body b = world.createBody(shapeDef);
-
-        b.setUserData(wall);
-
-        FixtureDef blockingBounds = new FixtureDef();
-
-        blockingBounds.density = 100f;
-        blockingBounds.friction = 0f;
-        blockingBounds.shape = boundShape;
-        blockingBounds.filter.categoryBits = floor;
-        blockingBounds.filter.maskBits = CollisionCategories.CATEGORY_PLAYER;
-        b.createFixture(blockingBounds);
-
-        return b;
-    }
 
     @Override
     public void dispose() {

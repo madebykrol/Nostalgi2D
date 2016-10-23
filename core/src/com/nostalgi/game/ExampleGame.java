@@ -19,10 +19,12 @@ import com.nostalgi.engine.Hud.DebugHudModule;
 import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.Hud.DemoHudModule;
 import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.ILevel;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.game.Controllers.ExampleController;
 import com.nostalgi.game.levels.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
@@ -63,7 +65,7 @@ public class ExampleGame extends BaseGame {
 		h = Gdx.graphics.getHeight();
 
 		// setup Game state
-		this.gameState = new BaseGameState(this.isAuthority());
+		this.gameState = new BaseGameState();
 
 		// setup Playerstate
 		this.playerState = new BasePlayerState();
@@ -71,8 +73,10 @@ public class ExampleGame extends BaseGame {
 		// setup physics world
 		this.world = new World(this.gameState.getGravity(), true);
 
+		IWorld nostalgiWorld = new NostalgiWorld(world);
+
 		// Setup start level
-		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(this.world), new NostalgiWallFactory(this.world));
+		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(nostalgiWorld), new NostalgiWallFactory(nostalgiWorld));
 
 		// setup map renderer.
 		this.tiledMapRenderer = new NostalgiRenderer(
@@ -94,11 +98,11 @@ public class ExampleGame extends BaseGame {
 		hud.addModule("Debug", new DebugHudModule());
 		hud.init();
 
-		this.playerController = new ExampleController(this.camera, this.world, hud);
+		this.playerController = new ExampleController(this.camera, nostalgiWorld, hud);
 
 		this.gameMode = new BaseGameMode(this.gameState, this.playerState, this.playerController, hud);
 
-		this.gameEngine = new NostalgiBaseEngine(this.world, camera, tiledMapRenderer, this.gameMode);
+		this.gameEngine = new NostalgiBaseEngine(nostalgiWorld, camera, tiledMapRenderer, this.gameMode);
 
 		this.playerController.possessCharacter(createPlayerCharacter());
 
@@ -110,7 +114,7 @@ public class ExampleGame extends BaseGame {
 		ICharacter playerCharacter = new BasePlayerCharacter();
 		playerCharacter.setPosition(new Vector2(9, 53));
 		playerCharacter.setParent(new RootActor());
-		playerCharacter.setWorld(this.gameEngine.getWorld());
+		//playerCharacter.setWorld();
 		animationFactory = new NostalgiAnimationFactory();
 
 		playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,

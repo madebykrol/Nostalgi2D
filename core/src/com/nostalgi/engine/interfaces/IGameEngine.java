@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 /**
  * Created by Kristoffer on 2016-06-29.
@@ -16,7 +17,7 @@ public interface IGameEngine {
     void dispose();
     IGameMode getGameMode();
 
-    World getWorld();
+    IWorld getWorld();
 
     void setCurrentCamera(NostalgiCamera camera);
     NostalgiCamera getCurrentCamera();

@@ -54,11 +54,6 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
-    public NetworkRole getNetworkRole() {
-        return this.isAuthority;
-    }
-
-    @Override
     public IController getCurrentController() {
         return this.playerControllers.get(0);
     }

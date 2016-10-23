@@ -10,6 +10,7 @@ import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 
@@ -28,9 +29,9 @@ public abstract class BaseController implements IController, InputProcessor {
     private GestureDetector.GestureListener gestureListener;
     private NostalgiCamera camera;
 
-    private World world;
+    private IWorld world;
 
-    public BaseController (NostalgiCamera camera, World world) {
+    public BaseController (NostalgiCamera camera, IWorld world) {
         this.camera = camera;
         this.world = world;
     }
@@ -101,7 +102,7 @@ public abstract class BaseController implements IController, InputProcessor {
 
         final ArrayList<IActor> actors = new ArrayList<IActor>();
 
-        world.QueryAABB(new QueryCallback() {
+        world.getPhysicsWorld().QueryAABB(new QueryCallback() {
                             @Override
                             public boolean reportFixture(Fixture fixture) {
                                 Object o = fixture.getBody().getUserData();

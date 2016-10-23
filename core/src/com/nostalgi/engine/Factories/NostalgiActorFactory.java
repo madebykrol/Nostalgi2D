@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
@@ -21,7 +22,7 @@ import com.nostalgi.engine.physics.CollisionCategories;
 public class NostalgiActorFactory extends BaseLevelObjectFactory implements IActorFactory {
 
     // world
-    private World world;
+    private IWorld world;
 
     private static final String DENSITY = "Density";
     private static final String SENSOR = "IsSensor";
@@ -33,7 +34,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
     private static final String COLLISION_CATEGORY = "CollisionCategory";
     private static final String COLLISION_MASK = "CollisionMask";
 
-    public NostalgiActorFactory(World world) {
+    public NostalgiActorFactory(IWorld world) {
         this.world = world;
     }
 
@@ -83,11 +84,17 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             actor.isStatic(Boolean.parseBoolean(isStatic));
         }
 
+        // set is Static
+        String isSensor= getObjectProperty(object, SENSOR);
+        if(isStatic != null) {
+            actor.isSensor(Boolean.parseBoolean(isSensor));
+        }
+
         actor.setPosition(position);
         actor.setParent(parent);
-        actor.setWorld(world);
+        //actor.setWorld(world);
 
-        createPhysicsBody(actor, unitScale);
+        world.createBody(actor, unitScale);
 
         return actor;
     }
@@ -205,7 +212,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
                 shapeDef.type = BodyDef.BodyType.DynamicBody;
             }
 
-            Body b = world.createBody(shapeDef);
+            Body b = world.getPhysicsWorld().createBody(shapeDef);
 
             b.setUserData(actor);
 

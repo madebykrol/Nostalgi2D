@@ -52,6 +52,7 @@ public abstract class BaseActor implements IActor {
     private float friction = 1f;
 
     private boolean isStatic = false;
+    private boolean isSensor = false;
 
     private boolean fixtureNeedsUpdate = false;
 
@@ -246,6 +247,16 @@ public abstract class BaseActor implements IActor {
     @Override
     public boolean  isStatic(boolean isStatic) {
         return this.isStatic = isStatic;
+    }
+
+    @Override
+    public boolean isSensor() {
+        return this.isSensor;
+    }
+
+    @Override
+    public boolean isSensor(boolean isSensor) {
+        return this.isSensor = isSensor;
     }
 
     public void transformationHasUpdated() {

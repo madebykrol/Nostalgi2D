@@ -32,6 +32,4 @@ public interface IGameMode extends Disposable{
 
     void update(float dTime);
 
-    NetworkRole getNetworkRole();
-
 }

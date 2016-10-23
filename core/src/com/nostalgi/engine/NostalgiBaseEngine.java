@@ -23,6 +23,7 @@ import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.Render.NostalgiCamera;
@@ -42,12 +43,12 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private INetworkLayer networkLayer;
 
-    private World world;
+    private IWorld world;
 
     private Box2DDebugRenderer debug;
     private HashMap<Integer, Short> floorMap = new HashMap<Integer, Short>();
 
-    public NostalgiBaseEngine(World world, NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameMode mode) {
+    public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameMode mode) {
         this.world = world;
         this.currentCamera = camera;
         this.mode = mode;
@@ -60,56 +61,9 @@ public class NostalgiBaseEngine implements IGameEngine {
         // init input
         this.initInput();
 
-        world.setContactListener(new ContactListener() {
-            @Override
-            public void beginContact(Contact contact) {
-                try {
-                    Fixture a = contact.getFixtureA();
-                    Fixture b = contact.getFixtureB();
-
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapBegin(actorB);
-                        actorB.onOverlapBegin(actorA);
-                    }
-                } catch (ClassCastException e) {
-
-                }
-            }
-
-            @Override
-            public void endContact(Contact contact) {
-                try {
-                    Fixture a = contact.getFixtureA();
-                    Fixture b = contact.getFixtureB();
-
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapEnd(actorB);
-                        actorB.onOverlapEnd(actorA);
-                    }
-                } catch (ClassCastException e) {
-
-                }
-            }
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-
-            }
-        });
-
         // Update playerbounds
-        initPlayerBounds(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
+        world.createBody(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
+        //initPlayerBounds(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
 
         // Update terrain / map bounds
         initMapWalls();
@@ -125,7 +79,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Update game mode.
         ICharacter currentCharacter = getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
-        if(this.getGameMode().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
+        if(this.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
             this.getGameMode().update(dTime);
             for(IController controller :  this.getGameMode().getControllers()) {
@@ -138,7 +92,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                 playerBody.setLinearVelocity(character .getVelocity());
 
                 if (character.fixtureNeedsUpdate()) {
-                    updatePlayerFixture(character );
+                    world.updateBody(character);
                 }
 
                 // Update NPC / Monster bounds
@@ -174,16 +128,12 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             // Send input to server.
 
-
             // Run simulation
             world.step(1f / 60f, 6, 2);
 
             Vector2 playerPos = currentCharacter.getWorldPosition();
             playerPos.x = playerBody.getPosition().x - 0.5f;
             playerPos.y = playerBody.getPosition().y - 0.5f;
-
-
-
         }
 
         // Update camera
@@ -207,7 +157,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             this.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
 
-        debug.render(world, currentCamera.combined);
+        debug.render(world.getPhysicsWorld(), currentCamera.combined);
     }
 
     @Override
@@ -222,7 +172,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     @Override
-    public World getWorld() {
+    public IWorld getWorld() {
         return this.world;
     }
 
@@ -271,78 +221,6 @@ public class NostalgiBaseEngine implements IGameEngine {
             }
         }
 
-    }
-
-    private void initPlayerBounds(IActor currentPlayer) {
-        // Update player bounds
-
-        Body playerBody = currentPlayer.getPhysicsBody();
-        if(playerBody == null) {
-            BodyDef playerBodyDef = new BodyDef();
-
-            playerBodyDef.fixedRotation = true;
-            playerBodyDef.position.x = getGameMode().getCurrentController()
-                    .getCurrentPossessedCharacter().getWorldPosition().x;
-            playerBodyDef.position.y = getGameMode().getCurrentController()
-                    .getCurrentPossessedCharacter().getWorldPosition().y;
-
-            if (currentPlayer.isStatic()) {
-                playerBodyDef.type = BodyDef.BodyType.StaticBody;
-            } else {
-                playerBodyDef.type = BodyDef.BodyType.DynamicBody;
-            }
-
-            playerBody = world.createBody(playerBodyDef);
-            playerBody.setUserData(currentPlayer);
-        }
-        int bvI = 0;
-        for(BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
-
-            FixtureDef blockingBounds = new FixtureDef();
-
-            blockingBounds.density = currentPlayer.getDensity();
-            blockingBounds.friction = currentPlayer.getFriction();
-            blockingBounds.shape = bv.getShape();
-            blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-            if(bvI == 0) {
-                blockingBounds.filter.maskBits = (short) (bv.getCollisionMask() | CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
-            } else {
-                blockingBounds.filter.maskBits = bv.getCollisionMask();
-            }
-
-            playerBody.createFixture(blockingBounds);
-            bvI++;
-        }
-        currentPlayer.setPhysicsBody(playerBody);
-    }
-
-    private void updatePlayerFixture(IActor currentPlayer) {
-
-        Body playerBody =  currentPlayer.getPhysicsBody();
-        if(playerBody == null) {
-            initPlayerBounds(currentPlayer);
-        } else {
-
-            for (Fixture fix : playerBody.getFixtureList()) {
-                playerBody.destroyFixture(fix);
-            }
-            int bvI = 0;
-            for (BoundingVolume bv : currentPlayer.getBoundingVolumes()) {
-                FixtureDef blockingBounds = new FixtureDef();
-
-                blockingBounds.density = currentPlayer.getDensity();
-                blockingBounds.friction = currentPlayer.getFriction();
-                blockingBounds.shape = bv.getShape();
-                blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-                if(bvI == 0) {
-                    blockingBounds.filter.maskBits = (short)(bv.getCollisionMask() | CollisionCategories.floorFromInt(currentPlayer.getFloorLevel()));
-                } else {
-                    blockingBounds.filter.maskBits = bv.getCollisionMask();
-                }
-                playerBody.createFixture(blockingBounds);
-                bvI++;
-            }
-        }
     }
 
     private void initInput() {

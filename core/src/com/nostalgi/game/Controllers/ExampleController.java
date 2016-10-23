@@ -13,6 +13,7 @@ import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class ExampleController extends BaseController {
     private boolean downIsPressed = false;
     private IHud hud;
 
-    public ExampleController(NostalgiCamera camera, World world, IHud hud) {
+    public ExampleController(NostalgiCamera camera, IWorld world, IHud hud) {
         super(camera, world);
 
         this.hud = hud;
