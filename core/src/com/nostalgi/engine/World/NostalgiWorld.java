@@ -31,8 +31,12 @@ public class NostalgiWorld implements IWorld {
 
     public NostalgiWorld(World world) {
         this.world = world;
+        world.setContactListener(initializeCollisionDetectionObservers());
+    }
 
-        world.setContactListener(new ContactListener() {
+    protected ContactListener initializeCollisionDetectionObservers() {
+
+        return new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
                 try {
@@ -78,8 +82,10 @@ public class NostalgiWorld implements IWorld {
             public void postSolve(Contact contact, ContactImpulse impulse) {
 
             }
-        });
+        };
+
     }
+
 
     @Override
     public IGameMode getGameMode() {
