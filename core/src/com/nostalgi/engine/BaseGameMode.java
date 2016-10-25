@@ -19,10 +19,8 @@ public class BaseGameMode implements IGameMode {
     private IHud hud;
     private final NetworkRole isAuthority;
 
-    public BaseGameMode (IGameState gameState,IController playerController, IHud hud) {
+    public BaseGameMode (IGameState gameState) {
         this.gameState = gameState;
-        this.playerControllers.add(playerController);
-        this.hud = hud;
         this.isAuthority = NetworkRole.ROLE_AUTHORITY;
     }
 
@@ -38,7 +36,7 @@ public class BaseGameMode implements IGameMode {
 
     @Override
     public void update(float dTime) {
-
+        this.gameState.update(dTime);
     }
 
     @Override

@@ -12,5 +12,4 @@ public interface INetworkLayer {
 
     void onRecieveActorSnapshot(OnlineSession session, INetworkDataReceiveCallback<ActorSnapshot> callback);
 
-
 }

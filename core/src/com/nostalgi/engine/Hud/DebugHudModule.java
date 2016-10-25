@@ -3,6 +3,7 @@ package com.nostalgi.engine.Hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
+import com.nostalgi.engine.interfaces.IGameMode;
 
 /**
  * Created by Kristoffer on 2016-07-12.
@@ -12,7 +13,11 @@ public class DebugHudModule extends BaseHudModule {
     HudText fpsText;
     HudText timeText;
 
-    float timePassed = 0;
+    IGameMode mode;
+
+    public DebugHudModule(IGameMode mode) {
+        this.mode = mode;
+    }
 
     @Override
     public void init(Stage stage) {
@@ -30,9 +35,8 @@ public class DebugHudModule extends BaseHudModule {
         fpsText.setVisible(this.isVisible());
         timeText.setVisible(this.isVisible());
 
-        timePassed += dTime;
         fpsText.update("FPS: " + Gdx.graphics.getFramesPerSecond());
-        timeText.update("Game Time: " + timePassed);
+        timeText.update("Game Time: " + mode.getGameState().getGameTime());
 
     }
 }

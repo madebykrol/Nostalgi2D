@@ -141,6 +141,8 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         this.currentCamera.update();
 
+        this.getWorld().getGameMode().update(dTime);
+
         // Set view
         this.mapRenderer.setView(this.currentCamera);
     }

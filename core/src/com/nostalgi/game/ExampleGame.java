@@ -71,12 +71,15 @@ public class ExampleGame extends BaseGame {
 		gameState = new BaseGameState();
 		gameState.addPlayerState(playerState);
 
+		gameMode = new BaseGameMode(this.gameState);
 
 		// setup physics world
 		IHud hud = new BaseHud(w/2, h/2);
 		hud.addModule("Demo", new DemoHudModule());
-		hud.addModule("Debug", new DebugHudModule());
+		hud.addModule("Debug", new DebugHudModule(gameMode));
 		hud.init();
+
+		gameMode.setHud(hud);
 
 		IWorld nostalgiWorld = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
 
@@ -90,9 +93,7 @@ public class ExampleGame extends BaseGame {
 
 		playerController = new ExampleController(this.camera, nostalgiWorld, hud);
 
-		this.gameMode = new BaseGameMode(this.gameState, this.playerController, hud);
-
-
+		gameMode.addController(playerController);
 
 
 		// setup map renderer.
