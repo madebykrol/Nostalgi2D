@@ -64,45 +64,49 @@ public class ExampleGame extends BaseGame {
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
-		// setup Game state
-		this.gameState = new BaseGameState();
-
 		// setup Playerstate
-		this.playerState = new BasePlayerState();
+		playerState = new BasePlayerState();
+
+		// setup Game state
+		gameState = new BaseGameState();
+		gameState.addPlayerState(playerState);
+
 
 		// setup physics world
-		this.world = new World(this.gameState.getGravity(), true);
+		IHud hud = new BaseHud(w/2, h/2);
+		hud.addModule("Demo", new DemoHudModule());
+		hud.addModule("Debug", new DebugHudModule());
+		hud.init();
 
-		IWorld nostalgiWorld = new NostalgiWorld(world);
+		IWorld nostalgiWorld = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
 
 		// Setup start level
 		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(nostalgiWorld), new NostalgiWallFactory(nostalgiWorld));
-
-		// setup map renderer.
-		this.tiledMapRenderer = new NostalgiRenderer(
-				grassland,
-				1 / (float)grassland.getTileSize());
-
-		this.gameState.setCurrentLevel(grassland);
 
 		camera = new NostalgiCamera(
 				w, h,
 				grassland.getCameraBounds(),
 				grassland.getTileSize());
 
+		playerController = new ExampleController(this.camera, nostalgiWorld, hud);
+
+		this.gameMode = new BaseGameMode(this.gameState, this.playerController, hud);
+
+
+
+
+		// setup map renderer.
+		tiledMapRenderer = new NostalgiRenderer(
+				grassland,
+				1 / (float)grassland.getTileSize());
+
+		gameState.setCurrentLevel(grassland);
+
 		camera.setPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
-		IHud hud = new BaseHud(w/2, h/2, this.gameState);
-		hud.addModule("Demo", new DemoHudModule());
-		hud.addModule("Debug", new DebugHudModule());
-		hud.init();
 
-		this.playerController = new ExampleController(this.camera, nostalgiWorld, hud);
-
-		this.gameMode = new BaseGameMode(this.gameState, this.playerState, this.playerController, hud);
-
-		this.gameEngine = new NostalgiBaseEngine(nostalgiWorld, camera, tiledMapRenderer, this.gameMode);
+		this.gameEngine = new NostalgiBaseEngine(nostalgiWorld, camera, tiledMapRenderer);
 
 		this.playerController.possessCharacter(createPlayerCharacter());
 

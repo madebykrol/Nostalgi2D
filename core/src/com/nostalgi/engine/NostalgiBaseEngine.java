@@ -35,7 +35,6 @@ import java.util.Map;
  * Created by ksdkrol on 2016-07-04.
  */
 public class NostalgiBaseEngine implements IGameEngine {
-    private IGameMode mode;
 
     private NostalgiCamera currentCamera;
     private NostalgiRenderer mapRenderer;
@@ -48,10 +47,9 @@ public class NostalgiBaseEngine implements IGameEngine {
     private Box2DDebugRenderer debug;
     private HashMap<Integer, Short> floorMap = new HashMap<Integer, Short>();
 
-    public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameMode mode) {
+    public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer) {
         this.world = world;
         this.currentCamera = camera;
-        this.mode = mode;
         this.mapRenderer = mapRenderer;
         this.debug = new Box2DDebugRenderer();
     }
@@ -62,7 +60,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.initInput();
 
         // Update playerbounds
-        world.createBody(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
+        world.createBody(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
         //initPlayerBounds(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
 
         // Update terrain / map bounds
@@ -77,12 +75,12 @@ public class NostalgiBaseEngine implements IGameEngine {
         float dTime = Gdx.graphics.getDeltaTime();
 
         // Update game mode.
-        ICharacter currentCharacter = getGameMode().getCurrentController().getCurrentPossessedCharacter();
+        ICharacter currentCharacter = world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
-        if(this.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
+        if(world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
-            this.getGameMode().update(dTime);
-            for(IController controller :  this.getGameMode().getControllers()) {
+            world.getGameMode().update(dTime);
+            for(IController controller :  world.getGameMode().getControllers()) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
 
                 Body playerBody = character.getPhysicsBody();
@@ -101,11 +99,11 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-            tickActors(this.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
+            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
 
             world.step(1f / 60f, 6, 2);
 
-            for(IController controller : this.getGameMode().getControllers()) {
+            for(IController controller : world.getGameMode().getControllers()) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
 
                 Body playerBody = character.getPhysicsBody();
@@ -117,12 +115,12 @@ public class NostalgiBaseEngine implements IGameEngine {
                 // replicate player state.
             }
 
-            replicateActors(this.getGameMode().getGameState().getCurrentLevel().getActors());
+            replicateActors(world.getGameMode().getGameState().getCurrentLevel().getActors());
         }
         else {
             Body playerBody = currentCharacter.getPhysicsBody();
             // put input into simulation
-            getGameMode().getCurrentController().update(dTime);
+           world.getGameMode().getCurrentController().update(dTime);
 
             playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
@@ -150,11 +148,11 @@ public class NostalgiBaseEngine implements IGameEngine {
     @Override
     public void render() {
 
-        this.mapRenderer.setCurrentPlayerCharacter(getGameMode().getCurrentController().getCurrentPossessedCharacter());
+        this.mapRenderer.setCurrentPlayerCharacter(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
         this.mapRenderer.render(Gdx.graphics.getDeltaTime());
 
-        if(this.getGameMode().getHud() != null) {
-            this.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        if(world.getGameMode().getHud() != null) {
+            world.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         }
 
         debug.render(world.getPhysicsWorld(), currentCamera.combined);
@@ -162,13 +160,8 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void dispose() {
-        this.getGameMode().dispose();
+        world.getGameMode().dispose();
         this.world.dispose();
-    }
-
-    @Override
-    public IGameMode getGameMode() {
-        return this.mode;
     }
 
     @Override
@@ -231,27 +224,27 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Get and set all input processors.
 
         // Hud input
-        if(this.getGameMode().getHud().getInputProcessor() != null)
-            inputProcessor.addProcessor(this.getGameMode().getHud().getInputProcessor());
+        if(world.getGameMode().getHud().getInputProcessor() != null)
+            inputProcessor.addProcessor(world.getGameMode().getHud().getInputProcessor());
 
         // Set gesture input processor
-        if (getGameMode().getCurrentController().getGestureListener() != null)
+        if (world.getGameMode().getCurrentController().getGestureListener() != null)
             inputProcessor.addProcessor(new GestureDetector(
-                    getGameMode().getCurrentController().getGestureListener()));
+                    world.getGameMode().getCurrentController().getGestureListener()));
 
         // Set standard input processor from controller
-        if(getGameMode().getCurrentController().getInputProcessor() != null)
+        if(world.getGameMode().getCurrentController().getInputProcessor() != null)
             inputProcessor.addProcessor(
-                    getGameMode().getCurrentController().getInputProcessor());
+                    world.getGameMode().getCurrentController().getInputProcessor());
 
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
     private void initMapActors() {
-        this.getGameMode().getGameState().getCurrentLevel().initActors();
+        world.getGameMode().getGameState().getCurrentLevel().initActors();
     }
 
     private void initMapWalls () {
-        this.getGameMode().getGameState().getCurrentLevel().initWalls();
+        world.getGameMode().getGameState().getCurrentLevel().initWalls();
     }
 }

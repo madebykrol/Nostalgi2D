@@ -28,11 +28,15 @@ import java.util.ArrayList;
 public class NostalgiWorld implements IWorld {
 
     private World world;
+    private IGameMode gameMode;
 
-    public NostalgiWorld(World world) {
+
+    public NostalgiWorld(World world, IGameMode gameMode) {
         this.world = world;
         world.setContactListener(initializeCollisionDetectionObservers());
+        this.gameMode = gameMode;
     }
+
 
     protected ContactListener initializeCollisionDetectionObservers() {
 
@@ -86,32 +90,49 @@ public class NostalgiWorld implements IWorld {
 
     }
 
-
+    /**
+     * @inheritDoc
+     */
     @Override
     public IGameMode getGameMode() {
-        return null;
+        return this.gameMode;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public IGameState getGameState() {
-        return null;
+        return this.gameMode.getGameState();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public World getPhysicsWorld() {
        return world;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void step(float timeStep, int velocityIterations, int positionIterations) {
         world.step(timeStep, velocityIterations, positionIterations);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Body createBody(IActor actor) {
         return createBody(actor, 1);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Body createBody(IActor actor, float unitScale) {
         // Update player bounds
@@ -157,11 +178,17 @@ public class NostalgiWorld implements IWorld {
         return actorBody;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Body createBody(IWall wall) {
         return createBody(wall, 1);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Body createBody(IWall wall, float unitScale) {
         // Set def.
@@ -205,6 +232,9 @@ public class NostalgiWorld implements IWorld {
         return b;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void updateBody(IActor actor) {
         Body playerBody =  actor.getPhysicsBody();
@@ -234,31 +264,73 @@ public class NostalgiWorld implements IWorld {
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void updateBody(IActor actor, float unitScale) {
         updateBody(actor, 1);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void updateBody(IWall wall) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void updateBody(IWall wall, float unitScale) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean destroyBody(Body body) {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public ArrayList<IActor> actorsCloseToLocation(Vector2 position, float distance) {
-        return null;
+        float factor = 2f;
+        if(distance <= 0) {
+            factor = 0.5f;
+        }
+
+        float x1 = (position.x) + (distance / factor);
+        float x2 = (position.x) - (distance / factor);
+
+        float y1 = (position.y) + (distance / factor);
+        float y2 = (position.y) - (distance / factor);
+
+        final ArrayList<IActor> actors = new ArrayList<IActor>();
+
+        world.QueryAABB(new QueryCallback() {
+                              @Override
+                              public boolean reportFixture(Fixture fixture) {
+                                  Object o = fixture.getBody().getUserData();
+                                  if (o instanceof IActor) {
+                                      actors.add((IActor) o);
+                                  }
+                                  return true;
+                              }
+                        }, x2, y2, x1, y1);
+
+        return actors;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void dispose() {
         world.dispose();

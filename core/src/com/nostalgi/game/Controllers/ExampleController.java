@@ -27,10 +27,11 @@ public class ExampleController extends BaseController {
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
     private IHud hud;
+    private IWorld world;
 
     public ExampleController(NostalgiCamera camera, IWorld world, IHud hud) {
-        super(camera, world);
-
+        super(camera);
+        this.world = world;
         this.hud = hud;
     }
 
@@ -97,7 +98,7 @@ public class ExampleController extends BaseController {
 
         Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
 
-        ArrayList<IActor> actors = actorsCloseToLocation(worldPos2D, 0f);
+        ArrayList<IActor> actors = world.actorsCloseToLocation(worldPos2D, 0f);
         if(!actors.isEmpty()) {
             IActor topActor = actors.get(0);
             if(topActor == this.getCurrentPossessedCharacter()) {

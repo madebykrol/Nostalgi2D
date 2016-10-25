@@ -15,7 +15,6 @@ public interface IGameEngine {
     void update();
     void render();
     void dispose();
-    IGameMode getGameMode();
 
     IWorld getWorld();
 

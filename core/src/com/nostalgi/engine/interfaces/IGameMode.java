@@ -16,9 +16,6 @@ public interface IGameMode extends Disposable{
     IGameState getGameState();
     void setGameState(IGameState gameState);
 
-    IPlayerState getPlayerState();
-    void setPlayerState(IPlayerState playerState);
-
     IController getCurrentController();
     void setCurrentController(IController controller);
 

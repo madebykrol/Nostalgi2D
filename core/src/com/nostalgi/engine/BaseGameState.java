@@ -21,7 +21,7 @@ public class BaseGameState implements IGameState {
     private float gameTime;
 
     @Replicated
-    private ArrayList<IPlayerState> players;
+    private ArrayList<IPlayerState> players = new ArrayList<IPlayerState>();
 
     NetworkRole networkRole;
 
@@ -42,6 +42,16 @@ public class BaseGameState implements IGameState {
     @Override
     public ArrayList<IPlayerState> getPlayers() {
         return players;
+    }
+
+    @Override
+    public void addPlayerState(IPlayerState playerState) {
+        this.players.add(playerState);
+    }
+
+    @Override
+    public IPlayerState getPlayerState(int player) {
+        return null;
     }
 
     @Override

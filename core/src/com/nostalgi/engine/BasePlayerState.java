@@ -8,6 +8,9 @@ import java.util.UUID;
  * Created by Kristoffer on 2016-07-26.
  */
 public class BasePlayerState implements IPlayerState {
+
+
+
     @Override
     public void setPlayerName(String name) {
 

@@ -15,6 +15,8 @@ public interface IGameState {
     void setCurrentLevel(ILevel level);
 
     ArrayList<IPlayerState> getPlayers();
+    void addPlayerState(IPlayerState playerState);
+    IPlayerState getPlayerState(int player);
 
     void update(float delta);
 

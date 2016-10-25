@@ -26,25 +26,22 @@ public class BaseHud implements IHud {
     private int screenHeight;
 
     private boolean yDown;
-    private IGameState gameState;
-
     private OrthographicCamera HUDCamera;
 
     private HashMap<String, IHudModule> modules = new HashMap<String, IHudModule>();
 
-    public BaseHud(int width, int height, IGameState gameState) {
-        this(width, height, gameState, new OrthographicCamera(width, height), false);
+    public BaseHud(int width, int height) {
+        this(width, height, new OrthographicCamera(width, height), false);
     }
 
-    public BaseHud(int width, int height, IGameState gameState, boolean yDown) {
-        this(width, height, gameState, new OrthographicCamera(width, height), yDown);
+    public BaseHud(int width, int height, boolean yDown) {
+        this(width, height, new OrthographicCamera(width, height), yDown);
     }
 
-    public BaseHud(int width, int height, IGameState gameState, OrthographicCamera camera, boolean yDown) {
+    public BaseHud(int width, int height, OrthographicCamera camera, boolean yDown) {
         screenWidth = width;
         screenHeight = height;
         this.yDown = yDown;
-        this.gameState = gameState;
         this.HUDCamera = camera;
 
         this.stage = new Stage(new StretchViewport(screenWidth, screenHeight, HUDCamera));

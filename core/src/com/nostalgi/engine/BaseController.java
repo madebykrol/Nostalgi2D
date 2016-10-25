@@ -29,11 +29,8 @@ public abstract class BaseController implements IController, InputProcessor {
     private GestureDetector.GestureListener gestureListener;
     private NostalgiCamera camera;
 
-    private IWorld world;
-
-    public BaseController (NostalgiCamera camera, IWorld world) {
+    public BaseController (NostalgiCamera camera) {
         this.camera = camera;
-        this.world = world;
     }
 
     @Override
@@ -85,36 +82,6 @@ public abstract class BaseController implements IController, InputProcessor {
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
         return false;
-    }
-
-    protected ArrayList<IActor> actorsCloseToLocation(Vector2 position, float distance) {
-
-        float factor = 2f;
-        if(distance <= 0) {
-            factor = 0.5f;
-        }
-
-        float x1 = (position.x) + (distance / factor);
-        float x2 = (position.x) - (distance / factor);
-
-        float y1 = (position.y) + (distance / factor);
-        float y2 = (position.y) - (distance / factor);
-
-        final ArrayList<IActor> actors = new ArrayList<IActor>();
-
-        world.getPhysicsWorld().QueryAABB(new QueryCallback() {
-                            @Override
-                            public boolean reportFixture(Fixture fixture) {
-                                Object o = fixture.getBody().getUserData();
-                                if (o instanceof IActor) {
-                                    actors.add((IActor) o);
-                                }
-                                return true;
-                            }
-                        },
-                x2, y2, x1, y1);
-
-        return actors;
     }
 
 

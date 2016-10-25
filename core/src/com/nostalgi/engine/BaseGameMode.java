@@ -15,14 +15,12 @@ import java.util.ArrayList;
 public class BaseGameMode implements IGameMode {
 
     private IGameState gameState;
-    private IPlayerState playerState;
     private ArrayList<IController> playerControllers =  new ArrayList<IController>();
     private IHud hud;
     private final NetworkRole isAuthority;
 
-    public BaseGameMode (IGameState gameState, IPlayerState playerState, IController playerController, IHud hud) {
+    public BaseGameMode (IGameState gameState,IController playerController, IHud hud) {
         this.gameState = gameState;
-        this.playerState = playerState;
         this.playerControllers.add(playerController);
         this.hud = hud;
         this.isAuthority = NetworkRole.ROLE_AUTHORITY;
@@ -36,16 +34,6 @@ public class BaseGameMode implements IGameMode {
     @Override
     public void setGameState(IGameState gameState) {
         this.gameState = gameState;
-    }
-
-    @Override
-    public IPlayerState getPlayerState() {
-        return this.playerState;
-    }
-
-    @Override
-    public void setPlayerState(IPlayerState playerState) {
-        this.playerState = playerState;
     }
 
     @Override
