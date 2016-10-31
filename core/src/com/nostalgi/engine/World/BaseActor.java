@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
@@ -42,7 +44,7 @@ public abstract class BaseActor implements IActor {
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
     private String name = "Actor"+this.hashCode();
 
-    private World world;
+    private IWorld world;
 
     private Body physicsBody;
 
@@ -55,6 +57,14 @@ public abstract class BaseActor implements IActor {
     private boolean isSensor = false;
 
     private boolean fixtureNeedsUpdate = false;
+
+    public BaseActor() {
+
+    }
+
+    public BaseActor(IWorld world) {
+        this.world = world;
+    }
 
     @Override
     public IActor getParent() {
@@ -199,7 +209,7 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void setWorld(World world) {
+    public void setWorld(IWorld world) {
         this.world = world;
     }
 

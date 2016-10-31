@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Created by ksdkrol on 2016-07-05.
  */
-public interface IActor {
+public interface IActor extends IWorldObject {
 
     IActor getParent();
     void setParent(IActor parent);
@@ -43,53 +43,8 @@ public interface IActor {
     boolean fixtureNeedsUpdate();
     boolean fixtureNeedsUpdate(boolean update);
 
-    /**
-     * Get world position, relative to parent
-     */
-    Vector2 getPosition();
-
-    /**
-     * Get absolute position relative to origin (0,0)
-     */
-    Vector2 getWorldPosition();
-
-    /**
-     * Set relative position relative to parent
-     * @param position
-     */
-    void setPosition(Vector2 position);
-
-    void setBoundingVolume(BoundingVolume body);
-    BoundingVolume getBoundingVolume(int index);
-
-    ArrayList<BoundingVolume> getBoundingVolumes();
-
-    Body getPhysicsBody();
-    void setPhysicsBody(Body body);
-
     void onOverlapBegin(IActor overlapper);
     void onOverlapEnd(IActor overlapper);
-
-    int getFloorLevel();
-    void setFloorLevel(int floor);
-
-    void setWorld(World world);
-
-    boolean isStatic();
-    boolean isStatic(boolean isStatic);
-
-    boolean isSensor();
-    boolean isSensor(boolean isSenor);
-
-    float getDensity();
-
-    void setDensity(float density);
-
-    float getFriction();
-
-    void setFriction(float friction);
-
-    void draw(Batch batch, float timeElapsed);
 
     void destroy();
 

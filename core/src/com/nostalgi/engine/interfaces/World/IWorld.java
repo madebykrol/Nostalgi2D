@@ -3,6 +3,7 @@ package com.nostalgi.engine.interfaces.World;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  *
  * Created by Kristoffer on 2016-07-23.
  */
-public interface IWorld{
+public interface IWorld {
 
     /**
      * get the current running game mode
@@ -34,12 +35,46 @@ public interface IWorld{
     World getPhysicsWorld();
 
     /**
-     * Step the physics world.
+     * get timestep
+     * @return
+     */
+    float getTimeStep();
+
+    /**
+     * Set timestep
      * @param timeStep
+     */
+    void setTimeStep(float timeStep);
+
+    /**
+     * Get velocity iterations
+     * @return
+     */
+    int getVelocityIterations();
+
+    /**
+     * set velocity iterations
      * @param velocityIterations
+     */
+
+    void setVelocityIterations(int velocityIterations);
+
+    /**
+     * get position iterations
+     * @return
+     */
+    int getPositionIterations();
+
+    /**
+     * set position iterations
      * @param positionIterations
      */
-    void step(float timeStep, int velocityIterations, int positionIterations);
+    void setPositionIterations(int positionIterations);
+
+    /**
+     * Tick the physics world.
+     */
+    void tick();
 
     /**
      * Create a physics body for a IActor with a fixed unit scale of 1
@@ -124,6 +159,15 @@ public interface IWorld{
     boolean destroyBody(Body body);
 
     /**
+     *
+     * @param origin
+     * @param direction
+     * @param distance
+     * @return
+     */
+    ArrayList<IWorldObject> rayCast(Vector2 origin, float direction, float distance);
+
+    /**
      * Perform a AABB collision query on a world position with the center of the querying square is given
      * by the position parameter.
      * and the length of the edges is given by the distance.
@@ -134,6 +178,20 @@ public interface IWorld{
      * @return
      */
     ArrayList<IActor> actorsCloseToLocation(Vector2 position, float distance);
+
+    /**
+     * Spawn a new actor into the world.
+     * Actors have to implement at least the IActor interface to be considered for spawning
+     * @param name
+     * @param physicsBound
+     * @param spawnPoint
+     * @param <T>
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @return
+     */
+    <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint) throws FailedToSpawnActorException;
+    <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor owner, ICharacter instigator) throws FailedToSpawnActorException;
 
     /**
      * Dispose of the current physics world state. Typically called when the game is shutting down.

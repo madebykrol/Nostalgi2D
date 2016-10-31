@@ -49,11 +49,6 @@ public class BaseHud implements IHud {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void addModule(String name, IHudModule module) {
         this.modules.put(name, module);
         module.init(stage);

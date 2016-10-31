@@ -6,26 +6,14 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
-import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.engine.physics.BoundingVolume;
-import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.Render.NostalgiCamera;
 
 import java.util.HashMap;
@@ -61,7 +49,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Update playerbounds
         world.createBody(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
-        //initPlayerBounds(this.getGameMode().getCurrentController().getCurrentPossessedCharacter());
 
         // Update terrain / map bounds
         initMapWalls();
@@ -92,16 +79,11 @@ public class NostalgiBaseEngine implements IGameEngine {
                 if (character.fixtureNeedsUpdate()) {
                     world.updateBody(character);
                 }
-
-                // Update NPC / Monster bounds
-                if (character.canEverTick()) {
-                    character.tick(Gdx.graphics.getDeltaTime());
-                }
             }
 
             tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
 
-            world.step(1f / 60f, 6, 2);
+            world.tick();
 
             for(IController controller : world.getGameMode().getControllers()) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
@@ -120,14 +102,14 @@ public class NostalgiBaseEngine implements IGameEngine {
         else {
             Body playerBody = currentCharacter.getPhysicsBody();
             // put input into simulation
-           world.getGameMode().getCurrentController().update(dTime);
+            world.getGameMode().getCurrentController().update(dTime);
 
             playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
             // Send input to server.
 
             // Run simulation
-            world.step(1f / 60f, 6, 2);
+            world.tick();
 
             Vector2 playerPos = currentCharacter.getWorldPosition();
             playerPos.x = playerBody.getPosition().x - 0.5f;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.Disposable;
  * Created by ksdkrol on 2016-07-04.
  */
 public interface IHud extends Disposable {
-    void init();
     void addModule(String name, IHudModule module);
     IHudModule getModule(String name);
     void update(float dTime);

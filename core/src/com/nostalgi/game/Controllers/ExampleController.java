@@ -26,13 +26,11 @@ public class ExampleController extends BaseController {
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
-    private IHud hud;
     private IWorld world;
 
-    public ExampleController(NostalgiCamera camera, IWorld world, IHud hud) {
+    public ExampleController(NostalgiCamera camera, IWorld world) {
         super(camera);
         this.world = world;
-        this.hud = hud;
     }
 
     @Override
@@ -103,7 +101,7 @@ public class ExampleController extends BaseController {
             IActor topActor = actors.get(0);
             if(topActor == this.getCurrentPossessedCharacter()) {
                 System.out.println("Clicked player - Open character wheel");
-                IHudModule module = hud.getModule("Debug");
+                IHudModule module = world.getGameMode().getHud().getModule("Debug");
                 if(module != null) {
                     module.isVisible(!module.isVisible());
                 }

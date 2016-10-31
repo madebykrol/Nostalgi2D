@@ -53,7 +53,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
             vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
             position = new Vector2(obj.getX(), obj.getY());
-        } else if( object instanceof PolygonMapObject) {
+        } else if(object instanceof PolygonMapObject) {
             PolygonMapObject obj = (PolygonMapObject) object;
 
             vertices = obj.getPolygon().getVertices();
@@ -78,13 +78,13 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             actor.setFriction(Float.parseFloat(friction));
         }
 
-        // set is Static
+        // set is static
         String isStatic = getObjectProperty(object, STATIC);
         if(isStatic != null) {
             actor.isStatic(Boolean.parseBoolean(isStatic));
         }
 
-        // set is Static
+        // set is sensor
         String isSensor= getObjectProperty(object, SENSOR);
         if(isStatic != null) {
             actor.isSensor(Boolean.parseBoolean(isSensor));
@@ -137,8 +137,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         return null;
     }
 
-    protected float[] rectangleToVertices(float x, float y, float width,
-                                              float height) {
+    protected float[] rectangleToVertices(float x, float y, float width, float height) {
         float[] result = new float[8];
         result[0] = x;
         result[1] = y;
@@ -196,37 +195,6 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         }
 
         return bv;
-    }
-
-    private void createPhysicsBody(IActor actor, float unitScale) {
-        BodyDef shapeDef = new BodyDef();
-        for(BoundingVolume bv : actor.getBoundingVolumes()) {
-            PolygonShape boundShape = bv.getShape();
-
-            shapeDef.position.set(
-                    (actor.getWorldPosition().x + bv.getRelativePosition().x) / unitScale,
-                    (actor.getWorldPosition().y + bv.getRelativePosition().y) / unitScale);
-            if (actor.isStatic()) {
-                shapeDef.type = BodyDef.BodyType.StaticBody;
-            } else {
-                shapeDef.type = BodyDef.BodyType.DynamicBody;
-            }
-
-            Body b = world.getPhysicsWorld().createBody(shapeDef);
-
-            b.setUserData(actor);
-
-            FixtureDef blockingBounds = new FixtureDef();
-
-            blockingBounds.density = actor.getDensity();
-            blockingBounds.friction = actor.getFriction();
-            blockingBounds.isSensor = bv.isSensor();
-            blockingBounds.shape = boundShape;
-            blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-            blockingBounds.filter.maskBits = bv.getCollisionMask();
-            b.createFixture(blockingBounds);
-            actor.setPhysicsBody(b);
-        }
     }
 
     @Override

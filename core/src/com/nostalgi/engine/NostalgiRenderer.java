@@ -73,11 +73,12 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
                     if(floorProp != null) {
                         floor = Integer.parseInt((String)floorProp);
                     }
-                    if(this.currentPlayer != null && floor == this.currentPlayer.getFloorLevel()) {
-                        this.currentPlayer.draw(this.getBatch(), timeElapsed);
-                    }
+
                     for(Map.Entry<String, IActor> entry : level.getActors().entrySet()) {
-                        entry.getValue().draw(getBatch(), timeElapsed);
+                        IActor actor = entry.getValue();
+                        if(actor != null && floor == actor.getFloorLevel()) {
+                            entry.getValue().draw(getBatch(), timeElapsed);
+                        }
                     }
                 }
             } else {

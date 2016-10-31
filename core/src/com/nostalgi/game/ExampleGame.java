@@ -12,6 +12,7 @@ import com.nostalgi.engine.BaseGameMode;
 import com.nostalgi.engine.BaseGameState;
 import com.nostalgi.engine.BaseHud;
 import com.nostalgi.engine.BasePlayerCharacter;
+import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.NostalgiActorFactory;
 import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Factories.NostalgiWallFactory;
@@ -23,6 +24,7 @@ import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.game.Controllers.ExampleController;
@@ -51,7 +53,7 @@ public class ExampleGame extends BaseGame {
 	IPlayerState playerState;
 
 	IAnimationFactory animationFactory;
-	World world;
+	IWorld world;
 
 	public ExampleGame(boolean headless) {
 		super(headless, false);
@@ -76,93 +78,95 @@ public class ExampleGame extends BaseGame {
 		// setup physics world
 		IHud hud = new BaseHud(w/2, h/2);
 		hud.addModule("Demo", new DemoHudModule());
-		hud.addModule("Debug", new DebugHudModule(gameMode));
-		hud.init();
+		hud.addModule("Debug", new DebugHudModule(gameState));
 
 		gameMode.setHud(hud);
 
 		IWorld nostalgiWorld = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
+        world = nostalgiWorld;
 
 		// Setup start level
 		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(nostalgiWorld), new NostalgiWallFactory(nostalgiWorld));
-
+        gameState.setCurrentLevel(grassland);
 		camera = new NostalgiCamera(
 				w, h,
 				grassland.getCameraBounds(),
 				grassland.getTileSize());
 
-		playerController = new ExampleController(this.camera, nostalgiWorld, hud);
+		playerController = new ExampleController(this.camera, nostalgiWorld);
 
 		gameMode.addController(playerController);
-
 
 		// setup map renderer.
 		tiledMapRenderer = new NostalgiRenderer(
 				grassland,
 				1 / (float)grassland.getTileSize());
 
-		gameState.setCurrentLevel(grassland);
-
 		camera.setPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
 
 		this.gameEngine = new NostalgiBaseEngine(nostalgiWorld, camera, tiledMapRenderer);
+        ICharacter defaultPawn = createPlayerCharacter("DefaultPawn1");
 
-		this.playerController.possessCharacter(createPlayerCharacter());
+        ICharacter defaultPawn2 = createPlayerCharacter("DefaultPawn2");
+		this.playerController.possessCharacter(defaultPawn);
 
 		this.gameEngine.init();
 	}
 
 
-	private ICharacter createPlayerCharacter() {
-		ICharacter playerCharacter = new BasePlayerCharacter();
-		playerCharacter.setPosition(new Vector2(9, 53));
-		playerCharacter.setParent(new RootActor());
-		//playerCharacter.setWorld();
-		animationFactory = new NostalgiAnimationFactory();
+	private ICharacter createPlayerCharacter(String name) {
+        try {
+            ICharacter playerCharacter = world.spawnActor(BasePlayerCharacter.class, name, true, new Vector2(8, 53));
+            animationFactory = new NostalgiAnimationFactory();
 
-		playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,
-				animationFactory.createAnimation("Spritesheet/char_walk_east.png",
-						32, 64, 1, 2, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_walk_east.png",
+                            32, 64, 1, 2, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.WalkingWestAnimation,
-				animationFactory.createAnimation("Spritesheet/char_walk_west.png",
-						32, 64, 1, 2, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.WalkingWestAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_walk_west.png",
+                            32, 64, 1, 2, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.WalkingNorthAnimation,
-				animationFactory.createAnimation("Spritesheet/char_walk_north.png",
-						32, 64, 1, 5, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.WalkingNorthAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_walk_north.png",
+                            32, 64, 1, 5, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.WalkingSouthAnimation,
-				animationFactory.createAnimation("Spritesheet/char_walk_south.png",
-						32, 64, 1, 5, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.WalkingSouthAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_walk_south.png",
+                            32, 64, 1, 5, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.IdleFaceSouthAnimation,
-				animationFactory.createAnimation("Spritesheet/char_idle.png",
-						32, 64, 1, 1, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.IdleFaceSouthAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_idle.png",
+                            32, 64, 1, 1, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.IdleFaceNorthAnimation,
-				animationFactory.createAnimation("Spritesheet/char_idle_north.png",
-						32, 64, 1, 1, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.IdleFaceNorthAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_idle_north.png",
+                            32, 64, 1, 1, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.IdleFaceEastAnimation,
-				animationFactory.createAnimation("Spritesheet/char_idle_east.png",
-						32, 64, 1, 1, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.IdleFaceEastAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_idle_east.png",
+                            32, 64, 1, 1, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		playerCharacter.addAnimation(AnimationStates.IdleFaceWestAnimation,
-				animationFactory.createAnimation("Spritesheet/char_idle_west.png",
-						32, 64, 1, 1, 1f / 6f,
-						Animation.PlayMode.LOOP));
+            playerCharacter.addAnimation(AnimationStates.IdleFaceWestAnimation,
+                    animationFactory.createAnimation("Spritesheet/char_idle_west.png",
+                            32, 64, 1, 1, 1f / 6f,
+                            Animation.PlayMode.LOOP));
 
-		return playerCharacter;
+            return playerCharacter;
+        }  catch(FailedToSpawnActorException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
 	}
 
 	@Override

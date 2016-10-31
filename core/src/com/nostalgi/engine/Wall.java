@@ -1,8 +1,13 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.nostalgi.engine.interfaces.World.IWall;
+import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.physics.BoundingVolume;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kristoffer on 2016-07-10.
@@ -28,56 +33,109 @@ public class Wall implements IWall {
         this(floors, position, new float[0]);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float[] getVertices() {
         return this.vertices;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float getX() {
         return this.position.x;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float getY() {
         return this.position.y;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setX(float x) {
         this.position.x = x;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setY(float y) {
         this.position.y = y;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setPosition(Vector2 pos) {
         this.position = pos;
     }
 
     @Override
+    public void setBoundingVolume(BoundingVolume body) {
+
+    }
+
+    @Override
+    public BoundingVolume getBoundingVolume(int index) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<BoundingVolume> getBoundingVolumes() {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
     public Vector2 getPosition() {
         return this.position;
     }
 
     @Override
-    public int[] getFloor() {
+    public Vector2 getWorldPosition() {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public int[] getFloors() {
         return this.floors;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setFloors(int[] floors) {
         this.floors = floors;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isOnFloor(int floor) {
         for (int floor1 : floors) {
@@ -89,13 +147,79 @@ public class Wall implements IWall {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Body getPhysicsBody() {
         return this.body;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setPhysicsBody(Body body) {
         this.body = body;
+    }
+
+    @Override
+    public int getFloorLevel() {
+        return 0;
+    }
+
+    @Override
+    public void setFloorLevel(int floor) {
+
+    }
+
+    @Override
+    public void setWorld(IWorld world) {
+
+    }
+
+    @Override
+    public boolean isStatic() {
+        return false;
+    }
+
+    @Override
+    public boolean isStatic(boolean isStatic) {
+        return false;
+    }
+
+    @Override
+    public boolean isSensor() {
+        return false;
+    }
+
+    @Override
+    public boolean isSensor(boolean isSenor) {
+        return false;
+    }
+
+    @Override
+    public float getDensity() {
+        return 0;
+    }
+
+    @Override
+    public void setDensity(float density) {
+
+    }
+
+    @Override
+    public float getFriction() {
+        return 0;
+    }
+
+    @Override
+    public void setFriction(float friction) {
+
+    }
+
+    @Override
+    public void draw(Batch batch, float timeElapsed) {
+
     }
 }

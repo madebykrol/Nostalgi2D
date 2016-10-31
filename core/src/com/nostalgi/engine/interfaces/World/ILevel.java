@@ -38,6 +38,7 @@ public interface ILevel extends Disposable {
 
     ArrayList<IWall> getWalls();
     HashMap<String, IActor> getActors();
+    void addActor(IActor actor);
 
     void initWalls();
     void initActors();

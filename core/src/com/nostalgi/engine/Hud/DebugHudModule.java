@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.IGameMode;
+import com.nostalgi.engine.interfaces.States.IGameState;
 
 /**
  * Created by Kristoffer on 2016-07-12.
@@ -13,10 +14,10 @@ public class DebugHudModule extends BaseHudModule {
     HudText fpsText;
     HudText timeText;
 
-    IGameMode mode;
+    IGameState state;
 
-    public DebugHudModule(IGameMode mode) {
-        this.mode = mode;
+    public DebugHudModule(IGameState state) {
+        this.state = state;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class DebugHudModule extends BaseHudModule {
         timeText.setVisible(this.isVisible());
 
         fpsText.update("FPS: " + Gdx.graphics.getFramesPerSecond());
-        timeText.update("Game Time: " + mode.getGameState().getGameTime());
+        timeText.update("Game Time: " + state.getGameTime());
 
     }
 }

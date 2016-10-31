@@ -121,6 +121,12 @@ public abstract class BaseLevel implements ILevel {
         return this.mapRoot.getChildren();
     }
 
+    @Override
+    public void addActor(IActor actor) {
+        this.mapRoot.addChild(actor);
+        actor.setParent(this.mapRoot);
+    }
+
     public void dispose() {
         this.map.dispose();
         for(Map.Entry<String, IActor> entry : getActors().entrySet()) {

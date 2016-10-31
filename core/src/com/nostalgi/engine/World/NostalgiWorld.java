@@ -1,5 +1,6 @@
 package com.nostalgi.engine.World;
 
+import com.badlogic.gdx.graphics.glutils.IndexArray;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -11,15 +12,20 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 /**
@@ -29,6 +35,10 @@ public class NostalgiWorld implements IWorld {
 
     private World world;
     private IGameMode gameMode;
+
+    private float timeStep = 1f / 60f;
+    private int velocityIterations = 6;
+    private int positionIterations = 2;
 
 
     public NostalgiWorld(World world, IGameMode gameMode) {
@@ -118,7 +128,55 @@ public class NostalgiWorld implements IWorld {
      * @inheritDoc
      */
     @Override
-    public void step(float timeStep, int velocityIterations, int positionIterations) {
+    public float getTimeStep() {
+        return timeStep;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void setTimeStep(float timeStep) {
+        this.timeStep = timeStep;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public int getVelocityIterations() {
+        return velocityIterations;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void setVelocityIterations(int velocityIterations) {
+        this.velocityIterations = velocityIterations;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public int getPositionIterations() {
+        return positionIterations;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void setPositionIterations(int positionIterations) {
+        this.positionIterations = positionIterations;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void tick() {
         world.step(timeStep, velocityIterations, positionIterations);
     }
 
@@ -277,7 +335,7 @@ public class NostalgiWorld implements IWorld {
      */
     @Override
     public void updateBody(IWall wall) {
-
+       updateBody(wall, 1);
     }
 
     /**
@@ -285,7 +343,15 @@ public class NostalgiWorld implements IWorld {
      */
     @Override
     public void updateBody(IWall wall, float unitScale) {
+        Body wallBody = wall.getPhysicsBody();
 
+        if(wallBody == null) {
+            createBody(wall, unitScale);
+        } else {
+            for(Fixture fix : wallBody.getFixtureList()) {
+                wallBody.destroyFixture(fix);
+            }
+        }
     }
 
     /**
@@ -294,6 +360,27 @@ public class NostalgiWorld implements IWorld {
     @Override
     public boolean destroyBody(Body body) {
         return false;
+    }
+
+
+    @Override
+    public ArrayList<IWorldObject> rayCast(Vector2 origin, float direction, float distance) {
+        Vector2 target = origin.cpy();
+        target.rotate(direction);
+        target.scl(distance);
+        final ArrayList<IWorldObject>  objects = new ArrayList<IWorldObject>();
+        world.rayCast(new RayCastCallback() {
+            @Override
+            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+                Object uO = fixture.getBody().getUserData();
+                if(uO instanceof IWorldObject) {
+                    objects.add((IWorldObject)uO);
+                }
+                return 0;
+            }
+        }, origin, target);
+
+        return objects;
     }
 
     /**
@@ -315,17 +402,55 @@ public class NostalgiWorld implements IWorld {
         final ArrayList<IActor> actors = new ArrayList<IActor>();
 
         world.QueryAABB(new QueryCallback() {
-                              @Override
-                              public boolean reportFixture(Fixture fixture) {
-                                  Object o = fixture.getBody().getUserData();
-                                  if (o instanceof IActor) {
-                                      actors.add((IActor) o);
-                                  }
-                                  return true;
-                              }
-                        }, x2, y2, x1, y1);
+              @Override
+              public boolean reportFixture(Fixture fixture) {
+                  Object o = fixture.getBody().getUserData();
+                  if (o instanceof IActor) {
+                      actors.add((IActor) o);
+                  }
+                  return true;
+              }
+        }, x2, y2, x1, y1);
 
         return actors;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint)
+            throws FailedToSpawnActorException
+    {
+        return spawnActor(type, name, physicsBound, spawnPoint, null, null);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor owner, ICharacter instigator)
+            throws FailedToSpawnActorException
+    {
+        IActor a;
+        try {
+            a = type.getConstructor(IWorld.class).newInstance(this);
+        } catch (NoSuchMethodException e) {
+            try {
+                a = type.newInstance();
+            } catch(Exception e1) {
+                throw new FailedToSpawnActorException(e1);
+            }
+        } catch (Exception e2) {
+            throw  new FailedToSpawnActorException(e2);
+        }
+
+        a.setPosition(spawnPoint);
+        a.setName(name);
+
+        gameMode.getGameState().getCurrentLevel().addActor(a);
+
+        return (T)a;
     }
 
     /**

@@ -27,7 +27,6 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private int walkingState;
 
     public BasePlayerCharacter () {
-
         this.isStatic(false);
         BoundingVolume boundingVolume = new BoundingVolume();
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
@@ -190,11 +189,6 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public void dispose() {
 
-    }
-
-    @Override
-    public String getName() {
-        return "BasePlayer";
     }
 
     @Override
