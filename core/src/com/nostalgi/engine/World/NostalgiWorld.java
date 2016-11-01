@@ -365,9 +365,11 @@ public class NostalgiWorld implements IWorld {
      */
     @Override
     public ArrayList<TraceHit> rayTrace(Vector2 origin, float direction, float distance, ArrayList<Class> filter, boolean stopAtWall) {
-        Vector2 target = origin.cpy();
-        target.rotate(direction);
-        target.scl(distance);
+        Vector2 target = new Vector2(
+                (float)Math.cos(direction * Math.PI / 180) * distance,
+                (float)Math.sin(direction * Math.PI / 180) * distance
+        );
+        target.add(origin);
         return rayTrace(origin, target, filter, stopAtWall);
     }
 

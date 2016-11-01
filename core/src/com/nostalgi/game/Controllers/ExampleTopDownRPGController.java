@@ -94,7 +94,7 @@ public class ExampleTopDownRPGController extends BaseController {
             ArrayList<Class> filters = new ArrayList<Class>();
             filters.add(BasePlayerCharacter.class);
             filters.add(Wall.class);
-            ArrayList<TraceHit> seeing = world.rayTrace(this.getCurrentPossessedCharacter().getWorldPosition(), this.getCurrentPossessedCharacter().getFacingDirection(), 1.5f, filters, false);
+            ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
             for(TraceHit hit : seeing) {
                 System.out.println(hit.object.getClass());
             }

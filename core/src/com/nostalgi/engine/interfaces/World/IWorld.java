@@ -160,7 +160,7 @@ public interface IWorld {
     boolean destroyBody(Body body);
 
     /**
-     * Send a ray from the origin travelling in the given direction for the given distance
+     * Send a ray from the origin travelling in the given direction in degrees for the given distance
      * returning a set of TraceHits
      *
      * The filter is a excluding filter, which means that if the trace hits a object of or direct descendant of class in filter it will be ignored
