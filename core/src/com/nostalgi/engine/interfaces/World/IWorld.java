@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
+import com.nostalgi.engine.physics.TraceHit;
 
 import java.util.ArrayList;
 
@@ -159,13 +160,35 @@ public interface IWorld {
     boolean destroyBody(Body body);
 
     /**
+     * Send a ray from the origin travelling in the given direction for the given distance
+     * returning a set of TraceHits
      *
+     * The filter is a excluding filter, which means that if the trace hits a object of or direct descendant of class in filter it will be ignored
+     *
+     * if stopAtWalls is true, the trace will stop at the first wall it hits, returning that wall as the last hit in the stack
      * @param origin
      * @param direction
      * @param distance
+     * @param filter
+     * @param stopAtWall
      * @return
      */
-    ArrayList<IWorldObject> rayCast(Vector2 origin, float direction, float distance);
+    ArrayList<TraceHit> rayTrace(Vector2 origin, float direction, float distance, ArrayList<Class> filter, boolean stopAtWall);
+
+    /**
+     * Send a ray from the origin travelling to the given target
+     * returning a set of TraceHits
+     *
+     * The filter is a excluding filter, which means that if the trace hits a object of or direct descendant of class in filter it will be ignored
+     *
+     * if stopAtWalls is true, the trace will stop at the first wall it hits, returning that wall as the last hit in the stack
+     * @param origin
+     * @param target
+     * @param filter
+     * @param stopAtWall
+     * @return
+     */
+    ArrayList<TraceHit> rayTrace(Vector2 origin, Vector2 target, ArrayList<Class> filter, boolean stopAtWall);
 
     /**
      * Perform a AABB collision query on a world position with the center of the querying square is given

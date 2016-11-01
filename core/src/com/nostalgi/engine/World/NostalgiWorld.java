@@ -1,6 +1,4 @@
 package com.nostalgi.engine.World;
-
-import com.badlogic.gdx.graphics.glutils.IndexArray;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -24,8 +22,7 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
-
-import java.lang.reflect.InvocationTargetException;
+import com.nostalgi.engine.physics.TraceHit;
 import java.util.ArrayList;
 
 /**
@@ -363,20 +360,49 @@ public class NostalgiWorld implements IWorld {
     }
 
 
+    /**
+     * @inheritDoc
+     */
     @Override
-    public ArrayList<IWorldObject> rayCast(Vector2 origin, float direction, float distance) {
+    public ArrayList<TraceHit> rayTrace(Vector2 origin, float direction, float distance, ArrayList<Class> filter, boolean stopAtWall) {
         Vector2 target = origin.cpy();
         target.rotate(direction);
         target.scl(distance);
-        final ArrayList<IWorldObject>  objects = new ArrayList<IWorldObject>();
+        return rayTrace(origin, target, filter, stopAtWall);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public ArrayList<TraceHit> rayTrace(Vector2 origin, Vector2 target, final ArrayList<Class> filter, final boolean stopAtWall) {
+        final ArrayList<TraceHit>  objects = new ArrayList<TraceHit>();
+
         world.rayCast(new RayCastCallback() {
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
                 Object uO = fixture.getBody().getUserData();
-                if(uO instanceof IWorldObject) {
-                    objects.add((IWorldObject)uO);
+                if(uO != null && uO instanceof IWorldObject) {
+                    if(!(filter.contains(uO.getClass()) || filter.contains(uO.getClass().getSuperclass()))) {
+                        TraceHit hit = new TraceHit();
+                        hit.object = (IWorldObject) uO;
+
+                        hit.hitNormal = normal;
+                        hit.hitNormal.add(point);
+
+                        hit.hitPoint = point;
+                        hit.fraction = fraction;
+
+                        hit.fixture = fixture;
+
+                        objects.add(hit);
+
+                        if (stopAtWall && uO instanceof IWall) {
+                            return 0;
+                        }
+                    }
                 }
-                return 0;
+                return 1;
             }
         }, origin, target);
 

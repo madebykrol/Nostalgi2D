@@ -56,4 +56,7 @@ public interface IWorldObject {
 
     void draw(Batch batch, float timeElapsed);
 
+    float getMass();
+    void setMass(float mass);
+
 }

@@ -202,5 +202,4 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
                     this.getHeight());
         }
     }
-
 }

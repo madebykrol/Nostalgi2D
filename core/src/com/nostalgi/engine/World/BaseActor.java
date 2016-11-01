@@ -26,9 +26,15 @@ public abstract class BaseActor implements IActor {
     private IActor parent;
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
 
+    /**
+     * Position relative to parent
+     */
     @Replicated
     private Vector2 position;
 
+    /**
+     * Absolut world position
+     */
     @Replicated
     private Vector2 worldPosition;
 
@@ -149,7 +155,6 @@ public abstract class BaseActor implements IActor {
     public void setCurrentAnimation(int state) {
         if(animations.containsKey(state))
             this.currentAnimation = animations.get(state);
-
     }
 
     @Override
@@ -269,6 +274,17 @@ public abstract class BaseActor implements IActor {
         return this.isSensor = isSensor;
     }
 
+    @Override
+    public float getMass() {
+        return 0;
+    }
+
+    @Override
+    public void setMass(float mass) {
+
+    }
+
+
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;
     }
@@ -288,6 +304,7 @@ public abstract class BaseActor implements IActor {
             this.transformationNeedsUpdate = false;
         }
     }
+
 
     public void destroy() {
         

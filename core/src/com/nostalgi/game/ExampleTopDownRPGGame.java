@@ -21,13 +21,11 @@ import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.Hud.DemoHudModule;
 import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.World.NostalgiWorld;
-import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
-import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.game.Controllers.ExampleController;
+import com.nostalgi.game.Controllers.ExampleTopDownRPGController;
 import com.nostalgi.game.levels.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
@@ -38,7 +36,7 @@ import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.Render.NostalgiCamera;
 
-public class ExampleGame extends BaseGame {
+public class ExampleTopDownRPGGame extends BaseGame {
 
 	NostalgiCamera camera;
 	NostalgiRenderer tiledMapRenderer;
@@ -55,7 +53,7 @@ public class ExampleGame extends BaseGame {
 	IAnimationFactory animationFactory;
 	IWorld world;
 
-	public ExampleGame(boolean headless) {
+	public ExampleTopDownRPGGame(boolean headless) {
 		super(headless, false);
 	}
 
@@ -82,18 +80,17 @@ public class ExampleGame extends BaseGame {
 
 		gameMode.setHud(hud);
 
-		IWorld nostalgiWorld = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
-        world = nostalgiWorld;
+		world = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
 
 		// Setup start level
-		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(nostalgiWorld), new NostalgiWallFactory(nostalgiWorld));
+		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(world), new NostalgiWallFactory(world));
         gameState.setCurrentLevel(grassland);
 		camera = new NostalgiCamera(
 				w, h,
 				grassland.getCameraBounds(),
 				grassland.getTileSize());
 
-		playerController = new ExampleController(this.camera, nostalgiWorld);
+		playerController = new ExampleTopDownRPGController(this.camera, world);
 
 		gameMode.addController(playerController);
 
@@ -106,7 +103,7 @@ public class ExampleGame extends BaseGame {
 		viewport = new StretchViewport(h, w, camera);
 
 
-		this.gameEngine = new NostalgiBaseEngine(nostalgiWorld, camera, tiledMapRenderer);
+		this.gameEngine = new NostalgiBaseEngine(world, camera, tiledMapRenderer);
         ICharacter defaultPawn = createPlayerCharacter("DefaultPawn1");
 
         ICharacter defaultPawn2 = createPlayerCharacter("DefaultPawn2");

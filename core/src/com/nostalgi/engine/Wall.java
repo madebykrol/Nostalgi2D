@@ -222,4 +222,15 @@ public class Wall implements IWall {
     public void draw(Batch batch, float timeElapsed) {
 
     }
+
+    @Override
+    public float getMass() {
+        return 0;
+    }
+
+    @Override
+    public void setMass(float mass) {
+
+    }
+
 }

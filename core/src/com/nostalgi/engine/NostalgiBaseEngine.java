@@ -93,6 +93,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                 Vector2 playerPos = character.getWorldPosition();
                 playerPos.x = playerBody.getPosition().x - 0.5f;
                 playerPos.y = playerBody.getPosition().y - 0.5f;
+                currentCharacter.setPosition(playerPos);
 
                 // replicate player state.
             }
@@ -111,9 +112,10 @@ public class NostalgiBaseEngine implements IGameEngine {
             // Run simulation
             world.tick();
 
-            Vector2 playerPos = currentCharacter.getWorldPosition();
+            Vector2 playerPos = currentCharacter.getPosition();
             playerPos.x = playerBody.getPosition().x - 0.5f;
             playerPos.y = playerBody.getPosition().y - 0.5f;
+            currentCharacter.setPosition(playerPos);
         }
 
         // Update camera

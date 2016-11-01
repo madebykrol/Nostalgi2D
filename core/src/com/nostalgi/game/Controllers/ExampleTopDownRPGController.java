@@ -1,26 +1,29 @@
 package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.nostalgi.engine.BaseController;
+import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.States.AnimationStates;
-import com.nostalgi.engine.interfaces.Hud.IHud;
+import com.nostalgi.engine.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
+import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.interfaces.World.IWorldObject;
+import com.nostalgi.engine.physics.TraceHit;
 
 import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-09-14.
  */
-public class ExampleController extends BaseController {
+public class ExampleTopDownRPGController extends BaseController {
 
     private boolean leftIsPressed = false;
     private boolean rightIsPressed = false;
@@ -28,7 +31,7 @@ public class ExampleController extends BaseController {
     private boolean downIsPressed = false;
     private IWorld world;
 
-    public ExampleController(NostalgiCamera camera, IWorld world) {
+    public ExampleTopDownRPGController(NostalgiCamera camera, IWorld world) {
         super(camera);
         this.world = world;
     }
@@ -87,6 +90,14 @@ public class ExampleController extends BaseController {
                 if(faceDirection == Direction.NORTH)
                     currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
             }
+
+            ArrayList<Class> filters = new ArrayList<Class>();
+            filters.add(BasePlayerCharacter.class);
+            filters.add(Wall.class);
+            ArrayList<TraceHit> seeing = world.rayTrace(this.getCurrentPossessedCharacter().getWorldPosition(), this.getCurrentPossessedCharacter().getFacingDirection(), 1.5f, filters, false);
+            for(TraceHit hit : seeing) {
+                System.out.println(hit.object.getClass());
+            }
         }
     }
 
@@ -107,7 +118,6 @@ public class ExampleController extends BaseController {
                 }
             }
         }
-
         return false;
     }
 
