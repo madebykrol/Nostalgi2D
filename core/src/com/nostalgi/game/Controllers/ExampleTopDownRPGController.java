@@ -16,6 +16,7 @@ import com.nostalgi.engine.interfaces.World.IInteractable;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.TraceHit;
+import com.nostalgi.game.Hud.ExampleHudModule;
 
 import java.util.ArrayList;
 
@@ -97,8 +98,14 @@ public class ExampleTopDownRPGController extends BaseController {
             IHudModule mainHud = world.getGameMode().getHud().getModule("Main");
             for(TraceHit hit : seeing) {
                 IWorldObject actor = hit.object;
+                System.out.println("Looking at: "+actor.getName());
                 if(actor instanceof IInteractable) {
-
+                    mainHud.isVisible(true);
+                    if(mainHud instanceof ExampleHudModule && actor instanceof IActor) {
+                        ((ExampleHudModule)mainHud).setLookingAt((IActor)actor);
+                    }
+                } else {
+                    mainHud.isVisible(false);
                 }
             }
 

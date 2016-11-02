@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.nostalgi.engine.Hud.BaseHudModule;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
+import com.nostalgi.engine.interfaces.World.IActor;
 
 /**
  * Created by ksdkrol on 2016-07-12.
@@ -20,6 +21,8 @@ import com.nostalgi.engine.interfaces.Hud.IHudModule;
 public class ExampleHudModule extends BaseHudModule {
     private Skin skin;
     private Table table;
+
+    IActor lookingAt;
 
     public ExampleHudModule() {
         // A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
@@ -73,5 +76,13 @@ public class ExampleHudModule extends BaseHudModule {
     @Override
     public void update(float dTime) {
         table.setVisible(this.isVisible());
+    }
+
+    public void setLookingAt(IActor actor) {
+        this.lookingAt = actor;
+    }
+
+    public IActor getLookingAt() {
+        return this.lookingAt;
     }
 }

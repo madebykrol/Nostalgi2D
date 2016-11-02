@@ -15,7 +15,7 @@ android {
         instrumentTest.setRoot('tests')
     }
     defaultConfig {
-        applicationId "com.pixelwarriors.game"
+        applicationId "com.nostalgi.game"
         minSdkVersion 8
         targetSdkVersion 23
     }

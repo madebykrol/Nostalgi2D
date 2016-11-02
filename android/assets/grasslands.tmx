@@ -1013,21 +1013,21 @@
     <property name="Type" value="com.nostalgi.engine.World.MapChangerActor"/>
    </properties>
   </object>
-  <object id="215" name="Water1" x="304" y="349">
+  <object id="215" name="Water1" x="312" y="351.554">
    <properties>
     <property name="Floor" value="1"/>
     <property name="IsStatic" type="bool" value="true"/>
     <property name="Type" value="com.nostalgi.game.Actors.WaterActor"/>
    </properties>
-   <polygon points="0,0 15,-23 361,-22 389,-1 389,126 367,147 26,152 6,133"/>
+   <polygon points="0,0 14.5373,-21.5543 349.864,-20.6171 377,-0.937143 377,118.08 355.679,137.76 25.1979,142.446 5.81491,124.64"/>
   </object>
-  <object id="216" name="Water2" x="125" y="297">
+  <object id="216" name="Water2" x="121.613" y="301">
    <properties>
     <property name="Floor" value="1"/>
     <property name="IsStatic" type="bool" value="true"/>
     <property name="Type" value="com.nostalgi.game.Actors.WaterActor"/>
    </properties>
-   <polygon points="0,0 23,19 22,181 -2,200 -127,202 -127,0"/>
+   <polygon points="0,0 22.3867,18.0594 21.4133,172.04 -1.94667,190.099 -123.613,192 -123.613,0"/>
   </object>
  </objectgroup>
 </map>
