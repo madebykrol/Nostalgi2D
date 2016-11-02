@@ -1,4 +1,4 @@
-package com.nostalgi.engine.Hud;
+package com.nostalgi.game.Hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -11,16 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.nostalgi.engine.Hud.BaseHudModule;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 
 /**
  * Created by ksdkrol on 2016-07-12.
  */
-public class DemoHudModule extends BaseHudModule {
+public class ExampleHudModule extends BaseHudModule {
     private Skin skin;
     private Table table;
 
-    public DemoHudModule () {
+    public ExampleHudModule() {
         // A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
         // recommended solely for the convenience of getting a texture, region, etc as a drawable, tinted drawable, etc.
         skin = new Skin();

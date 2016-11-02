@@ -59,4 +59,7 @@ public interface IWorldObject {
     float getMass();
     void setMass(float mass);
 
+    void setName(String name);
+    String getName();
+
 }

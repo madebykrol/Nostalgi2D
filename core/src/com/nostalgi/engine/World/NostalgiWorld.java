@@ -370,6 +370,7 @@ public class NostalgiWorld implements IWorld {
                 (float)Math.sin(direction * Math.PI / 180) * distance
         );
         target.add(origin);
+
         return rayTrace(origin, target, filter, stopAtWall);
     }
 

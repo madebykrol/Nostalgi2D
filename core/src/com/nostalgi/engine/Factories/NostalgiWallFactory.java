@@ -5,16 +5,10 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.nostalgi.engine.Wall;
+import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
  * Created by Kristoffer on 2016-07-16.

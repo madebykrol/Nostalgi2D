@@ -1015,6 +1015,7 @@
   </object>
   <object id="215" name="Water1" x="304" y="349">
    <properties>
+    <property name="Floor" value="1"/>
     <property name="IsStatic" type="bool" value="true"/>
     <property name="Type" value="com.nostalgi.game.Actors.WaterActor"/>
    </properties>
@@ -1022,6 +1023,7 @@
   </object>
   <object id="216" name="Water2" x="125" y="297">
    <properties>
+    <property name="Floor" value="1"/>
     <property name="IsStatic" type="bool" value="true"/>
     <property name="Type" value="com.nostalgi.game.Actors.WaterActor"/>
    </properties>

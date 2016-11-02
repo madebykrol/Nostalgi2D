@@ -24,9 +24,6 @@ public interface IActor extends IWorldObject {
     void addChildren(HashMap<String, IActor> children);
     void addChild(IActor actor);
 
-    void setName(String name);
-    String getName();
-
     boolean canEverTick();
     void tick(float delta);
 

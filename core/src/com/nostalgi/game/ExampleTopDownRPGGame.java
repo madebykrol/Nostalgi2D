@@ -18,7 +18,7 @@ import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Factories.NostalgiWallFactory;
 import com.nostalgi.engine.Hud.DebugHudModule;
 import com.nostalgi.engine.BasePlayerState;
-import com.nostalgi.engine.Hud.DemoHudModule;
+import com.nostalgi.game.Hud.ExampleHudModule;
 import com.nostalgi.engine.States.AnimationStates;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
@@ -75,7 +75,7 @@ public class ExampleTopDownRPGGame extends BaseGame {
 
 		// setup physics world
 		IHud hud = new BaseHud(w/2, h/2);
-		hud.addModule("Demo", new DemoHudModule());
+		hud.addModule("Demo", new ExampleHudModule());
 		hud.addModule("Debug", new DebugHudModule(gameState));
 
 		gameMode.setHud(hud);

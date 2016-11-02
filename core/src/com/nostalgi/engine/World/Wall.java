@@ -1,4 +1,4 @@
-package com.nostalgi.engine;
+package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -31,6 +31,22 @@ public class Wall implements IWall {
 
     public Wall(int[] floors, Vector2 position) {
         this(floors, position, new float[0]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public String getName() {
+        return "Wall-"+this.hashCode();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void setName(String name) {
+        return;
     }
 
     /**

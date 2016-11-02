@@ -103,6 +103,11 @@ public class BaseHud implements IHud {
     }
 
     @Override
+    public Stage getStage() {
+        return this.stage;
+    }
+
+    @Override
     public InputProcessor getInputProcessor() {
         return this.stage;
     }

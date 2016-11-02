@@ -3,17 +3,16 @@ package com.nostalgi.game.Controllers;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.States.AnimationStates;
-import com.nostalgi.engine.Wall;
+import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
-import com.nostalgi.engine.interfaces.World.IWall;
+import com.nostalgi.engine.interfaces.World.IInteractable;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.TraceHit;
@@ -95,9 +94,14 @@ public class ExampleTopDownRPGController extends BaseController {
             filters.add(BasePlayerCharacter.class);
             filters.add(Wall.class);
             ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
+            IHudModule mainHud = world.getGameMode().getHud().getModule("Main");
             for(TraceHit hit : seeing) {
-                System.out.println(hit.object.getClass());
+                IWorldObject actor = hit.object;
+                if(actor instanceof IInteractable) {
+
+                }
             }
+
         }
     }
 

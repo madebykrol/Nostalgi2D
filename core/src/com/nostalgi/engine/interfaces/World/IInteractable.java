@@ -5,5 +5,5 @@ package com.nostalgi.engine.interfaces.World;
  */
 
 public interface IInteractable {
-
+    
 }
