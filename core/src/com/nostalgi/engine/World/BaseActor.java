@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.compression.lzma.Base;
+import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IWorld;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 public abstract class BaseActor implements IActor {
 
     @Replicated
+    @NostalgiField(fieldName = "Floor")
     private int floor = 1;
 
     private IActor parent;
@@ -48,18 +50,24 @@ public abstract class BaseActor implements IActor {
     private Animation currentAnimation;
 
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
+
+    @NostalgiField(fieldName = "Name")
     private String name = "Actor"+this.hashCode();
 
     private IWorld world;
 
     private Body physicsBody;
 
+
     private boolean isReplicated = false;
 
+    @NostalgiField(fieldName = "Density")
     private float density = 100f;
+    @NostalgiField(fieldName = "Friction")
     private float friction = 1f;
-
+    @NostalgiField(fieldName = "IsStatic")
     private boolean isStatic = false;
+    @NostalgiField(fieldName = "IsSensor")
     private boolean isSensor = false;
 
     private boolean fixtureNeedsUpdate = false;

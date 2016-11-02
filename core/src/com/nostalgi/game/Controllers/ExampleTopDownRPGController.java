@@ -117,7 +117,6 @@ public class ExampleTopDownRPGController extends BaseController {
         ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
         ExampleHudModule mainHud = (ExampleHudModule) world.getGameMode().getHud().getModule("Main");
 
-
         for(TraceHit hit : seeing) {
             IWorldObject actor = hit.object;
             System.out.println("Looking at: "+actor.getName());
