@@ -31,6 +31,8 @@ public class ExampleTopDownRPGController extends BaseController {
     private boolean downIsPressed = false;
     private IWorld world;
 
+    private boolean isLookingAtActor;
+
     public ExampleTopDownRPGController(NostalgiCamera camera, IWorld world) {
         super(camera);
         this.world = world;
@@ -42,72 +44,9 @@ public class ExampleTopDownRPGController extends BaseController {
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
         if (currentPossessedCharacter != null) {
-            currentPossessedCharacter.stop();
+            handleMovement(currentPossessedCharacter, dTime);
+            handleLookingAtHudChanges(currentPossessedCharacter, dTime);
 
-            if(upIsPressed && rightIsPressed) {
-                currentPossessedCharacter.face(Direction.NORTH_EAST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
-            } else if (upIsPressed && leftIsPressed) {
-                currentPossessedCharacter.face(Direction.NORTH_WEST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
-            } else if (downIsPressed && rightIsPressed) {
-                currentPossessedCharacter.face(Direction.SOUTH_EAST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
-            } else if(downIsPressed && leftIsPressed) {
-                currentPossessedCharacter.face(Direction.SOUTH_WEST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
-            } else if(downIsPressed) {
-                currentPossessedCharacter.face(Direction.SOUTH);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
-            } else if(upIsPressed) {
-                currentPossessedCharacter.face(Direction.NORTH);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
-            } else if(leftIsPressed) {
-                currentPossessedCharacter.face(Direction.WEST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
-            } else if(rightIsPressed) {
-                currentPossessedCharacter.face(Direction.EAST);
-                currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
-            }
-
-            //this.currentPossessedCharacter.face(new Vector2(32,32));
-
-            if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {
-                currentPossessedCharacter.moveForward(5);
-            } else {
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
-                float faceDirection = currentPossessedCharacter.getFacingDirection();
-
-                if(faceDirection == Direction.SOUTH)
-                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
-
-                if(faceDirection == Direction.EAST)
-                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
-
-                if(faceDirection == Direction.WEST)
-                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
-
-                if(faceDirection == Direction.NORTH)
-                    currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
-            }
-
-            ArrayList<Class> filters = new ArrayList<Class>();
-            filters.add(BasePlayerCharacter.class);
-            filters.add(Wall.class);
-            ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
-            IHudModule mainHud = world.getGameMode().getHud().getModule("Main");
-            for(TraceHit hit : seeing) {
-                IWorldObject actor = hit.object;
-                System.out.println("Looking at: "+actor.getName());
-                if(actor instanceof IInteractable) {
-                    mainHud.isVisible(true);
-                    if(mainHud instanceof ExampleHudModule && actor instanceof IActor) {
-                        ((ExampleHudModule)mainHud).setLookingAt((IActor)actor);
-                    }
-                } else {
-                    mainHud.isVisible(false);
-                }
-            }
 
         }
     }
@@ -169,5 +108,85 @@ public class ExampleTopDownRPGController extends BaseController {
         if(keycode == Input.Keys.DOWN)
             this.downIsPressed = false;
         return true;
+    }
+
+    private void handleLookingAtHudChanges(ICharacter currentPossessedCharacter, float dTime) {
+        ArrayList<Class> filters = new ArrayList<Class>();
+        filters.add(BasePlayerCharacter.class);
+        filters.add(Wall.class);
+        ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
+        ExampleHudModule mainHud = (ExampleHudModule) world.getGameMode().getHud().getModule("Main");
+
+
+        for(TraceHit hit : seeing) {
+            IWorldObject actor = hit.object;
+            System.out.println("Looking at: "+actor.getName());
+            if(actor instanceof IInteractable) {
+                if(actor instanceof IActor) {
+                    IActor lookingAt =  mainHud.getLookingAt();
+                    if(!actor.equals(lookingAt)) {
+                        mainHud.isVisible(true);
+                        mainHud.setLookingAt((IActor) actor);
+                    }
+                }
+            }
+        }
+
+        if(seeing.isEmpty()) {
+            mainHud.isVisible(false);
+            mainHud.setLookingAt(null);
+        }
+
+    }
+
+    private void handleMovement(ICharacter currentPossessedCharacter, float dTime) {
+        currentPossessedCharacter.stop();
+
+        if(upIsPressed && rightIsPressed) {
+            currentPossessedCharacter.face(Direction.NORTH_EAST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+        } else if (upIsPressed && leftIsPressed) {
+            currentPossessedCharacter.face(Direction.NORTH_WEST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+        } else if (downIsPressed && rightIsPressed) {
+            currentPossessedCharacter.face(Direction.SOUTH_EAST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+        } else if(downIsPressed && leftIsPressed) {
+            currentPossessedCharacter.face(Direction.SOUTH_WEST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+        } else if(downIsPressed) {
+            currentPossessedCharacter.face(Direction.SOUTH);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+        } else if(upIsPressed) {
+            currentPossessedCharacter.face(Direction.NORTH);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+        } else if(leftIsPressed) {
+            currentPossessedCharacter.face(Direction.WEST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
+        } else if(rightIsPressed) {
+            currentPossessedCharacter.face(Direction.EAST);
+            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
+        }
+
+        //this.currentPossessedCharacter.face(new Vector2(32,32));
+
+        if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {
+            currentPossessedCharacter.moveForward(5);
+        } else {
+            currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+            float faceDirection = currentPossessedCharacter.getFacingDirection();
+
+            if(faceDirection == Direction.SOUTH)
+                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+
+            if(faceDirection == Direction.EAST)
+                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
+
+            if(faceDirection == Direction.WEST)
+                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
+
+            if(faceDirection == Direction.NORTH)
+                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
+        }
     }
 }

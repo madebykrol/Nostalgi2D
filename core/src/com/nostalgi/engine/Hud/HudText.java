@@ -8,9 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  * Created by Kristoffer on 2016-07-12.
  */
 public class HudText extends Actor {
-    //Remember to pass this in!
-
-
     protected BitmapFont font;
     protected String text;
     protected float x;
@@ -37,7 +34,6 @@ public class HudText extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         font.draw(batch, text, x, y);
-        //Also remember that an actor uses local coordinates for drawing within
-        //itself!
+        //Also remember that an actor uses local coordinates for drawing within itself!
     }
 }

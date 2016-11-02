@@ -2,17 +2,9 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.QueryCallback;
-import com.badlogic.gdx.physics.box2d.World;
-import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.Render.NostalgiCamera;
-import com.nostalgi.engine.interfaces.World.IWorld;
-
-import java.util.ArrayList;
 
 
 /**
@@ -25,7 +17,7 @@ import java.util.ArrayList;
 
 public abstract class BaseController implements IController, InputProcessor {
 
-    private ICharacter currentPossessedCharacter;
+    private ICharacter character;
     private GestureDetector.GestureListener gestureListener;
     private NostalgiCamera camera;
 
@@ -35,13 +27,13 @@ public abstract class BaseController implements IController, InputProcessor {
 
     @Override
     public void possessCharacter(ICharacter character) {
-        this.currentPossessedCharacter = character;
+        this.character = character;
         character.setCurrentController(this);
     }
 
     @Override
     public ICharacter getCurrentPossessedCharacter() {
-        return this.currentPossessedCharacter;
+        return this.character;
     }
 
     @Override
