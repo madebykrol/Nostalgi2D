@@ -13,6 +13,12 @@ So please do not rely on these assets without giving credits to the designers in
 ## Roadmap
 <ul>
 <li><s>Character Possession</s></li>
+<li><s>Trigger Volumes</s></li>
+<li><s>Physics movement</s></li>
+<li><s>Raycasting</s></li>
+<li><s>AABB Querying</s></li>
+<li><s>Multiple shape / fixtures per physics body on actors</s></li>
+<li><s>Floors and layered rendering (4 floors default)</s></li>
 <li>Animated tiles</li>
 <li>SpawnerActor</li>
 <li>Spatial sound sources</li>
