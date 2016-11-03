@@ -46,8 +46,6 @@ public class ExampleTopDownRPGController extends BaseController {
         if (currentPossessedCharacter != null) {
             handleMovement(currentPossessedCharacter, dTime);
             handleLookingAtHudChanges(currentPossessedCharacter, dTime);
-
-
         }
     }
 
@@ -77,8 +75,8 @@ public class ExampleTopDownRPGController extends BaseController {
         super.keyDown(keycode);
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
-        if(keycode == Input.Keys.LEFT) this.leftIsPressed = true;{
-
+        if(keycode == Input.Keys.LEFT) {
+            this.leftIsPressed = true;
             currentPossessedCharacter.face(Direction.WEST);
         }
         if(keycode == Input.Keys.RIGHT) {
