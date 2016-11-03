@@ -1,6 +1,6 @@
 android {
     buildToolsVersion "23.0.2"
-    compileSdkVersion 23
+    compileSdkVersion 24
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -16,8 +16,8 @@ android {
     }
     defaultConfig {
         applicationId "com.nostalgi.game"
-        minSdkVersion 8
-        targetSdkVersion 23
+        minSdkVersion 24
+        targetSdkVersion 24
     }
 }
 
@@ -82,8 +82,8 @@ eclipse {
     }
 
     jdt {
-        sourceCompatibility = 1.6
-        targetCompatibility = 1.6
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
     }
 
     classpath {
