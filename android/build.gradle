@@ -16,7 +16,7 @@ android {
     }
     defaultConfig {
         applicationId "com.nostalgi.game"
-        minSdkVersion 24
+        minSdkVersion 17
         targetSdkVersion 24
     }
 }

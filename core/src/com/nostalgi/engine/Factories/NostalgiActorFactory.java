@@ -80,7 +80,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
             for(Field field : c.getSuperclass().getDeclaredFields()) {
                 field.setAccessible(true);
-                NostalgiField annotation = field.getDeclaredAnnotation(NostalgiField.class);
+                NostalgiField annotation = field.getAnnotation(NostalgiField.class);
                 if(annotation != null) {
                     String fieldName = annotation.fieldName();
                     if(fieldName.isEmpty()) {
