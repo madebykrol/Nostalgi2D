@@ -12,6 +12,7 @@ So please do not rely on these assets without giving credits to the designers in
 
 ## Roadmap
 <ul>
+<li><stroke>Character Possession</stroke></li>
 <li>Animated tiles</li>
 <li>SpawnerActor</li>
 <li>Spatial sound sources</li>
