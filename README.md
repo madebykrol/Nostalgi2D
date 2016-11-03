@@ -11,3 +11,9 @@ Currently there are a bunch of bundled free assets, these will be removed and ch
 So please do not rely on these assets without giving credits to the designers in your live projects
 
 ## Roadmap
+1 Animated tiles
+2 SpawnerActor
+3 Spatial sound sources
+4 Level travelling
+5 Basic AI Controller
+6 Network / Multiplayer capabilities
