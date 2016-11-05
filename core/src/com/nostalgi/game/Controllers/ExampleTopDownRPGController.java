@@ -7,7 +7,7 @@ import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Render.NostalgiCamera;
-import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -141,28 +141,28 @@ public class ExampleTopDownRPGController extends BaseController {
 
         if(upIsPressed && rightIsPressed) {
             currentPossessedCharacter.face(Direction.NORTH_EAST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingNorthAnimation);
         } else if (upIsPressed && leftIsPressed) {
             currentPossessedCharacter.face(Direction.NORTH_WEST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingNorthAnimation);
         } else if (downIsPressed && rightIsPressed) {
             currentPossessedCharacter.face(Direction.SOUTH_EAST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingSouthAnimation);
         } else if(downIsPressed && leftIsPressed) {
             currentPossessedCharacter.face(Direction.SOUTH_WEST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingSouthAnimation);
         } else if(downIsPressed) {
             currentPossessedCharacter.face(Direction.SOUTH);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingSouthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingSouthAnimation);
         } else if(upIsPressed) {
             currentPossessedCharacter.face(Direction.NORTH);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingNorthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingNorthAnimation);
         } else if(leftIsPressed) {
             currentPossessedCharacter.face(Direction.WEST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingWestAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingWestAnimation);
         } else if(rightIsPressed) {
             currentPossessedCharacter.face(Direction.EAST);
-            currentPossessedCharacter.setWalkingState(AnimationStates.WalkingEastAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.WalkingEastAnimation);
         }
 
         //this.currentPossessedCharacter.face(new Vector2(32,32));
@@ -170,20 +170,20 @@ public class ExampleTopDownRPGController extends BaseController {
         if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {
             currentPossessedCharacter.moveForward(5);
         } else {
-            currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+            currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
             float faceDirection = currentPossessedCharacter.getFacingDirection();
 
             if(faceDirection == Direction.SOUTH)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceSouthAnimation);
+                currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
 
             if(faceDirection == Direction.EAST)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceEastAnimation);
+                currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceEastAnimation);
 
             if(faceDirection == Direction.WEST)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceWestAnimation);
+                currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceWestAnimation);
 
             if(faceDirection == Direction.NORTH)
-                currentPossessedCharacter.setWalkingState(AnimationStates.IdleFaceNorthAnimation);
+                currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceNorthAnimation);
         }
     }
 }

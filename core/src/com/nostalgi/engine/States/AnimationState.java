@@ -3,7 +3,7 @@ package com.nostalgi.engine.States;
 /**
  * Created by Kristoffer on 2016-07-06.
  */
-public class AnimationStates {
+public class AnimationState {
     /**
      * 0x00
      */

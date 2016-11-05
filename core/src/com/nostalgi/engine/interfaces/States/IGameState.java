@@ -2,6 +2,7 @@ package com.nostalgi.engine.interfaces.States;
 
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.States.GameState;
 import com.nostalgi.engine.interfaces.World.ILevel;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public interface IGameState {
 
     Vector2 getGravity();
 
+    void setState(GameState state);
+    GameState getState();
 
     NetworkRole getNetworkRole();
 }

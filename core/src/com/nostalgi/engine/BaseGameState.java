@@ -3,6 +3,7 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.States.GameState;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.ILevel;
@@ -23,10 +24,23 @@ public class BaseGameState implements IGameState {
     @Replicated
     private ArrayList<IPlayerState> players = new ArrayList<IPlayerState>();
 
+    @Replicated
+    private GameState gameState = GameState.STOPPED;
+
     NetworkRole networkRole;
 
     public BaseGameState() {
         networkRole = NetworkRole.ROLE_AUTHORITY;
+    }
+
+    @Override
+    public void setState(GameState state) {
+        gameState = state;
+    }
+
+    @Override
+    public GameState getState() {
+        return this.gameState;
     }
 
     @Override
@@ -56,7 +70,8 @@ public class BaseGameState implements IGameState {
 
     @Override
     public void update(float delta) {
-        gameTime += delta;
+        if(gameState == GameState.RUNNING)
+            gameTime += delta;
     }
 
     @Override
