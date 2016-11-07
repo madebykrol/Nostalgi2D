@@ -42,4 +42,6 @@ public interface ILevel extends Disposable {
 
     void initWalls();
     void initActors();
+
+    void onLoad();
 }

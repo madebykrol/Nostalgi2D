@@ -46,15 +46,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void init() {
         // init input
         this.initInput();
-
-        // Update playerbounds
-        world.createBody(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
-
-        // Update terrain / map bounds
-        initMapWalls();
-
-        // Init map objects. like triggers, chests doors.
-        initMapActors();
     }
 
     @Override
@@ -66,7 +57,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         if(world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
-            world.getGameMode().update(dTime);
+            world.getGameMode().tick(dTime);
             for(IController controller :  world.getGameMode().getControllers()) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
 
@@ -85,19 +76,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             world.tick();
 
-            for(IController controller : world.getGameMode().getControllers()) {
-                ICharacter character = controller.getCurrentPossessedCharacter();
-
-                Body playerBody = character.getPhysicsBody();
-
-                Vector2 playerPos = character.getWorldPosition();
-                playerPos.x = playerBody.getPosition().x - 0.5f;
-                playerPos.y = playerBody.getPosition().y - 0.5f;
-                currentCharacter.setPosition(playerPos);
-
-                // replicate player state.
-            }
-
             replicateActors(world.getGameMode().getGameState().getCurrentLevel().getActors());
         }
         else {
@@ -107,25 +85,21 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
+            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
             // Send input to server.
 
             // Run simulation
             world.tick();
-
-            Vector2 playerPos = currentCharacter.getPosition();
-            playerPos.x = playerBody.getPosition().x - 0.5f;
-            playerPos.y = playerBody.getPosition().y - 0.5f;
-            currentCharacter.setPosition(playerPos);
         }
 
         // Update camera
-        if(this.currentCamera != null) {
-            this.currentCamera.setPositionSafe(currentCharacter.getWorldPosition());
+        if(this.currentCamera != null && this.currentCamera.followPlayerCharacter()) {
+            this.getWorld().setCameraPositionSafe(currentCharacter.getWorldPosition());
         }
 
         this.currentCamera.update();
 
-        this.getWorld().getGameMode().update(dTime);
+        this.getWorld().getGameMode().tick(dTime);
 
         // Set view
         this.mapRenderer.setView(this.currentCamera);
@@ -195,6 +169,16 @@ public class NostalgiBaseEngine implements IGameEngine {
             IActor actor = entry.getValue();
             if(actor.canEverTick()) {
                 actor.tick(delta);
+                if(actor.physicsSimulated()) {
+                    Body playerBody = actor.getPhysicsBody();
+
+                    Vector2 playerPos = actor.getWorldPosition();
+                    // Center it to character to physics body!
+
+                    playerPos.x = playerBody.getPosition().x - 0.5f;
+                    playerPos.y = playerBody.getPosition().y - 0.5f;
+                    actor.setPosition(playerPos);
+                }
                 if(actor.getChildren() != null)
                     this.tickActors(actor.getChildren(), delta);
             }
@@ -224,13 +208,5 @@ public class NostalgiBaseEngine implements IGameEngine {
                     world.getGameMode().getCurrentController().getInputProcessor());
 
         Gdx.input.setInputProcessor(inputProcessor);
-    }
-
-    private void initMapActors() {
-        world.getGameMode().getGameState().getCurrentLevel().initActors();
-    }
-
-    private void initMapWalls () {
-        world.getGameMode().getGameState().getCurrentLevel().initWalls();
     }
 }

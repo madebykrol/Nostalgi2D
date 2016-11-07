@@ -48,4 +48,7 @@ public interface IActor extends IWorldObject {
     void addOnDestroyListener();
 
     boolean isReplicated();
+
+    boolean physicsSimulated();
+    boolean physicsSimulated(boolean simulated);
 }

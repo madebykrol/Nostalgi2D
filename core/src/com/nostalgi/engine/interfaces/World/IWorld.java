@@ -1,9 +1,13 @@
 package com.nostalgi.engine.interfaces.World;
 
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
+import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.physics.TraceHit;
@@ -11,7 +15,7 @@ import com.nostalgi.engine.physics.TraceHit;
 import java.util.ArrayList;
 
 /**
- * Physics World abstraction.
+ * World abstraction.
  *
  * Created by Kristoffer on 2016-07-23.
  */
@@ -215,6 +219,41 @@ public interface IWorld {
      */
     <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint) throws FailedToSpawnActorException;
     <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor owner, ICharacter instigator) throws FailedToSpawnActorException;
+
+    /**
+     * Set the current projecting camera.
+     * @param camera
+     */
+    void setCamera(OrthographicCamera camera);
+
+
+    /**
+     * Get the current projecting camera.
+     * @return
+     */
+    OrthographicCamera getCamera();
+
+    Vector2 project(Vector2 vector);
+    Vector2 unproject(Vector2 vector);
+
+    /**
+     * Set the world bounds. this will prevent the camera from panning out of the world.
+     * @param bounds
+     */
+    void setWorldBounds(LevelCameraBounds bounds);
+
+    /**
+     * Set the world bounds. this will prevent the camera from panning out of the world.
+     * @param left
+     * @param bottom
+     * @param width
+     * @param height
+     */
+    void setWorldBounds(int left, int bottom, int width, int height);
+
+    void setCameraPositionSafe(Vector2 position);
+    void setCameraPositionSafe(float x, float y);
+
 
     /**
      * Dispose of the current physics world state. Typically called when the game is shutting down.

@@ -11,60 +11,14 @@ import com.nostalgi.engine.interfaces.IFollowCamera;
  * Created by Kristoffer on 2016-06-26.
  */
 public class NostalgiCamera extends OrthographicCamera implements IFollowCamera {
-    private int left, right, bottom, top, unitScale;
+    private int unitScale;
 
-    private float camViewportHalfWidth = 0;
-    private float camViewportHalfHeight = 0;
-
-    public NostalgiCamera(float w, float h, LevelCameraBounds bounds, int unitScale) {
+    public NostalgiCamera(float w, float h, int unitScale) {
         super(w, h);
         this.unitScale = unitScale;
         setToOrtho(false, w / (unitScale), h / (unitScale));
-        setWorldBounds(bounds);
     }
 
-    public void setWorldBounds(LevelCameraBounds bounds) {
-        this.setWorldBounds(bounds.left, bounds.bottom, bounds.right, bounds.top);
-    }
-
-    public void setWorldBounds(int left, int bottom, int width, int height) {
-
-        this.left = left;
-        this.bottom = bottom;
-
-        this.top = bottom + height;
-        this.right = left + width;
-
-        camViewportHalfWidth = this.viewportWidth  * 0.5f;
-        camViewportHalfHeight = this.viewportHeight * 0.5f;
-    }
-
-    public void moveToWorldFromScreenLocation(Vector2 screenLocation) {
-        moveToWorldFromScreenLocation(screenLocation.x, screenLocation.y);
-    }
-
-    public void moveToWorldFromScreenLocation(float x, float y) {
-        Vector3 worldPos = this.unproject(new Vector3(x, y, 0));
-
-        setPositionSafe(worldPos.x, worldPos.y);
-    }
-    
-    public void setPositionSafe(Vector2 pos) {
-        this.setPositionSafe(pos.x, pos.y);
-    }
-
-    public void setPositionSafe(float x, float y) {
-
-        // Clamp x
-        float x1 = MathUtils.clamp(x, left + (camViewportHalfWidth*zoom), right - (camViewportHalfWidth*zoom));
-
-        // Clamp y
-        float y1 = MathUtils.clamp(y, bottom + (camViewportHalfHeight*zoom), top - (camViewportHalfHeight*zoom));
-
-        // Set these positions
-        this.position.set(x1, y1, 0);
-        update();
-    }
 
     @Override
     public boolean followPlayerCharacter() {

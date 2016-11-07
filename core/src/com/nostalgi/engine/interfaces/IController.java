@@ -34,18 +34,6 @@ public interface IController {
     InputProcessor getInputProcessor();
 
     /**
-     * Return the current rendering camera.
-     * @return
-     */
-    NostalgiCamera getCamera();
-
-    /**
-     * Set the current rendering camera.
-     * @param camera
-     */
-    void setCamera(NostalgiCamera camera);
-
-    /**
      * Update, this is called as often as possible.
      * @param dTime
      */

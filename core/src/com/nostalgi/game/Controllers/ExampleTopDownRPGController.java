@@ -29,13 +29,9 @@ public class ExampleTopDownRPGController extends BaseController {
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
-    private IWorld world;
 
-    private boolean isLookingAtActor;
-
-    public ExampleTopDownRPGController(NostalgiCamera camera, IWorld world) {
-        super(camera);
-        this.world = world;
+    public ExampleTopDownRPGController(IWorld world) {
+        super(world);
     }
 
     @Override
@@ -51,9 +47,8 @@ public class ExampleTopDownRPGController extends BaseController {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 worldPos = getCamera().unproject(new Vector3(screenX, screenY, 0));
-
-        Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+        IWorld world = getWorld();
+        Vector2 worldPos2D = world.unproject(new Vector2(screenX, screenY));
 
         ArrayList<IActor> actors = world.actorsCloseToLocation(worldPos2D, 0f);
         if(!actors.isEmpty()) {
@@ -109,6 +104,7 @@ public class ExampleTopDownRPGController extends BaseController {
     }
 
     private void handleLookingAtHudChanges(ICharacter currentPossessedCharacter, float dTime) {
+        IWorld world = getWorld();
         ArrayList<Class> filters = new ArrayList<Class>();
         filters.add(BasePlayerCharacter.class);
         filters.add(Wall.class);

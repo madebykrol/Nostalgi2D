@@ -35,7 +35,7 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
-    public void update(float dTime) {
+    public void tick(float dTime) {
         this.gameState.update(dTime);
     }
 

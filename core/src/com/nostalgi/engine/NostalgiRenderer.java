@@ -48,11 +48,16 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
 
     private float timeElapsed;
 
-    public NostalgiRenderer(ILevel level, float unitScale) {
-        super(level.getMap(), unitScale);
-        this.level = level;
+    public NostalgiRenderer(float unitScale) {
+        super(null, unitScale);
 
         shapeRenderer = new ShapeRenderer();
+    }
+
+    public void loadLevel(ILevel level) {
+        level.onLoad();
+        this.level  = level;
+        this.map = level.getMap();
     }
 
     public Batch getBatch() {

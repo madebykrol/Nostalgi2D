@@ -62,4 +62,6 @@ public interface IWorldObject {
     void setName(String name);
     String getName();
 
+
+
 }
