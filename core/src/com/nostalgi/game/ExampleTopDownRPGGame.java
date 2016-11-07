@@ -73,6 +73,8 @@ public class ExampleTopDownRPGGame extends BaseGame {
 
 		gameMode = new BaseGameMode(this.gameState);
 
+		int unitScale = 32;
+
 		// setup physics world
 		IHud hud = new BaseHud(w/2, h/2);
 		hud.addModule("Main", new ExampleHudModule());
@@ -80,26 +82,27 @@ public class ExampleTopDownRPGGame extends BaseGame {
 
 		gameMode.setHud(hud);
 
-		world = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode);
+		camera = new NostalgiCamera(
+				w, h,
+				unitScale);
+
+		world = new NostalgiWorld(new World(gameState.getGravity(), true), gameMode, camera);
 
 		// Setup start level
 		ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(world), new NostalgiWallFactory(world));
         gameState.setCurrentLevel(grassland);
-		camera = new NostalgiCamera(
-				w, h,
-				grassland.getCameraBounds(),
-				grassland.getTileSize());
 
-		playerController = new ExampleTopDownRPGController(this.camera, world);
+		playerController = new ExampleTopDownRPGController(world);
 
 		gameMode.addController(playerController);
 
 		// setup map renderer.
-		tiledMapRenderer = new NostalgiRenderer(
-				grassland,
-				1 / (float)grassland.getTileSize());
+		tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
+		tiledMapRenderer.loadLevel(grassland);
 
-		camera.setPositionSafe(grassland.getCameraInitLocation());
+		world.setWorldBounds(grassland.getCameraBounds());
+
+		world.setCameraPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
 

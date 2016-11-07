@@ -323,4 +323,12 @@ public abstract class BaseActor implements IActor {
     public boolean isReplicated() {
         return this.isReplicated;
     }
+
+    public boolean physicsSimulated() {
+        return true;
+    }
+
+    public boolean  physicsSimulated( boolean simulated) {
+        return simulated;
+    }
 }

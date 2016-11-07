@@ -1,5 +1,9 @@
 package com.nostalgi.engine.World;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
+import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -37,11 +42,19 @@ public class NostalgiWorld implements IWorld {
     private int velocityIterations = 6;
     private int positionIterations = 2;
 
+    private OrthographicCamera camera;
 
-    public NostalgiWorld(World world, IGameMode gameMode) {
+    private int worldBoundsLeft, worldBoundsRight, worldBoundsBottom, worldBoundsTop;
+
+    private float camViewportHalfWidth = 0;
+    private float camViewportHalfHeight = 0;
+
+    public NostalgiWorld(World world, IGameMode gameMode, OrthographicCamera camera) {
         this.world = world;
-        world.setContactListener(initializeCollisionDetectionObservers());
         this.gameMode = gameMode;
+        this.camera = camera;
+        world.setContactListener(initializeCollisionDetectionObservers());
+
     }
 
 
@@ -479,7 +492,74 @@ public class NostalgiWorld implements IWorld {
 
         gameMode.getGameState().getCurrentLevel().addActor(a);
 
+        if(physicsBound)
+            createBody(a);
+
         return (T)a;
+    }
+
+    @Override
+    public void setCamera(OrthographicCamera camera) {
+        this.camera = camera;
+    }
+
+    @Override
+    public OrthographicCamera getCamera() {
+        return this.camera;
+    }
+
+    @Override
+    public Vector2 project(Vector2 vector) {
+        Vector3 v = camera.project(new Vector3(vector.x, vector.y, 0f));
+        return new Vector2(v.x, v.y);
+    }
+
+    @Override
+    public Vector2 unproject(Vector2 vector) {
+        Vector3 v = camera.unproject(new Vector3(vector.x, vector.y, 0f));
+        return new Vector2(v.x, v.y);
+    }
+
+
+    @Override
+    public void setWorldBounds(LevelCameraBounds bounds) {
+        this.setWorldBounds(bounds.left, bounds.bottom, bounds.right, bounds.top);
+    }
+
+    @Override
+    public void setWorldBounds(int left, int bottom, int width, int height) {
+
+        this.worldBoundsLeft = left;
+        this.worldBoundsBottom = bottom;
+
+        this.worldBoundsTop = bottom + height;
+        this.worldBoundsRight = left + width;
+
+        camViewportHalfWidth = this.getCamera().viewportWidth  * 0.5f;
+        camViewportHalfHeight = this.getCamera().viewportHeight * 0.5f;
+    }
+
+    @Override
+    public void setCameraPositionSafe(Vector2 position) {
+        setCameraPositionSafe(position.x, position.y);
+    }
+
+    @Override
+    public void setCameraPositionSafe(float x, float y) {
+
+        // Clamp x
+        float x1 = MathUtils.clamp(x,
+                worldBoundsLeft + (camViewportHalfWidth*this.camera.zoom),
+                worldBoundsRight - (camViewportHalfWidth*this.camera.zoom));
+
+        // Clamp y
+        float y1 = MathUtils.clamp(y,
+                worldBoundsBottom + (camViewportHalfHeight*this.camera.zoom),
+                worldBoundsTop - (camViewportHalfHeight*this.camera.zoom));
+
+        // Set these positions
+        this.camera.position.set(x1, y1, 0);
+        this.camera.update();
     }
 
     /**

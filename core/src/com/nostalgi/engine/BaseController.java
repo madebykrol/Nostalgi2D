@@ -5,6 +5,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 
 /**
@@ -19,10 +20,10 @@ public abstract class BaseController implements IController, InputProcessor {
 
     private ICharacter character;
     private GestureDetector.GestureListener gestureListener;
-    private NostalgiCamera camera;
+    private IWorld world;
 
-    public BaseController (NostalgiCamera camera) {
-        this.camera = camera;
+    public BaseController (IWorld world) {
+        this.world = world;
     }
 
     @Override
@@ -76,12 +77,8 @@ public abstract class BaseController implements IController, InputProcessor {
         return false;
     }
 
-
-    public void setCamera(NostalgiCamera camera) {
-        this.camera = camera;
+    public IWorld getWorld() {
+        return this.world;
     }
 
-    public NostalgiCamera getCamera() {
-        return this.camera;
-    }
 }

@@ -169,4 +169,10 @@ public abstract class BaseLevel implements ILevel {
         return this.groundLayerName;
     }
 
+    @Override
+    public void onLoad() {
+        this.initMap();
+        this.initActors();
+        this.initWalls();
+    }
 }

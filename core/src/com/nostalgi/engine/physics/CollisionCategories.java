@@ -29,7 +29,8 @@ public class CollisionCategories {
             CATEGORY_TRIGGER |
             CATEGORY_NPC |
             CATEGORY_ITEM |
-            CATEGORY_PROJECTILES;
+            CATEGORY_PROJECTILES |
+            CATEGORY_PLAYER;
 
     public static final short MASK_MONSTER = CATEGORY_PLAYER |
             CATEGORY_TRIGGER |

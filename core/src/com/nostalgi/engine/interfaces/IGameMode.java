@@ -24,9 +24,11 @@ public interface IGameMode extends Disposable{
 
     ArrayList<IController> getControllers();
 
+
+
     IHud getHud();
     void setHud(IHud hud);
 
-    void update(float dTime);
+    void tick(float dTime);
 
 }
