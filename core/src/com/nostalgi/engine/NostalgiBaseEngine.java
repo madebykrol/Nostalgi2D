@@ -33,7 +33,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     private IWorld world;
 
     private Box2DDebugRenderer debug;
-    private HashMap<Integer, Short> floorMap = new HashMap<Integer, Short>();
 
     public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer) {
         this.world = world;
@@ -107,8 +106,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void render() {
-
-        this.mapRenderer.setCurrentPlayerCharacter(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
         this.mapRenderer.render(Gdx.graphics.getDeltaTime());
 
         if(world.getGameMode().getHud() != null) {

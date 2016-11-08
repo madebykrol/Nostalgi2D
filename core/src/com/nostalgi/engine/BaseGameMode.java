@@ -6,6 +6,7 @@ import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
+import com.nostalgi.engine.interfaces.World.IActor;
 
 import java.util.ArrayList;
 
@@ -62,6 +63,11 @@ public class BaseGameMode implements IGameMode {
     @Override
     public ArrayList<IController> getControllers() {
         return this.playerControllers;
+    }
+
+    @Override
+    public IActor choosePlayerStart(IController player) {
+        return null;
     }
 
     @Override
