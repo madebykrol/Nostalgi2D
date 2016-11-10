@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
+import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -44,17 +45,18 @@ public class NostalgiWorld implements IWorld {
 
     private OrthographicCamera camera;
 
+    private NostalgiRenderer renderer;
+
     private int worldBoundsLeft, worldBoundsRight, worldBoundsBottom, worldBoundsTop;
 
     private float camViewportHalfWidth = 0;
     private float camViewportHalfHeight = 0;
 
-    public NostalgiWorld(World world, IGameMode gameMode, OrthographicCamera camera) {
+    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera) {
         this.world = world;
-        this.gameMode = gameMode;
         this.camera = camera;
+        this.renderer = mapRenderer;
         world.setContactListener(initializeCollisionDetectionObservers());
-
     }
 
 
@@ -116,6 +118,11 @@ public class NostalgiWorld implements IWorld {
     @Override
     public IGameMode getGameMode() {
         return this.gameMode;
+    }
+
+    @Override
+    public void setGameMode(IGameMode gameMode) {
+        this.gameMode = gameMode;
     }
 
     /**
@@ -490,7 +497,7 @@ public class NostalgiWorld implements IWorld {
         a.setPosition(spawnPoint);
         a.setName(name);
 
-        gameMode.getGameState().getCurrentLevel().addActor(a);
+        renderer.getCurrentLevel().addActor(a);
 
         if(physicsBound)
             createBody(a);

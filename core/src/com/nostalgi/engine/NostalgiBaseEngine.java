@@ -71,11 +71,11 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
+            tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
 
             world.tick();
 
-            replicateActors(world.getGameMode().getGameState().getCurrentLevel().getActors());
+            replicateActors(mapRenderer.getCurrentLevel().getActors());
         }
         else {
             Body playerBody = currentCharacter.getPhysicsBody();
@@ -84,7 +84,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
-            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
+            tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
             // Send input to server.
 
             // Run simulation

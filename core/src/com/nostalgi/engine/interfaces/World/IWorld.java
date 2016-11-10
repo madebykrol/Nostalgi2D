@@ -27,6 +27,8 @@ public interface IWorld {
      */
     IGameMode getGameMode();
 
+    void setGameMode(IGameMode gameMode);
+
     /**
      * Get the current gamestate
      * @return IGameState

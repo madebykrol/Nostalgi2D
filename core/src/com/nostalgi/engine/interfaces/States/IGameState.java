@@ -22,8 +22,6 @@ public interface IGameState {
 
     float getGameTime();
 
-    Vector2 getGravity();
-
 
     NetworkRole getNetworkRole();
 }

@@ -55,6 +55,10 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
         this.map = level.getMap();
     }
 
+    public ILevel getCurrentLevel() {
+        return this.level;
+    }
+
     public Batch getBatch() {
         return this.batch;
     }

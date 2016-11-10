@@ -7,6 +7,7 @@ import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 
@@ -20,8 +21,8 @@ public class BaseGameMode implements IGameMode {
     private IHud hud;
     private final NetworkRole isAuthority;
 
-    public BaseGameMode (IGameState gameState) {
-        this.gameState = gameState;
+    public BaseGameMode () {
+
         this.isAuthority = NetworkRole.ROLE_AUTHORITY;
     }
 
@@ -47,7 +48,11 @@ public class BaseGameMode implements IGameMode {
 
     @Override
     public void setCurrentController(IController controller) {
-        this.playerControllers.set(0,controller);
+        if(this.playerControllers.size() > 0) {
+            this.playerControllers.set(0, controller);
+        } else {
+            this.addController(controller);
+        }
     }
 
     @Override
