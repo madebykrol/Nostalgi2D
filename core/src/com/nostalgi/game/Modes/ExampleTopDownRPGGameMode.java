@@ -29,7 +29,7 @@ import com.nostalgi.game.Hud.ExampleHudModule;
 public class ExampleTopDownRPGGameMode extends BaseGameMode {
     private IWorld world;
     public ExampleTopDownRPGGameMode(IWorld world) {
-        super();
+        super(world);
 
         this.world = world;
 
@@ -54,7 +54,6 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
 
 
         ICharacter defaultPawn = createPlayerCharacter("DefaultPawn1");
-
 
         IController playerController = new ExampleTopDownRPGController(world);
         this.setCurrentController(playerController);

@@ -19,7 +19,7 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.game.Modes.ExampleTopDownRPGGameMode;
 import com.nostalgi.game.levels.GrassLandLevel;
 
-public class ExampleTopDownRPGGame extends BaseGame {
+public class Game extends BaseGame {
 
 	NostalgiCamera camera;
 	NostalgiRenderer tiledMapRenderer;
@@ -28,11 +28,7 @@ public class ExampleTopDownRPGGame extends BaseGame {
 	int w;
 	int h;
 
-	IGameMode gameMode;
-
-	IWorld world;
-
-	public ExampleTopDownRPGGame(boolean headless) {
+	public Game(boolean headless) {
 		super(headless, false);
 	}
 
@@ -49,29 +45,16 @@ public class ExampleTopDownRPGGame extends BaseGame {
 				unitScale);
         tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
 
-		world = new NostalgiWorld(new World(new Vector2(0,0), true), tiledMapRenderer, camera);
-
-        // Setup start level
-        ILevel grassland = new GrassLandLevel(new TmxMapLoader(), new NostalgiActorFactory(world), new NostalgiWallFactory(world));
-        // setup map renderer.
-        tiledMapRenderer.loadLevel(grassland);
-
-        gameMode = new ExampleTopDownRPGGameMode(world);
-
-        world.setGameMode(gameMode);
-		world.setWorldBounds(grassland.getCameraBounds());
-
-		world.setCameraPositionSafe(grassland.getCameraInitLocation());
 		viewport = new StretchViewport(h, w, camera);
 
-		this.gameEngine = new NostalgiBaseEngine(world, camera, tiledMapRenderer);
+		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer);
+        this.gameEngine.loadLevel("grasslands");
 
 		this.gameEngine.init();
 	}
 
 	@Override
 	public void dispose() {
-        world.dispose();
 		this.gameEngine.dispose();
 	}
 

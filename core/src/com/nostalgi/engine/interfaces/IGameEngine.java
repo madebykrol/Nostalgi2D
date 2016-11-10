@@ -26,4 +26,6 @@ public interface IGameEngine {
 
     InputProcessor getInputProcessor();
 
+    void loadLevel(String level);
+
 }

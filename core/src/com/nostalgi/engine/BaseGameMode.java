@@ -25,7 +25,7 @@ public class BaseGameMode implements IGameMode {
     private Class defaultPlayerStateClass;
     private Class defaultCharacterClass;
 
-    public BaseGameMode () {
+    public BaseGameMode (IWorld world) {
 
         this.isAuthority = NetworkRole.ROLE_AUTHORITY;
     }

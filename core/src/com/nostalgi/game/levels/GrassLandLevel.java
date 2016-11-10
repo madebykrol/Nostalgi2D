@@ -1,5 +1,6 @@
 package com.nostalgi.game.levels;
 
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.BaseLevel;
@@ -11,9 +12,9 @@ import com.nostalgi.engine.interfaces.Factories.IWallFactory;
  */
 public class GrassLandLevel extends BaseLevel {
 
-    public GrassLandLevel(TmxMapLoader mapLoader, IActorFactory actorFactory, IWallFactory wallFactory) {
-        super(new Vector2(0,0), wallFactory, actorFactory);
-        this.setMap(mapLoader.load("grasslands.tmx"));
+    public GrassLandLevel(TiledMap map, IActorFactory actorFactory, IWallFactory wallFactory) {
+        super(map, wallFactory, actorFactory);
+
     }
 
     @Override

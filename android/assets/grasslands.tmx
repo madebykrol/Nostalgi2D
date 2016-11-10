@@ -2,6 +2,8 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="221">
  <properties>
   <property name="GameMode" value="com.nostalgi.game.Modes.ExampleTopDownRPGGameMode"/>
+  <property name="GravityX" type="float" value="0"/>
+  <property name="GravityY" type="float" value="0"/>
   <property name="Type" value="com.nostalgi.game.levels.GrassLandLevel"/>
  </properties>
  <tileset firstgid="1" name="Cliff_tileset" tilewidth="32" tileheight="32" tilecount="240" columns="15">

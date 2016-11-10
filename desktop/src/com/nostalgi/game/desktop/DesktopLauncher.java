@@ -2,7 +2,7 @@ package com.nostalgi.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.nostalgi.game.ExampleTopDownRPGGame;
+import com.nostalgi.game.Game;
 import com.nostalgi.game.desktop.com.nostalgi.cli.CLI;
 import com.nostalig.server.HeadlessApplication;
 import com.nostalig.server.ServerConfig;
@@ -19,9 +19,9 @@ public class DesktopLauncher {
 		ServerConfig serverConfig = new ServerConfig();
 
 		if(cli.getBooleanArg("server")) {
-			new HeadlessApplication(new ExampleTopDownRPGGame(true), serverConfig).run();
+			new HeadlessApplication(new Game(true), serverConfig).run();
 		} else {
-			new LwjglApplication(new ExampleTopDownRPGGame(false), config);
+			new LwjglApplication(new Game(false), config);
 		}
 	}
 }

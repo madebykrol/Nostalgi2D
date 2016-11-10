@@ -3,7 +3,7 @@ package com.nostalgi.game.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.nostalgi.game.ExampleTopDownRPGGame;
+import com.nostalgi.game.Game;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -14,6 +14,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new ExampleTopDownRPGGame(false);
+                return new Game(false);
         }
 }

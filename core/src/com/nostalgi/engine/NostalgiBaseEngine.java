@@ -4,20 +4,39 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import java.lang.reflect.Constructor;
+
+import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.Factories.NostalgiActorFactory;
+import com.nostalgi.engine.Factories.NostalgiWallFactory;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.World.NostalgiWorld;
+import com.nostalgi.engine.interfaces.Factories.IActorFactory;
+import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
+import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
+import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.game.Game;
+import com.nostalgi.game.Modes.ExampleTopDownRPGGameMode;
+import com.nostalgi.game.levels.GrassLandLevel;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javafx.beans.property.MapProperty;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -34,11 +53,15 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private Box2DDebugRenderer debug;
 
-    public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer) {
-        this.world = world;
+    private TmxMapLoader mapLoader;
+    private IActorFactory actorFactory;
+    private IWallFactory wallFactory;
+
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer) {
         this.currentCamera = camera;
         this.mapRenderer = mapRenderer;
         this.debug = new Box2DDebugRenderer();
+        this.mapLoader = new TmxMapLoader();
     }
 
     @Override
@@ -149,6 +172,55 @@ public class NostalgiBaseEngine implements IGameEngine {
     @Override
     public InputProcessor getInputProcessor() {
         return inputProcessor;
+    }
+
+    @Override
+    public void loadLevel(String level) {
+        TiledMap map = mapLoader.load(level+(!level.contains(".tmx") ? ".tmx" : ""));
+        // Setup start level
+
+        MapProperties mapProperties = map.getProperties();
+        Object GameMode = mapProperties.containsKey("GameMode") ? map.getProperties().get("GameMode") : null;
+        Object Type = mapProperties.containsKey("Type") ? map.getProperties().get("Type") : null;
+
+
+        world = new NostalgiWorld(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
+
+        try {
+
+            if(Type != null) {
+                if(Type instanceof String) {
+                    Class c =  Class.forName((String)Type);
+                    Constructor ctor = c.getConstructor(TiledMap.class, IActorFactory.class, IWallFactory.class);
+                    ILevel lvl = (ILevel)ctor.newInstance(map, new NostalgiActorFactory(world), new NostalgiWallFactory(world));
+                    mapRenderer.loadLevel(lvl);
+                    world.setWorldBounds(lvl.getCameraBounds());
+                    world.setCameraPositionSafe(lvl.getCameraInitLocation());
+                }
+            }
+
+            if(GameMode != null) {
+                if(GameMode instanceof String) {
+                    Class c =  Class.forName((String)GameMode);
+                    Constructor ctor = c.getConstructor(IWorld.class);
+                    IGameMode gameMode = (IGameMode)ctor.newInstance(world);
+                    world.setGameMode(gameMode);
+                }
+            }
+
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void replicateActors(HashMap<String, IActor> actors) {

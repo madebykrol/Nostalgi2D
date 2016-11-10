@@ -36,24 +36,26 @@ public abstract class BaseLevel implements ILevel {
     private IWallFactory wallFactory;
     private IActorFactory actorFactory;
 
-    public BaseLevel(Vector2 origin,
+    public BaseLevel(
+                     TiledMap map,
                      IWallFactory wallFactory,
                      IActorFactory actorFactory) {
-        this(origin, wallFactory, actorFactory, "Walls", "Actors", "Ground");
+        this(map, wallFactory, actorFactory, "Walls", "Actors", "Ground");
     }
 
-    public BaseLevel(Vector2 origin,
+    public BaseLevel(TiledMap map,
                      IWallFactory wallFactory,
                      IActorFactory actorFactory,
                      String wallsLayer,
                      String actorsLayer,
                      String groundLayer) {
-        this.mapPosition = origin;
+        this.map = map;
+        this.mapPosition = new Vector2(0,0);
         this.wallsLayerName = wallsLayer;
         this.actorsLayerName = actorsLayer;
         this.groundLayerName = groundLayer;
 
-        this.mapRoot.setPosition(origin);
+        this.mapRoot.setPosition(new Vector2(0,0));
 
         this.wallFactory = wallFactory;
         this.actorFactory = actorFactory;
