@@ -46,7 +46,7 @@ public class Wall implements IWall {
      */
     @Override
     public void setName(String name) {
-        return;
+
     }
 
     /**

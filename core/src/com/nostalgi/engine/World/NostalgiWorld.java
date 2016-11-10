@@ -312,6 +312,15 @@ public class NostalgiWorld implements IWorld {
      */
     @Override
     public void updateBody(IActor actor) {
+        updateBody(actor, 1);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void updateBody(IActor actor, float unitScale) {
+
         Body playerBody =  actor.getPhysicsBody();
         if(playerBody == null) {
             createBody(actor);
@@ -337,14 +346,6 @@ public class NostalgiWorld implements IWorld {
                 bvI++;
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void updateBody(IActor actor, float unitScale) {
-        updateBody(actor, 1);
     }
 
     /**

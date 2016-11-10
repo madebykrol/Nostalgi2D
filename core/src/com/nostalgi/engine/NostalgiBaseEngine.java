@@ -54,8 +54,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     private Box2DDebugRenderer debug;
 
     private TmxMapLoader mapLoader;
-    private IActorFactory actorFactory;
-    private IWallFactory wallFactory;
 
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer) {
         this.currentCamera = camera;
@@ -182,11 +180,11 @@ public class NostalgiBaseEngine implements IGameEngine {
         MapProperties mapProperties = map.getProperties();
         Object GameMode = mapProperties.containsKey("GameMode") ? map.getProperties().get("GameMode") : null;
         Object Type = mapProperties.containsKey("Type") ? map.getProperties().get("Type") : null;
-
-
-        world = new NostalgiWorld(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
-
         try {
+
+            world = new NostalgiWorld(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
+
+
 
             if(Type != null) {
                 if(Type instanceof String) {

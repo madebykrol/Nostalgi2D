@@ -152,7 +152,6 @@ public abstract class BaseLevel implements ILevel {
                mapRoot.addChild(actorFactory.fromMapObject(object, this.mapRoot, getMainLayer().getTileWidth()));
             }
         }
-        return;
     }
 
     @Override
