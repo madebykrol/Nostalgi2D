@@ -26,13 +26,8 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
     // world
     private IWorld world;
-
-    private static final String DENSITY = "Density";
     private static final String SENSOR = "IsSensor";
-    private static final String STATIC = "IsStatic";
     private static final String TYPE = "Type";
-    private static final String FLOOR = "Floor";
-    private static final String FRICTION = "Friction";
 
     private static final String COLLISION_CATEGORY = "CollisionCategory";
     private static final String COLLISION_MASK = "CollisionMask";
@@ -77,30 +72,12 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
             IActor actor = (IActor)c.newInstance();
 
+            // Set base class fields
+            setFields(actor, object, c.getSuperclass().getDeclaredFields());
 
-            for(Field field : c.getSuperclass().getDeclaredFields()) {
-                field.setAccessible(true);
-                NostalgiField annotation = field.getAnnotation(NostalgiField.class);
-                if(annotation != null) {
-                    String fieldName = annotation.fieldName();
-                    if(fieldName.isEmpty()) {
-                        fieldName = field.getName();
-                    }
+            // Set class fields.
+            setFields(actor, object, c.getDeclaredFields());
 
-                    String propertyValue = getObjectProperty(object, fieldName);
-                    if(propertyValue != null && !propertyValue.isEmpty()) {
-                        if (field.getType() == int.class) {
-                            field.set(actor, Integer.parseInt(propertyValue));
-                        } else if (field.getType() == float.class) {
-                            field.set(actor, Float.parseFloat(propertyValue));
-                        } else if (field.getType() == boolean.class) {
-                            field.set(actor, Boolean.parseBoolean(propertyValue));
-                        } else if (field.getType() == String.class) {
-                            field.set(actor, propertyValue);
-                        }
-                    }
-                }
-            }
 
             float[] vertices = new float[0];
             Vector2 position = new Vector2(0,0);
@@ -133,6 +110,33 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         }
     }
 
+
+    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException {
+        for(Field field : fields) {
+            field.setAccessible(true);
+            NostalgiField annotation = field.getAnnotation(NostalgiField.class);
+            if (annotation != null && annotation.fromEditor()) {
+                String fieldName = annotation.fieldName();
+                if (fieldName.isEmpty()) {
+                    fieldName = field.getName();
+                }
+
+                String propertyValue = getObjectProperty(object, fieldName);
+                if (propertyValue != null && !propertyValue.isEmpty()) {
+                    if (field.getType() == int.class) {
+                        field.set(actor, Integer.parseInt(propertyValue));
+                    } else if (field.getType() == float.class) {
+                        field.set(actor, Float.parseFloat(propertyValue));
+                    } else if (field.getType() == boolean.class) {
+                        field.set(actor, Boolean.parseBoolean(propertyValue));
+                    } else if (field.getType() == String.class) {
+                        field.set(actor, propertyValue);
+                    }
+                }
+            }
+            field.setAccessible(false);
+        }
+    }
 
     protected String getObjectProperty(MapObject object, String prop) {
         Object p = object.getProperties().get(prop);

@@ -33,7 +33,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     private IWorld world;
 
     private Box2DDebugRenderer debug;
-    private HashMap<Integer, Short> floorMap = new HashMap<Integer, Short>();
 
     public NostalgiBaseEngine(IWorld world, NostalgiCamera camera, NostalgiRenderer mapRenderer) {
         this.world = world;
@@ -72,11 +71,11 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
+            tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
 
             world.tick();
 
-            replicateActors(world.getGameMode().getGameState().getCurrentLevel().getActors());
+            replicateActors(mapRenderer.getCurrentLevel().getActors());
         }
         else {
             Body playerBody = currentCharacter.getPhysicsBody();
@@ -85,7 +84,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             playerBody.setLinearVelocity(currentCharacter.getVelocity());
 
-            tickActors(world.getGameMode().getGameState().getCurrentLevel().getActors(), dTime);
+            tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
             // Send input to server.
 
             // Run simulation
@@ -107,8 +106,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void render() {
-
-        this.mapRenderer.setCurrentPlayerCharacter(world.getGameMode().getCurrentController().getCurrentPossessedCharacter());
         this.mapRenderer.render(Gdx.graphics.getDeltaTime());
 
         if(world.getGameMode().getHud() != null) {

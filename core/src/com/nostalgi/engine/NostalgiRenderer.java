@@ -41,23 +41,22 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
  */
 public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
 
-    private ShapeRenderer shapeRenderer;
     private ILevel level;
-
-    private ICharacter currentPlayer;
 
     private float timeElapsed;
 
     public NostalgiRenderer(float unitScale) {
         super(null, unitScale);
-
-        shapeRenderer = new ShapeRenderer();
     }
 
     public void loadLevel(ILevel level) {
         level.onLoad();
         this.level  = level;
         this.map = level.getMap();
+    }
+
+    public ILevel getCurrentLevel() {
+        return this.level;
     }
 
     public Batch getBatch() {
@@ -238,10 +237,4 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
             y -= layerTileHeight;
         }
     }
-
-
-    public void setCurrentPlayerCharacter(ICharacter character) {
-        this.currentPlayer = character;
-    }
-
 }

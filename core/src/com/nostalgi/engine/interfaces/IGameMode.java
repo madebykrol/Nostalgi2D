@@ -2,9 +2,11 @@ package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.World.PlayerStartActor;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
+import com.nostalgi.engine.interfaces.World.IActor;
 
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public interface IGameMode extends Disposable{
 
     ArrayList<IController> getControllers();
 
-
+    IActor choosePlayerStart(IController player);
 
     IHud getHud();
     void setHud(IHud hud);

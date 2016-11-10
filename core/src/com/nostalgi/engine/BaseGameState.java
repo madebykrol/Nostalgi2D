@@ -1,6 +1,5 @@
 package com.nostalgi.engine;
 
-import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.States.GameState;
@@ -77,11 +76,6 @@ public class BaseGameState implements IGameState {
     @Override
     public float getGameTime() {
         return this.gameTime;
-    }
-
-    @Override
-    public Vector2 getGravity() {
-        return new Vector2(0,0);
     }
 
     @Override
