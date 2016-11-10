@@ -20,6 +20,10 @@ public class BaseGameMode implements IGameMode {
     private ArrayList<IController> playerControllers =  new ArrayList<IController>();
     private IHud hud;
     private final NetworkRole isAuthority;
+    private Class defaultControllerClass;
+    private Class defaultGameStateClass;
+    private Class defaultPlayerStateClass;
+    private Class defaultCharacterClass;
 
     public BaseGameMode () {
 
@@ -34,6 +38,51 @@ public class BaseGameMode implements IGameMode {
     @Override
     public void setGameState(IGameState gameState) {
         this.gameState = gameState;
+    }
+
+    @Override
+    public <T extends IController> void setDefaultControllerClass(Class<T> defaultClass) {
+        defaultControllerClass = defaultClass;
+    }
+
+    @Override
+    public Class getDefaultControllerClass() {
+        return defaultControllerClass;
+    }
+
+    @Override
+    public void postDefaultControllerCreation(IController controller) {
+
+    }
+
+    @Override
+    public <T extends IGameState> void setDefaultGameStateClass(Class<T> defaultClass) {
+        this.defaultGameStateClass = defaultClass;
+    }
+
+    @Override
+    public Class getDefaultGameStateClass() {
+        return this.defaultGameStateClass;
+    }
+
+    @Override
+    public void postDefaultGameStateCreation(IGameState gameState) {
+
+    }
+
+    @Override
+    public <T extends IPlayerState> void setDefaultPlayerStateClass(Class<T> defaultClass) {
+        this.defaultPlayerStateClass = defaultClass;
+    }
+
+    @Override
+    public Class getDefaultPlayerStateClass() {
+        return this.defaultPlayerStateClass;
+    }
+
+    @Override
+    public void postDefaultPlayerStateCreation(IPlayerState playerState) {
+
     }
 
     @Override

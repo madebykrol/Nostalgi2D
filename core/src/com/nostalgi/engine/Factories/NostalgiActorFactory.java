@@ -44,12 +44,9 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
 
         String name = object.getName();
 
-
-
         IActor actor = this.createActor(type, name, object, unitScale);
 
         actor.setParent(parent);
-        //actor.setWorld(world);
 
         world.createBody(actor, unitScale);
 

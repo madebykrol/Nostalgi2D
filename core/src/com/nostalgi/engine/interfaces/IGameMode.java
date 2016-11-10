@@ -18,6 +18,19 @@ public interface IGameMode extends Disposable{
     IGameState getGameState();
     void setGameState(IGameState gameState);
 
+    <T extends IController> void setDefaultControllerClass(Class<T> defaultClass);
+    Class getDefaultControllerClass();
+    void postDefaultControllerCreation(IController controller);
+
+    <T extends IGameState> void setDefaultGameStateClass(Class<T> defaultClass);
+    Class getDefaultGameStateClass();
+    void postDefaultGameStateCreation(IGameState gameState);
+
+    <T extends IPlayerState> void setDefaultPlayerStateClass(Class<T> defaultClass);
+    Class getDefaultPlayerStateClass();
+    void postDefaultPlayerStateCreation(IPlayerState playerState);
+
+
     IController getCurrentController();
     void setCurrentController(IController controller);
 

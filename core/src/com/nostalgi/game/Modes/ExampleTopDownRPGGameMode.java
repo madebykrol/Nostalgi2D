@@ -11,7 +11,7 @@ import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Hud.DebugHudModule;
-import com.nostalgi.engine.States.AnimationStates;
+import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.IController;
@@ -55,10 +55,10 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
 
         ICharacter defaultPawn = createPlayerCharacter("DefaultPawn1");
 
-        ICharacter defaultPawn2 = createPlayerCharacter("DefaultPawn2");
 
         IController playerController = new ExampleTopDownRPGController(world);
         this.setCurrentController(playerController);
+        this.setDefaultControllerClass(ExampleTopDownRPGController.class);
 
         playerController.possessCharacter(defaultPawn);
 
@@ -69,42 +69,42 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
             ICharacter playerCharacter = world.spawnActor(BasePlayerCharacter.class, name, true, new Vector2(8, 53));
             IAnimationFactory animationFactory = new NostalgiAnimationFactory();
 
-            playerCharacter.addAnimation(AnimationStates.WalkingEastAnimation,
+            playerCharacter.addAnimation(AnimationState.WalkingEastAnimation,
                     animationFactory.createAnimation("Spritesheet/char_walk_east.png",
                             32, 64, 1, 2, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.WalkingWestAnimation,
+            playerCharacter.addAnimation(AnimationState.WalkingWestAnimation,
                     animationFactory.createAnimation("Spritesheet/char_walk_west.png",
                             32, 64, 1, 2, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.WalkingNorthAnimation,
+            playerCharacter.addAnimation(AnimationState.WalkingNorthAnimation,
                     animationFactory.createAnimation("Spritesheet/char_walk_north.png",
                             32, 64, 1, 5, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.WalkingSouthAnimation,
+            playerCharacter.addAnimation(AnimationState.WalkingSouthAnimation,
                     animationFactory.createAnimation("Spritesheet/char_walk_south.png",
                             32, 64, 1, 5, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.IdleFaceSouthAnimation,
+            playerCharacter.addAnimation(AnimationState.IdleFaceSouthAnimation,
                     animationFactory.createAnimation("Spritesheet/char_idle.png",
                             32, 64, 1, 1, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.IdleFaceNorthAnimation,
+            playerCharacter.addAnimation(AnimationState.IdleFaceNorthAnimation,
                     animationFactory.createAnimation("Spritesheet/char_idle_north.png",
                             32, 64, 1, 1, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.IdleFaceEastAnimation,
+            playerCharacter.addAnimation(AnimationState.IdleFaceEastAnimation,
                     animationFactory.createAnimation("Spritesheet/char_idle_east.png",
                             32, 64, 1, 1, 1f / 6f,
                             Animation.PlayMode.LOOP));
 
-            playerCharacter.addAnimation(AnimationStates.IdleFaceWestAnimation,
+            playerCharacter.addAnimation(AnimationState.IdleFaceWestAnimation,
                     animationFactory.createAnimation("Spritesheet/char_idle_west.png",
                             32, 64, 1, 1, 1f / 6f,
                             Animation.PlayMode.LOOP));

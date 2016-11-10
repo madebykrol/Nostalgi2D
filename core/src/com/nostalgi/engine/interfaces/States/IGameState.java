@@ -22,6 +22,5 @@ public interface IGameState {
 
     float getGameTime();
 
-
     NetworkRole getNetworkRole();
 }

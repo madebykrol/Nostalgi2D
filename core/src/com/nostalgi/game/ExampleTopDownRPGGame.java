@@ -1,41 +1,23 @@
 package com.nostalgi.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseGame;
-import com.nostalgi.engine.BaseGameMode;
-import com.nostalgi.engine.BaseGameState;
-import com.nostalgi.engine.BaseHud;
-import com.nostalgi.engine.BasePlayerCharacter;
-import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.NostalgiActorFactory;
-import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.Factories.NostalgiWallFactory;
-import com.nostalgi.engine.Hud.DebugHudModule;
-import com.nostalgi.engine.BasePlayerState;
-import com.nostalgi.game.Hud.ExampleHudModule;
-import com.nostalgi.engine.States.AnimationStates;
-import com.nostalgi.engine.World.NostalgiWorld;
-import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
-import com.nostalgi.engine.interfaces.States.IPlayerState;
-import com.nostalgi.engine.interfaces.World.ILevel;
-import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.game.Controllers.ExampleTopDownRPGController;
-import com.nostalgi.game.Modes.ExampleTopDownRPGGameMode;
-import com.nostalgi.game.levels.GrassLandLevel;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
-import com.nostalgi.engine.interfaces.World.ICharacter;
-import com.nostalgi.engine.interfaces.IController;
-import com.nostalgi.engine.interfaces.IGameMode;
-import com.nostalgi.engine.interfaces.States.IGameState;
-import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.World.NostalgiWorld;
+import com.nostalgi.engine.interfaces.IGameMode;
+import com.nostalgi.engine.interfaces.World.ILevel;
+import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.game.Modes.ExampleTopDownRPGGameMode;
+import com.nostalgi.game.levels.GrassLandLevel;
 
 public class ExampleTopDownRPGGame extends BaseGame {
 
@@ -47,9 +29,7 @@ public class ExampleTopDownRPGGame extends BaseGame {
 	int h;
 
 	IGameMode gameMode;
-	IPlayerState playerState;
 
-	IAnimationFactory animationFactory;
 	IWorld world;
 
 	public ExampleTopDownRPGGame(boolean headless) {
@@ -79,8 +59,6 @@ public class ExampleTopDownRPGGame extends BaseGame {
         gameMode = new ExampleTopDownRPGGameMode(world);
 
         world.setGameMode(gameMode);
-
-
 		world.setWorldBounds(grassland.getCameraBounds());
 
 		world.setCameraPositionSafe(grassland.getCameraInitLocation());
@@ -90,9 +68,6 @@ public class ExampleTopDownRPGGame extends BaseGame {
 
 		this.gameEngine.init();
 	}
-
-
-
 
 	@Override
 	public void dispose() {

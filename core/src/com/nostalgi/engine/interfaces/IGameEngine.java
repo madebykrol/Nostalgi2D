@@ -25,4 +25,5 @@ public interface IGameEngine {
     NostalgiRenderer getMapRenderer();
 
     InputProcessor getInputProcessor();
+
 }

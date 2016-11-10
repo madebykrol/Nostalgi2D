@@ -32,15 +32,6 @@ public class BaseGameState implements IGameState {
         networkRole = NetworkRole.ROLE_AUTHORITY;
     }
 
-    @Override
-    public void setState(GameState state) {
-        gameState = state;
-    }
-
-    @Override
-    public GameState getState() {
-        return this.gameState;
-    }
 
     @Override
     public ILevel getCurrentLevel() {
