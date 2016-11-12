@@ -19,11 +19,17 @@ import java.util.HashMap;
 /**
  * Created by Kristoffer on 2016-07-15.
  */
-public abstract class BaseActor implements IActor {
+public class BaseActor implements IActor {
 
     @Replicated
     @NostalgiField(fieldName = "Floor")
     private int floor = 1;
+
+    @NostalgiField(fieldName = "PhysicsSimulated")
+    private boolean physicsSimulated;
+
+    @NostalgiField(fieldName = "Mass")
+    private float mass;
 
     private IActor parent;
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
@@ -292,6 +298,23 @@ public abstract class BaseActor implements IActor {
 
     }
 
+    @Override
+    public void addOnDestroyListener() {}
+
+    @Override
+    public boolean isReplicated() {
+        return this.isReplicated;
+    }
+
+    @Override
+    public boolean physicsSimulated() {
+        return this.physicsSimulated;
+    }
+
+    @Override
+    public boolean  physicsSimulated( boolean simulated) {
+        return (this.physicsSimulated = simulated);
+    }
 
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;
@@ -313,22 +336,8 @@ public abstract class BaseActor implements IActor {
         }
     }
 
-
     public void destroy() {
         
     }
 
-    public void addOnDestroyListener() {}
-
-    public boolean isReplicated() {
-        return this.isReplicated;
-    }
-
-    public boolean physicsSimulated() {
-        return true;
-    }
-
-    public boolean  physicsSimulated( boolean simulated) {
-        return simulated;
-    }
 }

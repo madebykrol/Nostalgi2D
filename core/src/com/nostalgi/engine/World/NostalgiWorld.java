@@ -1,7 +1,10 @@
 package com.nostalgi.engine.World;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -479,7 +482,7 @@ public class NostalgiWorld implements IWorld {
      * @inheritDoc
      */
     @Override
-    public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor owner, ICharacter instigator)
+    public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor parent, ICharacter instigator)
             throws FailedToSpawnActorException
     {
         IActor a;
@@ -498,12 +501,56 @@ public class NostalgiWorld implements IWorld {
         a.setPosition(spawnPoint);
         a.setName(name);
 
-        renderer.getCurrentLevel().addActor(a);
+        if(parent == null) {
+            renderer.getCurrentLevel().addActor(a);
+        } else {
+            parent.addChild(a);
+        }
 
-        if(physicsBound)
+        if(physicsBound) {
             createBody(a);
+        }
 
         return (T)a;
+    }
+
+    @Override
+    public IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale) {
+        String f = getObjectProperty(object, "Floor");
+        int[] floors = new int[]{1};
+        if(f != null) {
+            String[] sFloors = f.split(",");
+            floors = new int[sFloors.length];
+            for(int i = 0; i < sFloors.length; i++) {
+                floors[i] = Integer.parseInt(sFloors[i]);
+            }
+        }
+
+        float[] vertices = new float[0];
+        Vector2 position = new Vector2(0,0);
+
+        if(object instanceof RectangleMapObject) {
+            Rectangle obj = ((RectangleMapObject) object).getRectangle();
+
+            vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
+            position = new Vector2(obj.getX()/unitScale+mapOrigin.x, obj.getY()/unitScale+mapOrigin.y);
+        } else if( object instanceof PolygonMapObject) {
+            PolygonMapObject obj = (PolygonMapObject) object;
+
+            vertices = obj.getPolygon().getVertices();
+            position = new Vector2(obj.getPolygon().getX()/unitScale+mapOrigin.x, obj.getPolygon().getY()/unitScale+mapOrigin.y);
+        }
+
+        IWall wall = new Wall(floors, position, vertices);
+
+        createBody(wall, unitScale);
+
+        return wall;
+    }
+
+    @Override
+    public IWall createWall(MapObject object, Vector2 mapOrigin) {
+        return createWall(object, mapOrigin, 32f);
     }
 
     @Override
@@ -568,6 +615,32 @@ public class NostalgiWorld implements IWorld {
         // Set these positions
         this.camera.position.set(x1, y1, 0);
         this.camera.update();
+    }
+
+    protected String getObjectProperty(MapObject object, String prop) {
+        Object p = object.getProperties().get(prop);
+
+        if(p != null) {
+            return (String)p;
+        }
+        return null;
+    }
+
+    protected float[] rectangleToVertices(float x, float y, float width,
+                                          float height) {
+        float[] result = new float[8];
+        result[0] = x;
+        result[1] = y;
+
+        result[2] = x + width;
+        result[3] = y;
+
+        result[4] = x + width;
+        result[5] = y + height;
+        result[6] = x;
+        result[7] = y + height;
+
+        return result;
     }
 
     /**

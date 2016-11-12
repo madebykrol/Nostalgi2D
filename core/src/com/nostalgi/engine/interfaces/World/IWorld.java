@@ -2,6 +2,7 @@ package com.nostalgi.engine.interfaces.World;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -220,7 +221,12 @@ public interface IWorld {
      * @return
      */
     <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint) throws FailedToSpawnActorException;
-    <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor owner, ICharacter instigator) throws FailedToSpawnActorException;
+    <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor parent, ICharacter instigator) throws FailedToSpawnActorException;
+
+    IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale);
+    IWall createWall(MapObject object, Vector2 mapOrigin);
+
+
 
     /**
      * Set the current projecting camera.

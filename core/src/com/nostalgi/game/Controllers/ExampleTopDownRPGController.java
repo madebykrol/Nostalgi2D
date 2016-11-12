@@ -119,6 +119,7 @@ public class ExampleTopDownRPGController extends BaseController {
                     IActor lookingAt =  mainHud.getLookingAt();
                     if(!actor.equals(lookingAt)) {
                         mainHud.isVisible(true);
+                        
                         mainHud.setLookingAt((IActor) actor);
                     }
                 }

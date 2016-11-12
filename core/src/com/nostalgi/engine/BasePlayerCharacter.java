@@ -47,6 +47,8 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         boundingVolume2.setShape(shape2);
 
         this.setBoundingVolume(boundingVolume2);
+
+        physicsSimulated(true);
     }
 
     @Override

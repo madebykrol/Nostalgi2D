@@ -11,6 +11,7 @@ import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWall;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,18 +34,18 @@ public abstract class BaseLevel implements ILevel {
 
     private IActor mapRoot = new RootActor();
 
-    private IWallFactory wallFactory;
     private IActorFactory actorFactory;
+    private IWorld world;
 
     public BaseLevel(
                      TiledMap map,
-                     IWallFactory wallFactory,
+                     IWorld world,
                      IActorFactory actorFactory) {
-        this(map, wallFactory, actorFactory, "Walls", "Actors", "Ground");
+        this(map, world, actorFactory, "Walls", "Actors", "Ground");
     }
 
     public BaseLevel(TiledMap map,
-                     IWallFactory wallFactory,
+                     IWorld world,
                      IActorFactory actorFactory,
                      String wallsLayer,
                      String actorsLayer,
@@ -57,8 +58,8 @@ public abstract class BaseLevel implements ILevel {
 
         this.mapRoot.setPosition(new Vector2(0,0));
 
-        this.wallFactory = wallFactory;
         this.actorFactory = actorFactory;
+        this.world = world;
     }
 
     @Override
@@ -149,7 +150,7 @@ public abstract class BaseLevel implements ILevel {
         MapLayer actorsLayer = map.getLayers().get(this.actorsLayerName);
         if(actorsLayer != null) {
             for(MapObject object : actorsLayer.getObjects()) {
-               mapRoot.addChild(actorFactory.fromMapObject(object, this.mapRoot, getMainLayer().getTileWidth()));
+               mapRoot.addChild(actorFactory.createActor(object, this.mapRoot, getMainLayer().getTileWidth()));
             }
         }
     }
@@ -160,7 +161,7 @@ public abstract class BaseLevel implements ILevel {
         MapLayer boundsLayer = map.getLayers().get(this.wallsLayerName);
         if(boundsLayer != null) {
             for (MapObject object :boundsLayer.getObjects()){
-                walls.add(wallFactory.fromMapObject(object, mapPosition, getMainLayer().getTileWidth()));
+                walls.add(world.createWall(object, mapPosition, getMainLayer().getTileWidth()));
             }
         }
     }

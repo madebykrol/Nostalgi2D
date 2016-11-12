@@ -5,11 +5,7 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -37,7 +33,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
     }
 
     @Override
-    public IActor fromMapObject(MapObject object, IActor parent, float unitScale) {
+    public IActor createActor(MapObject object, IActor parent, float unitScale) {
         // Get the type, which is a class!
         // This will be used to create an instance
         String type = getObjectProperty(object, TYPE);
@@ -54,8 +50,8 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
     }
 
     @Override
-    public IActor fromMapObject(MapObject object, IActor parent) {
-        return fromMapObject(object, parent, 32f);
+    public IActor createActor(MapObject object, IActor parent) {
+        return createActor(object, parent, 32f);
     }
 
     @Override
