@@ -32,7 +32,7 @@
   </tile>
  </tileset>
  <tileset firstgid="854" name="character-animation" tilewidth="32" tileheight="65" spacing="6" margin="5" tilecount="20" columns="5">
-  <image source="Spritesheet/character-animation.png" trans="000000" width="194" height="284"/>
+  <image source="../Spritesheet/character-animation.png" trans="000000" width="194" height="284"/>
   <tile id="0">
    <properties>
     <property name="Type" value="NPC"/>

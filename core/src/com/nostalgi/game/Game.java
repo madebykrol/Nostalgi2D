@@ -48,7 +48,7 @@ public class Game extends BaseGame {
 		viewport = new StretchViewport(h, w, camera);
 
 		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer);
-        this.gameEngine.loadLevel("grasslands");
+        this.gameEngine.loadLevel("maps/grasslands");
 
 		this.gameEngine.init();
 	}
