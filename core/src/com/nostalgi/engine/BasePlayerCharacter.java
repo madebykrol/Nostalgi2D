@@ -50,6 +50,8 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
         this.setBoundingVolume(boundingVolume2);
 
+        this.setMass(0.25f);
+
         physicsSimulated(true);
     }
 

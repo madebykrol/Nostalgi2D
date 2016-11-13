@@ -25,7 +25,7 @@ public class GravityActor extends BaseActor {
     }
 
     @Override
-    public void postSpawn() {
+    public void createPhysicsBody() {
         BoundingVolume boundingVolume2 = new BoundingVolume();
         boundingVolume2.isSensor(true);
         boundingVolume2.setVolumeId("gravitywell");
@@ -33,7 +33,7 @@ public class GravityActor extends BaseActor {
         boundingVolume2.setCollisionMask(CollisionCategories.MASK_TRIGGER);
 
         CircleShape shape2 = new CircleShape();
-        shape2.setRadius(this.getMass());
+        shape2.setRadius(this.getMass()/10);
         boundingVolume2.setShape(shape2);
 
         this.setBoundingVolume(boundingVolume2);
@@ -44,7 +44,8 @@ public class GravityActor extends BaseActor {
         String volumeId = (String)targetFixture.getUserData();
         if(volumeId.equals("gravitywell")) {
             System.out.println("Begin gravity pull on object");
-            actorsInWell.add(overlapper);
+            if(!actorsInWell.contains(overlapper))
+                actorsInWell.add(overlapper);
         }
     }
 
@@ -60,11 +61,17 @@ public class GravityActor extends BaseActor {
     @Override
     public void tick(float time) {
         for(IActor actor : actorsInWell) {
-            System.out.println("Pulling on: "+actor.getName());
-
             float angleBetween = MathUtils.atan2(this.getPosition().y - actor.getPosition().y, this.getPosition().x - actor.getPosition().x);
 
-            actor.getPhysicsBody().applyForce(new Vector2(50000*MathUtils.cos(angleBetween), 50000*MathUtils.sin(angleBetween)), actor.getPhysicsBody().getWorldCenter(), true);
+            float distanceBetween = this.getPosition().dst(actor.getPosition());
+
+            float G  = 50000; // Approximation of G for the system.
+
+            // G*M1*M2 / D^2
+            float x = (G * (this.getMass() * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.cos(angleBetween);
+            float y = (G * (this.getMass() * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.sin(angleBetween);
+
+            actor.getPhysicsBody().applyForce(new Vector2(x, y), actor.getPhysicsBody().getWorldCenter(), true);
         }
     }
 

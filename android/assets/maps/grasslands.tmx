@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="247">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="254">
  <properties>
   <property name="GameMode" value="com.nostalgi.game.Modes.ExampleTopDownRPGGameMode"/>
   <property name="GravityX" type="float" value="0"/>
@@ -1045,14 +1045,14 @@
     <property name="Friction" type="float" value="5"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>
-    <property name="Mass" type="float" value="10"/>
+    <property name="Mass" type="float" value="100"/>
     <property name="Type" value="com.nostalgi.engine.World.GravityActor"/>
    </properties>
    <ellipse/>
   </object>
-  <object id="246" x="1355" y="181">
+  <object id="246" name="Planetoid01" x="1355" y="181">
    <properties>
-    <property name="CollisionCategory" value="Player"/>
+    <property name="CollisionCategory" value="Trigger"/>
     <property name="CollisionMask" value="Player"/>
     <property name="Floor" type="int" value="0"/>
     <property name="IsSensor" type="bool" value="false"/>

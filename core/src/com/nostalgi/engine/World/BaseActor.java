@@ -321,7 +321,7 @@ public class BaseActor implements IActor {
     }
 
     @Override
-    public void postSpawn() {
+    public void createPhysicsBody() {
 
     }
 

@@ -529,7 +529,7 @@ public class NostalgiWorld implements IWorld {
             createBody(a);
         }
 
-        a.postSpawn();
+        a.createPhysicsBody();
 
         return (T)a;
     }
@@ -587,8 +587,7 @@ public class NostalgiWorld implements IWorld {
 
             actor.setName(mapObject.getName());
 
-            createBody(actor);
-            actor.postSpawn();
+            actor.createPhysicsBody();
             createBody(actor);
             return (T)actor;
         } catch(IllegalAccessException e) {
