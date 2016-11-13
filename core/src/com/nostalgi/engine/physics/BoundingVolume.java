@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 
 /**
  * Created by Kristoffer on 2016-07-18.
@@ -11,11 +12,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 public class BoundingVolume {
 
     private boolean isSensor = false;
-    private PolygonShape shape = new PolygonShape();
+    private Shape shape = new PolygonShape();
     private short collisionMask = -1;
     private short collisionCategory = 0;
     private boolean autoRotate = false;
     private Vector2 relativePosition = new Vector2();
+    private String volumeId;
 
 
     public short getCollisionCategory() {
@@ -34,11 +36,11 @@ public class BoundingVolume {
         this.collisionMask = collisionMask;
     }
 
-    public PolygonShape getShape() {
+    public Shape getShape() {
         return this.shape;
     }
 
-    public void setShape(PolygonShape shape) {
+    public void setShape(Shape shape) {
         this.shape = shape;
     }
 
@@ -61,4 +63,12 @@ public class BoundingVolume {
     public void setRelativePosition(Vector2 relativePosition) { this.relativePosition = relativePosition; }
 
     public Vector2 getRelativePosition() { return this.relativePosition; }
+
+    public String getVolumeId() {
+        return volumeId;
+    }
+
+    public void setVolumeId(String volumeId) {
+        this.volumeId = volumeId;
+    }
 }

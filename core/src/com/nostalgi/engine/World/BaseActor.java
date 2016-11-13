@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.NostalgiField;
@@ -33,6 +34,9 @@ public class BaseActor implements IActor {
 
     private IActor parent;
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
+
+    @Replicated
+    protected boolean canEverTick;
 
     /**
      * Position relative to parent
@@ -150,10 +154,10 @@ public class BaseActor implements IActor {
     public ArrayList<BoundingVolume> getBoundingVolumes() {return this.boundingVolumes;}
 
     @Override
-    public void onOverlapBegin(IActor overlapper) {}
+    public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {}
 
     @Override
-    public void onOverlapEnd(IActor overlapper) { }
+    public void onOverlapEnd(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) { }
 
     @Override
     public com.badlogic.gdx.graphics.g2d.Animation getCurrentAnimation() {
@@ -201,7 +205,7 @@ public class BaseActor implements IActor {
 
     @Override
     public boolean canEverTick() {
-        return false;
+        return canEverTick;
     }
 
     @Override
@@ -290,12 +294,12 @@ public class BaseActor implements IActor {
 
     @Override
     public float getMass() {
-        return 0;
+        return this.mass;
     }
 
     @Override
     public void setMass(float mass) {
-
+        this.mass = mass;
     }
 
     @Override
@@ -315,6 +319,17 @@ public class BaseActor implements IActor {
     public boolean  physicsSimulated( boolean simulated) {
         return (this.physicsSimulated = simulated);
     }
+
+    @Override
+    public void postSpawn() {
+
+    }
+
+    @Override
+    public void postDespawned() {
+
+    }
+
 
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;

@@ -150,7 +150,13 @@ public abstract class BaseLevel implements ILevel {
         MapLayer actorsLayer = map.getLayers().get(this.actorsLayerName);
         if(actorsLayer != null) {
             for(MapObject object : actorsLayer.getObjects()) {
-               mapRoot.addChild(actorFactory.createActor(object, this.mapRoot, getMainLayer().getTileWidth()));
+                String type = (String)object.getProperties().get("Type");
+                try {
+                    mapRoot.addChild(world.spawnActor((Class)Class.forName(type), object, this.mapRoot, getMainLayer().getTileHeight()));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                //mapRoot.addChild(actorFactory.createActor(object, this.mapRoot, getMainLayer().getTileWidth()));
             }
         }
     }

@@ -1,11 +1,15 @@
 package com.nostalgi.engine.Factories;
 
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.CircleMapObject;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.interfaces.Factories.IActorFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -14,6 +18,8 @@ import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
 import java.lang.reflect.Field;
+
+import javafx.scene.shape.Ellipse;
 
 /**
  * Created by Kristoffer on 2016-07-16.
@@ -37,6 +43,7 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         // Get the type, which is a class!
         // This will be used to create an instance
         String type = getObjectProperty(object, TYPE);
+
 
         String name = object.getName();
 
@@ -72,25 +79,46 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
             setFields(actor, object, c.getDeclaredFields());
 
 
-            float[] vertices = new float[0];
+            float[] vertices;
             Vector2 position = new Vector2(0,0);
-
+            BoundingVolume bv =  new BoundingVolume();
             if(object instanceof RectangleMapObject) {
                 Rectangle obj = ((RectangleMapObject) object).getRectangle();
 
                 vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
+                bv = createBoundingVolume(object, vertices, unitScale);
                 position = new Vector2(obj.getX(), obj.getY());
             } else if(object instanceof PolygonMapObject) {
                 PolygonMapObject obj = (PolygonMapObject) object;
 
                 vertices = obj.getPolygon().getVertices();
                 position = new Vector2(obj.getPolygon().getX(), obj.getPolygon().getY());
+                bv = createBoundingVolume(object, vertices, unitScale);
+            } else if(object instanceof CircleMapObject) {
+
+                CircleMapObject obj = (CircleMapObject)object;
+                position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
+                CircleShape circle = new CircleShape();
+                circle.setPosition(position);
+                circle.setRadius(obj.getCircle().radius);
+
+                bv = createBoundingVolume(obj, circle);
+            } else  if (object instanceof EllipseMapObject) {
+                EllipseMapObject obj = (EllipseMapObject)object;
+
+                CircleShape circle = new CircleShape();
+
+                float radius = obj.getEllipse().width  / 2;
+
+                circle.setRadius(radius/unitScale);
+                circle.setPosition(new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale));
+
+                bv = createBoundingVolume(obj, circle);
             }
 
-
             actor.setPosition(position);
+            actor.setBoundingVolume(bv);
 
-            actor.setBoundingVolume(createBoundingVolume(object, vertices, unitScale));
             actor.setName(id);
 
             return actor;
@@ -156,15 +184,8 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         return result;
     }
 
-    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices, float unitScale) {
+    protected BoundingVolume createBoundingVolume(MapObject object, Shape boundShape) {
         BoundingVolume bv = new BoundingVolume();
-        PolygonShape boundShape = new PolygonShape();
-
-        for(int i = 0; i < vertices.length; i++) {
-            vertices[i] /= unitScale;
-        }
-
-        boundShape.set(vertices);
         bv.setShape(boundShape);
 
         // set is Sensor
@@ -198,6 +219,19 @@ public class NostalgiActorFactory extends BaseLevelObjectFactory implements IAct
         }
 
         return bv;
+    }
+
+    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices, float unitScale) {
+
+        PolygonShape boundShape = new PolygonShape();
+
+        for(int i = 0; i < vertices.length; i++) {
+            vertices[i] /= unitScale;
+        }
+
+        boundShape.set(vertices);
+
+        return createBoundingVolume(object, boundShape);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.nostalgi.engine.World;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.CircleMapObject;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -18,7 +21,9 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.NostalgiRenderer;
@@ -32,6 +37,8 @@ import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.physics.TraceHit;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +62,14 @@ public class NostalgiWorld implements IWorld {
     private float camViewportHalfWidth = 0;
     private float camViewportHalfHeight = 0;
 
+
+    private static final String SENSOR = "IsSensor";
+    private static final String TYPE = "Type";
+
+    private static final String COLLISION_CATEGORY = "CollisionCategory";
+    private static final String COLLISION_MASK = "CollisionMask";
+
+
     public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera) {
         this.world = world;
         this.camera = camera;
@@ -76,8 +91,8 @@ public class NostalgiWorld implements IWorld {
                     IActor actorB = (IActor) b.getBody().getUserData();
 
                     if (actorA != null && actorB != null) {
-                        actorA.onOverlapBegin(actorB);
-                        actorB.onOverlapBegin(actorA);
+                        actorA.onOverlapBegin(actorB, b, a);
+                        actorB.onOverlapBegin(actorA, a, b);
                     }
                 } catch (ClassCastException e) {
 
@@ -94,8 +109,8 @@ public class NostalgiWorld implements IWorld {
                     IActor actorB = (IActor) b.getBody().getUserData();
 
                     if (actorA != null && actorB != null) {
-                        actorA.onOverlapEnd(actorB);
-                        actorB.onOverlapEnd(actorA);
+                        actorA.onOverlapEnd(actorB, b, a);
+                        actorB.onOverlapEnd(actorA, a, b);
                     }
                 } catch (ClassCastException e) {
 
@@ -241,14 +256,16 @@ public class NostalgiWorld implements IWorld {
             blockingBounds.friction = actor.getFriction();
             blockingBounds.shape = bv.getShape();
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
-            blockingBounds.isSensor = actor.isSensor();
+            blockingBounds.isSensor = bv.isSensor();
+
             if(bvI == 0) {
                 blockingBounds.filter.maskBits = (short) (bv.getCollisionMask() | CollisionCategories.floorFromInt(actor.getFloorLevel()));
             } else {
                 blockingBounds.filter.maskBits = bv.getCollisionMask();
             }
 
-            actorBody.createFixture(blockingBounds);
+            Fixture  f = actorBody.createFixture(blockingBounds);
+            f.setUserData(bv.getVolumeId());
             bvI++;
         }
         actor.setPhysicsBody(actorBody);
@@ -345,7 +362,8 @@ public class NostalgiWorld implements IWorld {
                 } else {
                     blockingBounds.filter.maskBits = bv.getCollisionMask();
                 }
-                playerBody.createFixture(blockingBounds);
+                Fixture f = playerBody.createFixture(blockingBounds);
+                f.setUserData(bv.getVolumeId());
                 bvI++;
             }
         }
@@ -511,7 +529,73 @@ public class NostalgiWorld implements IWorld {
             createBody(a);
         }
 
+        a.postSpawn();
+
         return (T)a;
+    }
+
+    @Override
+    public <T extends IActor> T spawnActor(Class<T> type, MapObject mapObject, IActor parent, float unitScale) {
+        try {
+            IActor actor = type.newInstance();
+
+            // Set base class fields
+            setFields(actor, mapObject, type.getSuperclass().getDeclaredFields());
+
+            // Set class fields.
+            setFields(actor,mapObject, type.getDeclaredFields());
+
+            float[] vertices;
+            Vector2 position = new Vector2(0,0);
+            BoundingVolume bv =  new BoundingVolume();
+            if(mapObject instanceof RectangleMapObject) {
+                Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
+
+                vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
+                bv = createBoundingVolume(mapObject, vertices, unitScale);
+                position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
+            } else if(mapObject instanceof PolygonMapObject) {
+                PolygonMapObject obj = (PolygonMapObject) mapObject;
+                vertices = obj.getPolygon().getVertices();
+                position = new Vector2(obj.getPolygon().getX()/unitScale, obj.getPolygon().getY()/unitScale);
+                bv = createBoundingVolume(mapObject, vertices, unitScale);
+            } else if(mapObject instanceof CircleMapObject) {
+
+                CircleMapObject obj = (CircleMapObject)mapObject;
+                position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
+                CircleShape circle = new CircleShape();
+                circle.setPosition(position);
+                circle.setRadius(obj.getCircle().radius);
+
+                bv = createBoundingVolume(obj, circle);
+            } else  if (mapObject instanceof EllipseMapObject) {
+                EllipseMapObject obj = (EllipseMapObject)mapObject;
+                position = new Vector2(obj.getEllipse().x/unitScale, obj.getEllipse().y/unitScale);
+                CircleShape circle = new CircleShape();
+
+                float radius = obj.getEllipse().width  / 2;
+
+                circle.setPosition(new Vector2((obj.getEllipse().x + radius) / unitScale, (obj.getEllipse().y + radius) / unitScale));
+                circle.setRadius(radius/unitScale);
+                bv = createBoundingVolume(obj, circle);
+            }
+
+            bv.setVolumeId("base");
+
+            actor.setPosition(position);
+            actor.setBoundingVolume(bv);
+
+            actor.setName(mapObject.getName());
+
+            createBody(actor);
+            actor.postSpawn();
+            createBody(actor);
+            return (T)actor;
+        } catch(IllegalAccessException e) {
+            return null;
+        } catch (InstantiationException e) {
+            return null;
+        }
     }
 
     @Override
@@ -641,6 +725,83 @@ public class NostalgiWorld implements IWorld {
         result[7] = y + height;
 
         return result;
+    }
+
+    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException {
+        for(Field field : fields) {
+            field.setAccessible(true);
+            NostalgiField annotation = field.getAnnotation(NostalgiField.class);
+            if (annotation != null && annotation.fromEditor()) {
+                String fieldName = annotation.fieldName();
+                if (fieldName.isEmpty()) {
+                    fieldName = field.getName();
+                }
+
+                String propertyValue = getObjectProperty(object, fieldName);
+                if (propertyValue != null && !propertyValue.isEmpty()) {
+                    if (field.getType() == int.class) {
+                        field.set(actor, Integer.parseInt(propertyValue));
+                    } else if (field.getType() == float.class) {
+                        field.set(actor, Float.parseFloat(propertyValue));
+                    } else if (field.getType() == boolean.class) {
+                        field.set(actor, Boolean.parseBoolean(propertyValue));
+                    } else if (field.getType() == String.class) {
+                        field.set(actor, propertyValue);
+                    }
+                }
+            }
+            field.setAccessible(false);
+        }
+    }
+
+    protected BoundingVolume createBoundingVolume(MapObject object, Shape boundShape) {
+        BoundingVolume bv = new BoundingVolume();
+        bv.setShape(boundShape);
+
+        // set is Sensor
+        String isSensor = getObjectProperty(object, SENSOR);
+        if(isSensor != null) {
+            bv.isSensor(Boolean.parseBoolean(isSensor));
+        }
+
+        // set collision category
+        String collisionCategory = getObjectProperty(object, COLLISION_CATEGORY);
+        short category;
+        if (collisionCategory != null) {
+            try {
+                category  = Short.parseShort(collisionCategory);
+            } catch (NumberFormatException e) {
+                category = CollisionCategories.categoryFromString(collisionCategory);
+            }
+            bv.setCollisionCategory(category);
+        }
+
+        // set Collision mask
+        String collisionMask = getObjectProperty(object, COLLISION_MASK);
+        short mask;
+        if (collisionMask != null) {
+            try {
+                mask = Short.parseShort(collisionMask);
+            } catch (NumberFormatException e) {
+                mask = CollisionCategories.maskFromString(collisionMask);
+            }
+            bv.setCollisionMask(mask);
+        }
+
+        return bv;
+    }
+
+    protected BoundingVolume createBoundingVolume(MapObject object, float[] vertices, float unitScale) {
+
+        PolygonShape boundShape = new PolygonShape();
+
+        for(int i = 0; i < vertices.length; i++) {
+            vertices[i] /= unitScale;
+        }
+
+        boundShape.set(vertices);
+
+        return createBoundingVolume(object, boundShape);
     }
 
     /**

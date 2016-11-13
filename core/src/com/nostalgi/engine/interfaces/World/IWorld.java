@@ -223,6 +223,8 @@ public interface IWorld {
     <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint) throws FailedToSpawnActorException;
     <T extends IActor> T  spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor parent, ICharacter instigator) throws FailedToSpawnActorException;
 
+    <T extends IActor> T  spawnActor(Class<T> type, MapObject mapObject, IActor parent, float unitScale);
+
     IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale);
     IWall createWall(MapObject object, Vector2 mapOrigin);
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.physics.BoundingVolume;
 
@@ -40,8 +41,11 @@ public interface IActor extends IWorldObject {
     boolean fixtureNeedsUpdate();
     boolean fixtureNeedsUpdate(boolean update);
 
-    void onOverlapBegin(IActor overlapper);
-    void onOverlapEnd(IActor overlapper);
+    void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture);
+    void onOverlapEnd(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture);
+
+    void postSpawn();
+    void postDespawned();
 
     void destroy();
 
