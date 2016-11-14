@@ -176,15 +176,12 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void loadLevel(String level) {
         TiledMap map = mapLoader.load(level+(!level.contains(".tmx") ? ".tmx" : ""));
         // Setup start level
-
         MapProperties mapProperties = map.getProperties();
         Object GameMode = mapProperties.containsKey("GameMode") ? map.getProperties().get("GameMode") : null;
         Object Type = mapProperties.containsKey("Type") ? map.getProperties().get("Type") : null;
         try {
 
             world = new NostalgiWorld(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
-
-
 
             if(Type != null) {
                 if(Type instanceof String) {
