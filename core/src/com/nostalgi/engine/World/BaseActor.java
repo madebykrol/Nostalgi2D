@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.NostalgiField;
@@ -19,14 +20,23 @@ import java.util.HashMap;
 /**
  * Created by Kristoffer on 2016-07-15.
  */
-public abstract class BaseActor implements IActor {
+public class BaseActor implements IActor {
 
     @Replicated
     @NostalgiField(fieldName = "Floor")
     private int floor = 1;
 
+    @NostalgiField(fieldName = "PhysicsSimulated")
+    private boolean physicsSimulated;
+
+    @NostalgiField(fieldName = "Mass")
+    private float mass;
+
     private IActor parent;
     private HashMap<String, IActor> children = new HashMap<String, IActor>();
+
+    @Replicated
+    protected boolean canEverTick;
 
     /**
      * Position relative to parent
@@ -144,10 +154,10 @@ public abstract class BaseActor implements IActor {
     public ArrayList<BoundingVolume> getBoundingVolumes() {return this.boundingVolumes;}
 
     @Override
-    public void onOverlapBegin(IActor overlapper) {}
+    public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {}
 
     @Override
-    public void onOverlapEnd(IActor overlapper) { }
+    public void onOverlapEnd(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) { }
 
     @Override
     public com.badlogic.gdx.graphics.g2d.Animation getCurrentAnimation() {
@@ -195,7 +205,7 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public boolean canEverTick() {
-        return false;
+        return canEverTick;
     }
 
     @Override
@@ -284,11 +294,39 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public float getMass() {
-        return 0;
+        return this.mass;
     }
 
     @Override
     public void setMass(float mass) {
+        this.mass = mass;
+    }
+
+    @Override
+    public void addOnDestroyListener() {}
+
+    @Override
+    public boolean isReplicated() {
+        return this.isReplicated;
+    }
+
+    @Override
+    public boolean physicsSimulated() {
+        return this.physicsSimulated;
+    }
+
+    @Override
+    public boolean  physicsSimulated( boolean simulated) {
+        return (this.physicsSimulated = simulated);
+    }
+
+    @Override
+    public void createPhysicsBody() {
+
+    }
+
+    @Override
+    public void postDespawned() {
 
     }
 
@@ -313,22 +351,8 @@ public abstract class BaseActor implements IActor {
         }
     }
 
-
     public void destroy() {
         
     }
 
-    public void addOnDestroyListener() {}
-
-    public boolean isReplicated() {
-        return this.isReplicated;
-    }
-
-    public boolean physicsSimulated() {
-        return true;
-    }
-
-    public boolean  physicsSimulated( boolean simulated) {
-        return simulated;
-    }
 }

@@ -22,12 +22,12 @@ public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWall
     }
 
     @Override
-    public IWall fromMapObject(MapObject mapObject, Vector2 mapOrigin) {
-        return fromMapObject(mapObject, mapOrigin, 32f);
+    public IWall createWall(MapObject mapObject, Vector2 mapOrigin) {
+        return createWall(mapObject, mapOrigin, 32f);
     }
 
     @Override
-    public IWall fromMapObject(MapObject object, Vector2 mapOrigin, float unitScale) {
+    public IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale) {
 
         String f = getObjectProperty(object, "Floor");
         int[] floors = new int[]{1};
@@ -54,7 +54,7 @@ public class NostalgiWallFactory extends BaseLevelObjectFactory implements IWall
             position = new Vector2(obj.getPolygon().getX()/unitScale+mapOrigin.x, obj.getPolygon().getY()/unitScale+mapOrigin.y);
         }
 
-        IWall wall = createWall(floors, position, vertices);
+        IWall wall = new Wall(floors, position, vertices);
 
         world.createBody(wall, unitScale);
 

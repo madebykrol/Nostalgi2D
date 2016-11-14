@@ -1,9 +1,11 @@
 package com.nostalgi.game.Hud;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.nostalgi.engine.Hud.BaseHudModule;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 /**
  * Created by ksdkrol on 2016-07-12.
@@ -21,13 +24,16 @@ import com.nostalgi.engine.interfaces.World.IActor;
 public class ExampleHudModule extends BaseHudModule {
     private Skin skin;
     private Table table;
+    private TextButton button;
+    private IWorld world;
 
     IActor lookingAt;
 
-    public ExampleHudModule() {
+    public ExampleHudModule(IWorld world) {
         // A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
         // recommended solely for the convenience of getting a texture, region, etc as a drawable, tinted drawable, etc.
-        skin = new Skin();
+        this.skin = new Skin();
+        this.world = world;
     }
 
     @Override
@@ -55,9 +61,11 @@ public class ExampleHudModule extends BaseHudModule {
         stage.addActor(table);
 
         // Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
-        final TextButton button = new TextButton("Click me!", skin);
-        table.add(button);
+        button = new TextButton("Click me!", skin);
+        //table.add(button);
+        stage.addActor(button);
 
+        button.setPosition(2, 1);
         // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
         // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
         // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
@@ -68,14 +76,17 @@ public class ExampleHudModule extends BaseHudModule {
                 button.setText("Good job!");
             }
         });
-
-        // Add an image actor. Have to set the size, else it would be the size of the drawable (which is the 1x1 texture).
-        table.add(new Image(skin.newDrawable("white", Color.RED))).size(64);
     }
 
     @Override
     public void update(float dTime) {
-        table.setVisible(this.isVisible());
+        button.setVisible(this.isVisible());
+        if(lookingAt != null) {
+            Vector2 screenPos = world.project(lookingAt.getWorldPosition());
+            System.out.print(screenPos);
+            button.setPosition(screenPos.x, screenPos.y);
+            button.setText(lookingAt.getName());
+        }
     }
 
     public void setLookingAt(IActor actor) {

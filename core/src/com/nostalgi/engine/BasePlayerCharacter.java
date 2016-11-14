@@ -36,17 +36,23 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(0.5f, 0.25f, new Vector2(0,-0.25f), 0);
         boundingVolume.setShape(shape);
+        boundingVolume.setVolumeId("feet");
 
         this.setBoundingVolume(boundingVolume);
 
         BoundingVolume boundingVolume2 = new BoundingVolume();
         boundingVolume2.isSensor(false);
+        boundingVolume2.setVolumeId("head");
 
         PolygonShape shape2 = new PolygonShape();
         shape2.setAsBox(0.5f, 0.75f, new Vector2(0,0.75f), 0);
         boundingVolume2.setShape(shape2);
 
         this.setBoundingVolume(boundingVolume2);
+
+        this.setMass(0.25f);
+
+        physicsSimulated(true);
     }
 
     @Override

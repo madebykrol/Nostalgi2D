@@ -113,7 +113,6 @@ public class ExampleTopDownRPGController extends BaseController {
 
         for(TraceHit hit : seeing) {
             IWorldObject actor = hit.object;
-            System.out.println("Looking at: "+actor.getName());
             if(actor instanceof IInteractable) {
                 if(actor instanceof IActor) {
                     IActor lookingAt =  mainHud.getLookingAt();

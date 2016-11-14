@@ -47,7 +47,7 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
 
         // setup physics world
         IHud hud = new BaseHud(w/2, h/2);
-        hud.addModule("Main", new ExampleHudModule());
+        hud.addModule("Main", new ExampleHudModule(world));
         hud.addModule("Debug", new DebugHudModule(gameState));
 
         this.setHud(hud);

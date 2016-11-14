@@ -186,8 +186,8 @@ public class NostalgiBaseEngine implements IGameEngine {
             if(Type != null) {
                 if(Type instanceof String) {
                     Class c =  Class.forName((String)Type);
-                    Constructor ctor = c.getConstructor(TiledMap.class, IActorFactory.class, IWallFactory.class);
-                    ILevel lvl = (ILevel)ctor.newInstance(map, new NostalgiActorFactory(world), new NostalgiWallFactory(world));
+                    Constructor ctor = c.getConstructor(TiledMap.class, IWorld.class,  IActorFactory.class);
+                    ILevel lvl = (ILevel)ctor.newInstance(map, world, new NostalgiActorFactory(world));
                     mapRenderer.loadLevel(lvl);
                     world.setWorldBounds(lvl.getCameraBounds());
                     world.setCameraPositionSafe(lvl.getCameraInitLocation());
