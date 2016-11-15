@@ -1039,8 +1039,8 @@
   </object>
   <object id="242" name="Planetoid02" x="1119" y="678" width="127" height="133">
    <properties>
-    <property name="CollisionCategory" value="Player"/>
-    <property name="CollisionMask" value="Player"/>
+    <property name="CollisionCategory" value="Actor"/>
+    <property name="CollisionMask" value="Actor"/>
     <property name="Floor" type="int" value="1"/>
     <property name="Friction" type="float" value="5"/>
     <property name="IsSensor" type="bool" value="false"/>
@@ -1052,8 +1052,8 @@
   </object>
   <object id="246" name="Planetoid01" x="1355" y="181">
    <properties>
-    <property name="CollisionCategory" value="Trigger"/>
-    <property name="CollisionMask" value="Player"/>
+    <property name="CollisionCategory" value="Actor"/>
+    <property name="CollisionMask" value="Actor"/>
     <property name="Floor" type="int" value="0"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>

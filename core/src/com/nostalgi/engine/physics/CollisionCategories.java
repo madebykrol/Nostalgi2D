@@ -9,42 +9,40 @@ public class CollisionCategories {
 
     public static final short CATEGORY_NIL = 0;
     public static final short CATEGORY_PLAYER = 1;
-    public static final short CATEGORY_NPC = 2;
+    public static final short CATEGORY_ACTOR = 2;
     public static final short CATEGORY_ITEM = 4;
-    public static final short CATEGORY_MONSTER =8;
-    public static final short CATEGORY_WALL = 16;
-    public static final short CATEGORY_PROJECTILES = 32;
-    public static final short CATEGORY_FLOOR_1 = 64;
-    public static final short CATEGORY_FLOOR_2 = 128;
-    public static final short CATEGORY_FLOOR_3 = 258;
-    public static final short CATEGORY_FLOOR_4 = 512;
-    public static final short CATEGORY_TRIGGER = 1024;
+    public static final short CATEGORY_WALL = 8;
+    public static final short CATEGORY_PROJECTILES = 16;
+    public static final short CATEGORY_FLOOR_1 = 32;
+    public static final short CATEGORY_FLOOR_2 = 64;
+    public static final short CATEGORY_FLOOR_3 = 128;
+    public static final short CATEGORY_FLOOR_4 = 256;
+    public static final short CATEGORY_TRIGGER = 512;
 
-    public static final short CATEGORY_CUSTOM_1 = 2048;
-    public static final short CATEGORY_CUSTOM_2 = 4096;
-    public static final short CATEGORY_CUSTOM_3 = 8192;
+    public static final short CATEGORY_CUSTOM_1 = 1024;
+    public static final short CATEGORY_CUSTOM_2 = 2048;
+    public static final short CATEGORY_CUSTOM_3 = 4096;
+    public static final short CATEGORY_CUSTOM_4 = 8192;
 
-
-    public static final short MASK_PLAYER = CATEGORY_MONSTER |
+    public static final short MASK_PLAYER =
             CATEGORY_TRIGGER |
-            CATEGORY_NPC |
+            CATEGORY_ACTOR |
             CATEGORY_ITEM |
             CATEGORY_PROJECTILES |
             CATEGORY_PLAYER;
 
-    public static final short MASK_MONSTER = CATEGORY_PLAYER |
+    public static final short MASK_ACTOR = CATEGORY_PLAYER |
             CATEGORY_TRIGGER |
             CATEGORY_WALL |
             CATEGORY_PROJECTILES |
-            CATEGORY_NPC;
+            CATEGORY_ACTOR;
     public static final short MASK_WALLS = CATEGORY_PROJECTILES;
 
     public static final short MASK_NPC = CATEGORY_TRIGGER |
-            CATEGORY_MONSTER |
             CATEGORY_WALL |
             CATEGORY_PROJECTILES;
 
-    public static final short MASK_TRIGGER = CATEGORY_PLAYER |CATEGORY_NPC |CATEGORY_MONSTER;
+    public static final short MASK_TRIGGER = CATEGORY_PLAYER | CATEGORY_ACTOR ;
 
     public static short categoryFromString(String s) {
         try {
