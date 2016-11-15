@@ -47,4 +47,5 @@ The game state tracks the current game across maps.
 <li>Level travelling</li>
 <li>Basic AI Controller</li>
 <li>Network / Multiplayer capabilities</li>
+<li>Custom map editor instead of Tiled</li>
 </ul>
