@@ -127,7 +127,12 @@ public class AmbientSoundActor implements IActor {
     }
 
     @Override
-    public void postDespawned() {
+    public void onSpawn() {
+
+    }
+
+    @Override
+    public void onDespawn() {
 
     }
 
@@ -162,7 +167,12 @@ public class AmbientSoundActor implements IActor {
     }
 
     @Override
-    public void applyForce(Vector2 force, Vector2 point) {
+    public void applyForce(Vector2 force, Vector2 targetPoint) {
+
+    }
+
+    @Override
+    public void applyRadialForce(Vector2 origin, float force, float falloffRadius) {
 
     }
 

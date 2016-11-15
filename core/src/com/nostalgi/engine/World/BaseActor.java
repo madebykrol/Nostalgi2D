@@ -2,6 +2,7 @@ package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -327,8 +328,22 @@ public class BaseActor implements IActor {
     }
 
     @Override
-    public void applyForce(Vector2 force, Vector2 point) {
-        getPhysicsBody().applyForce(force, point, true);
+    public void applyForce(Vector2 force, Vector2 targetPoint) {
+        getPhysicsBody().applyForce(force, targetPoint, true);
+    }
+
+    @Override
+    public void applyRadialForce(Vector2 origin, float force, float falloffRadius) {
+        float angleBetween = MathUtils.atan2(this.getPosition().y-origin.y,  this.getPosition().x-origin.x);
+
+        float distanceBetween = this.getPosition().dst(origin);
+        float falloff = falloffRadius-distanceBetween;
+
+        // F/M1 * (R-D) * cos(a)|sin(a)
+        float x = ((force / this.getMass()) * (falloff) )* MathUtils.cos(angleBetween);
+        float y = ((force / this.getMass()) * (falloff) )* MathUtils.sin(angleBetween);
+
+        this.applyForce(new Vector2(x, y), this.getPhysicsBody().getWorldCenter());
     }
 
     @Override
@@ -337,7 +352,12 @@ public class BaseActor implements IActor {
     }
 
     @Override
-    public void postDespawned() {
+    public void onSpawn() {
+
+    }
+
+    @Override
+    public void onDespawn() {
 
     }
 
@@ -364,7 +384,4 @@ public class BaseActor implements IActor {
             this.transformationNeedsUpdate = false;
         }
     }
-
-
-
 }

@@ -536,7 +536,7 @@ public class NostalgiWorld implements IWorld {
         }
 
         a.createPhysicsBody();
-
+        a.onSpawn();
         return (T)a;
     }
 

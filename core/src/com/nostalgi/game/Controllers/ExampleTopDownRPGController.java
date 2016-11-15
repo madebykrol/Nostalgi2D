@@ -61,6 +61,13 @@ public class ExampleTopDownRPGController extends BaseController {
                 }
             }
         }
+
+        ArrayList<IActor> actors2 = world.actorsCloseToLocation(worldPos2D, 4f);
+        if(!actors2.isEmpty()) {
+            for(IActor currActor : actors2) {
+                currActor.applyRadialForce(worldPos2D, 500000, 4);
+            }
+        }
         return false;
     }
 

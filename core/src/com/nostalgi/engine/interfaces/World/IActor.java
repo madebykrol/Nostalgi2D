@@ -161,8 +161,17 @@ public interface IActor extends IWorldObject {
      */
     void createPhysicsBody();
 
+    /**
+     * Called as soon as actor is ready and added to the level.
+     * The actor has not yet been rendered at this point, but it's part of the scene and can begin to tick.
+     */
+    void onSpawn();
 
-    void postDespawned();
+    /**
+     * Called as soon as the actor has been removed from the scene.
+     * The actor will no longer be rendering.
+     */
+    void onDespawn();
 
     void destroy();
 
@@ -193,7 +202,18 @@ public interface IActor extends IWorldObject {
      * Apply force to actor with angle and velocity.
      *
      * @param force
-     * @param point
+     * @param targetPoint
      */
-    void applyForce(Vector2 force, Vector2 point);
+    void applyForce(Vector2 force, Vector2 targetPoint);
+
+    /**
+     * Apply radial force to actor.
+     * Commonly used to simulate an explosion in the vincinity of an actor.
+     * @param origin
+     * @param force
+     * @param falloffRadius
+     */
+    void applyRadialForce(Vector2 origin, float force, float falloffRadius);
+
+
 }
