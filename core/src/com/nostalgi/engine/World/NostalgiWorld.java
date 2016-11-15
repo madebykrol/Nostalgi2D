@@ -119,7 +119,13 @@ public class NostalgiWorld implements IWorld {
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
+                try {
+                    IActor a = (IActor) contact.getFixtureA().getBody().getUserData();
+                    IActor b = (IActor) contact.getFixtureB().getBody().getUserData();
+                    contact.setEnabled(a.blockOnCollision(b, contact) && b.blockOnCollision(a, contact));
+                } catch (ClassCastException e) {
 
+                }
             }
 
             @Override
@@ -265,7 +271,7 @@ public class NostalgiWorld implements IWorld {
             }
 
             Fixture  f = actorBody.createFixture(blockingBounds);
-            f.setUserData(bv.getVolumeId());
+            f.setUserData(bv);
             bvI++;
         }
         actor.setPhysicsBody(actorBody);
@@ -363,7 +369,7 @@ public class NostalgiWorld implements IWorld {
                     blockingBounds.filter.maskBits = bv.getCollisionMask();
                 }
                 Fixture f = playerBody.createFixture(blockingBounds);
-                f.setUserData(bv.getVolumeId());
+                f.setUserData(bv);
                 bvI++;
             }
         }

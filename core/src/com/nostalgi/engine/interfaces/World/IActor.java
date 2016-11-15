@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.physics.BoundingVolume;
@@ -159,14 +160,40 @@ public interface IActor extends IWorldObject {
      *
      */
     void createPhysicsBody();
+
+
     void postDespawned();
 
     void destroy();
 
     void addOnDestroyListener();
 
+    /**
+     * Returns true if this actor is replicated between the server and clients
+     * @return
+     */
     boolean isReplicated();
 
+    /**
+     * Return if this actor is supposed to be part of the physics simulation.
+     * @return
+     */
     boolean physicsSimulated();
+
+    /**
+     * Set / Get if this actor is supposed to be part of the physics simulation.
+     * @param simulated
+     * @return
+     */
     boolean physicsSimulated(boolean simulated);
+
+    boolean blockOnCollision(IActor actor, Contact contact);
+
+    /**
+     * Apply force to actor with angle and velocity.
+     *
+     * @param force
+     * @param point
+     */
+    void applyForce(Vector2 force, Vector2 point);
 }

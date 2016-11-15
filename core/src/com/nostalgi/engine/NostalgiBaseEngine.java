@@ -91,10 +91,9 @@ public class NostalgiBaseEngine implements IGameEngine {
                     world.updateBody(character);
                 }
             }
+            world.tick();
 
             tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
-
-            world.tick();
 
             replicateActors(mapRenderer.getCurrentLevel().getActors());
         }

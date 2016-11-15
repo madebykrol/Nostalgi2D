@@ -24,10 +24,13 @@ In a Nostalgi2D Game, a Controller is conceptually the player, or rather what ha
 
 <i>(?)Playersession - The engine keeps track of a player in a multiplayer context with a playersession that is tied to a state and a controller. In a singleplayer context it just tracks a single session. locally.</i>
 ### Actors
+Actors are the objects that brings life to your game. It could be characters, doors, lamps, spawners, ponds, or anything else that is going to be acting with or to players or other events in the world.
 
 ### GameMode
+The game mode is what governs the rules of your game. Each map is associated with a game mode.
 
 ### GameState
+The game state tracks the current game across maps.
 
 ## Roadmap
 <ul>
@@ -44,4 +47,5 @@ In a Nostalgi2D Game, a Controller is conceptually the player, or rather what ha
 <li>Level travelling</li>
 <li>Basic AI Controller</li>
 <li>Network / Multiplayer capabilities</li>
+<li>Custom map editor instead of Tiled</li>
 </ul>

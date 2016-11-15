@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.compression.lzma.Base;
@@ -321,6 +322,16 @@ public class BaseActor implements IActor {
     }
 
     @Override
+    public boolean blockOnCollision(IActor actor, Contact contact) {
+        return contact.isEnabled();
+    }
+
+    @Override
+    public void applyForce(Vector2 force, Vector2 point) {
+        getPhysicsBody().applyForce(force, point, true);
+    }
+
+    @Override
     public void createPhysicsBody() {
 
     }
@@ -330,11 +341,14 @@ public class BaseActor implements IActor {
 
     }
 
+    @Override
+    public void destroy() {
+
+    }
 
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;
     }
-
     private void doWorldTransformation() {
         if(this.transformationNeedsUpdate) {
             if(this.parent != null) {
@@ -351,8 +365,6 @@ public class BaseActor implements IActor {
         }
     }
 
-    public void destroy() {
-        
-    }
+
 
 }
