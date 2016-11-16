@@ -2,11 +2,9 @@ package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
-import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
@@ -65,7 +63,7 @@ public class ExampleTopDownRPGController extends BaseController {
         ArrayList<IActor> actors2 = world.actorsCloseToLocation(worldPos2D, 4f);
         if(!actors2.isEmpty()) {
             for(IActor currActor : actors2) {
-                currActor.applyRadialForce(worldPos2D, 500000, 4);
+                currActor.applyForceFromOrigin(worldPos2D, 500000, 4);
             }
         }
         return false;

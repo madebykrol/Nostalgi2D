@@ -4,8 +4,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.nostalgi.game.Game;
 import com.nostalgi.game.desktop.com.nostalgi.cli.CLI;
-import com.nostalig.server.HeadlessApplication;
-import com.nostalig.server.ServerConfig;
+import com.nostalgi.server.HeadlessApplication;
+import com.nostalgi.server.ServerConfig;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

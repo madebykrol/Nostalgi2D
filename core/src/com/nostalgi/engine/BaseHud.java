@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
-import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 
 import java.util.HashMap;

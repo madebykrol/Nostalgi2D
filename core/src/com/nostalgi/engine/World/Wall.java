@@ -25,10 +25,16 @@ public class Wall implements IWall {
         this.position = position;
     }
 
+    /**
+     * @inheritDoc
+     */
     public Wall(int[] floors) {
         this(floors, new Vector2(0,0));
     }
 
+    /**
+     * @inheritDoc
+     */
     public Wall(int[] floors, Vector2 position) {
         this(floors, position, new float[0]);
     }
@@ -105,16 +111,25 @@ public class Wall implements IWall {
         this.position = pos;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setBoundingVolume(BoundingVolume body) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public BoundingVolume getBoundingVolume(int index) {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public ArrayList<BoundingVolume> getBoundingVolumes() {
         return null;
@@ -128,6 +143,9 @@ public class Wall implements IWall {
         return this.position;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Vector2 getWorldPosition() {
         return null;
@@ -179,46 +197,73 @@ public class Wall implements IWall {
         this.body = body;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public int getFloorLevel() {
         return 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setFloorLevel(int floor) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setWorld(IWorld world) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isStatic() {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isStatic(boolean isStatic) {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isSensor() {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public boolean isSensor(boolean isSenor) {
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float getDensity() {
         return 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setDensity(float density) {
 
@@ -234,16 +279,25 @@ public class Wall implements IWall {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void draw(Batch batch, float timeElapsed) {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float getMass() {
         return 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setMass(float mass) {
 

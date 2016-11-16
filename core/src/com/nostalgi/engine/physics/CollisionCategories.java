@@ -1,6 +1,8 @@
 package com.nostalgi.engine.physics;
 
-import java.lang.reflect.Field;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Created by Kristoffer on 2016-07-08.
@@ -73,8 +75,12 @@ public class CollisionCategories {
     }
 
     public static short getFieldFromString(String s) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        Class myClass = Class.forName("com.nostalgi.engine.physics.CollisionCategories");
-        Field myField = myClass.getDeclaredField(s.toUpperCase());
-        return myField.getShort(null);
+        try {
+            Class myClass = ClassReflection.forName("com.nostalgi.engine.physics.CollisionCategories");
+            Field myField = ClassReflection.getDeclaredField(myClass, s.toUpperCase());
+            return (Short)myField.get(null);
+        } catch (ReflectionException e) {
+            return 0;
+        }
     }
 }

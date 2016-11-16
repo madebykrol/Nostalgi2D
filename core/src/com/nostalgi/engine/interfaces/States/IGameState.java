@@ -1,6 +1,5 @@
 package com.nostalgi.engine.interfaces.States;
 
-import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.World.ILevel;
 

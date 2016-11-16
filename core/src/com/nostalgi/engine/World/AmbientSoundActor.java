@@ -172,7 +172,7 @@ public class AmbientSoundActor implements IActor {
     }
 
     @Override
-    public void applyRadialForce(Vector2 origin, float force, float falloffRadius) {
+    public void applyForceFromOrigin(Vector2 origin, float force, float radius) {
 
     }
 

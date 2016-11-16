@@ -2,8 +2,6 @@ package com.nostalgi.engine.Hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.nostalgi.engine.interfaces.Hud.IHudModule;
-import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 
 /**

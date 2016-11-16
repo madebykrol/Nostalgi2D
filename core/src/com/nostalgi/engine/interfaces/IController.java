@@ -2,7 +2,6 @@ package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
-import com.nostalgi.engine.Render.NostalgiCamera;
 
 /**
  * Created by ksdkrol on 2016-07-04.
