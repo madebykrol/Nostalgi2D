@@ -83,7 +83,6 @@ public class ExampleHudModule extends BaseHudModule {
         button.setVisible(this.isVisible());
         if(lookingAt != null) {
             Vector2 screenPos = world.project(lookingAt.getWorldPosition());
-            System.out.print(screenPos);
             button.setPosition(screenPos.x, screenPos.y);
             button.setText(lookingAt.getName());
         }

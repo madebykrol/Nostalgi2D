@@ -334,16 +334,19 @@ public class BaseActor implements IActor {
 
     @Override
     public void applyRadialForce(Vector2 origin, float force, float falloffRadius) {
-        float angleBetween = MathUtils.atan2(this.getPosition().y-origin.y,  this.getPosition().x-origin.x);
+        float angleBetween = Math.abs(MathUtils.atan2(origin.y-this.getPosition().y,  origin.x-this.getPosition().x));
+
+        System.out.println(angleBetween);
 
         float distanceBetween = this.getPosition().dst(origin);
-        float falloff = falloffRadius-distanceBetween;
+        float falloff = 1;
 
         // F/M1 * (R-D) * cos(a)|sin(a)
         float x = ((force / this.getMass()) * (falloff) )* MathUtils.cos(angleBetween);
         float y = ((force / this.getMass()) * (falloff) )* MathUtils.sin(angleBetween);
 
-        this.applyForce(new Vector2(x, y), this.getPhysicsBody().getWorldCenter());
+
+        this.getPhysicsBody().applyLinearImpulse(new Vector2(x, y), this.getPhysicsBody().getWorldCenter(), true);
     }
 
     @Override

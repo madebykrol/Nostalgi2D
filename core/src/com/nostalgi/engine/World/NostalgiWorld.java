@@ -483,7 +483,8 @@ public class NostalgiWorld implements IWorld {
               public boolean reportFixture(Fixture fixture) {
                   Object o = fixture.getBody().getUserData();
                   if (o instanceof IActor) {
-                      actors.add((IActor) o);
+                      if(!actors.contains((IActor)o))
+                        actors.add((IActor) o);
                   }
                   return true;
               }
