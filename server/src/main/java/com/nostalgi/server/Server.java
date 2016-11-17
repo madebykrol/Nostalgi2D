@@ -1,4 +1,4 @@
-package com.nostalig.server;
+package com.nostalgi.server;
 
 /**
  * Created by ksdkrol on 2016-09-16.

@@ -23,6 +23,10 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.reflect.Annotation;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
@@ -37,8 +41,6 @@ import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.physics.TraceHit;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -86,16 +88,18 @@ public class NostalgiWorld implements IWorld {
                 try {
                     Fixture a = contact.getFixtureA();
                     Fixture b = contact.getFixtureB();
+                    if(a.getBody().getUserData() instanceof IActor &&
+                            b.getBody().getUserData() instanceof IActor) {
+                        IActor actorA = (IActor) a.getBody().getUserData();
+                        IActor actorB = (IActor) b.getBody().getUserData();
 
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapBegin(actorB, b, a);
-                        actorB.onOverlapBegin(actorA, a, b);
+                        if (actorA != null && actorB != null) {
+                            actorA.onOverlapBegin(actorB, b, a);
+                            actorB.onOverlapBegin(actorA, a, b);
+                        }
                     }
                 } catch (ClassCastException e) {
-
+                    e.printStackTrace();
                 }
             }
 
@@ -113,18 +117,21 @@ public class NostalgiWorld implements IWorld {
                         actorB.onOverlapEnd(actorA, a, b);
                     }
                 } catch (ClassCastException e) {
-
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
                 try {
-                    IActor a = (IActor) contact.getFixtureA().getBody().getUserData();
-                    IActor b = (IActor) contact.getFixtureB().getBody().getUserData();
-                    contact.setEnabled(a.blockOnCollision(b, contact) && b.blockOnCollision(a, contact));
+                    if(contact.getFixtureA().getBody().getUserData() instanceof IActor
+                            && contact.getFixtureB().getBody().getUserData() instanceof IActor) {
+                        IActor a = (IActor) contact.getFixtureA().getBody().getUserData();
+                        IActor b = (IActor) contact.getFixtureB().getBody().getUserData();
+                        contact.setEnabled(a.blockOnCollision(b, contact) && b.blockOnCollision(a, contact));
+                    }
                 } catch (ClassCastException e) {
-
+                    e.printStackTrace();
                 }
             }
 
@@ -510,18 +517,7 @@ public class NostalgiWorld implements IWorld {
     public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor parent, ICharacter instigator)
             throws FailedToSpawnActorException
     {
-        IActor a;
-        try {
-            a = type.getConstructor(IWorld.class).newInstance(this);
-        } catch (NoSuchMethodException e) {
-            try {
-                a = type.newInstance();
-            } catch(Exception e1) {
-                throw new FailedToSpawnActorException(e1);
-            }
-        } catch (Exception e2) {
-            throw  new FailedToSpawnActorException(e2);
-        }
+        IActor a = createActorInstance(type);
 
         a.setPosition(spawnPoint);
         a.setName(name);
@@ -542,22 +538,30 @@ public class NostalgiWorld implements IWorld {
     }
 
     @Override
-    public <T extends IActor> T spawnActor(Class<T> type, MapObject mapObject, IActor parent, float unitScale) {
+    public <T extends IActor> T spawnActor(Class<T> type, MapObject mapObject, IActor parent, float unitScale)
+    throws FailedToSpawnActorException
+    {
         try {
-            IActor actor = type.newInstance();
+            IActor actor = createActorInstance(type);
 
-            // Set base class fields
-            setFields(actor, mapObject, type.getSuperclass().getDeclaredFields());
 
-            // Set class fields.
-            setFields(actor,mapObject, type.getDeclaredFields());
+            try {
+                // Set base class fields
+                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type.getSuperclass()));
+
+                // Set class fields.
+                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type));
+            } catch (ReflectionException e) {
+                e.printStackTrace();
+            }
+
+
 
             float[] vertices;
             Vector2 position = new Vector2(0,0);
             BoundingVolume bv =  new BoundingVolume();
             if(mapObject instanceof RectangleMapObject) {
                 Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
-
                 vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
                 bv = createBoundingVolume(mapObject, vertices, unitScale);
                 position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
@@ -598,8 +602,6 @@ public class NostalgiWorld implements IWorld {
             createBody(actor);
             return (T)actor;
         } catch(IllegalAccessException e) {
-            return null;
-        } catch (InstantiationException e) {
             return null;
         }
     }
@@ -707,6 +709,14 @@ public class NostalgiWorld implements IWorld {
         this.camera.update();
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void dispose() {
+        world.dispose();
+    }
+
     protected String getObjectProperty(MapObject object, String prop) {
         Object p = object.getProperties().get(prop);
 
@@ -727,16 +737,21 @@ public class NostalgiWorld implements IWorld {
 
         result[4] = x + width;
         result[5] = y + height;
+
         result[6] = x;
         result[7] = y + height;
 
         return result;
     }
 
-    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException {
+    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException, ReflectionException {
         for(Field field : fields) {
             field.setAccessible(true);
-            NostalgiField annotation = field.getAnnotation(NostalgiField.class);
+            Annotation declaredAnnotation = field.getDeclaredAnnotation(NostalgiField.class);
+            NostalgiField annotation = null;
+            if(declaredAnnotation != null) {
+                annotation = declaredAnnotation.getAnnotation(NostalgiField.class);
+            }
             if (annotation != null && annotation.fromEditor()) {
                 String fieldName = annotation.fieldName();
                 if (fieldName.isEmpty()) {
@@ -810,11 +825,23 @@ public class NostalgiWorld implements IWorld {
         return createBoundingVolume(object, boundShape);
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void dispose() {
-        world.dispose();
+    protected IActor createActorInstance(Class type) throws FailedToSpawnActorException {
+        IActor a;
+        try {
+            a = (IActor) ClassReflection.getConstructor(type, IWorld.class).newInstance(this);
+            //a = (IActor)type.getConstructor(IWorld.class).newInstance(this);
+        } catch (ReflectionException e) {
+            if(e.getCause() instanceof NoSuchMethodException) {
+                try {
+                    a = (IActor) ClassReflection.newInstance(type);
+                } catch(ReflectionException e1 ) {
+                    throw new FailedToSpawnActorException(e1);
+                }
+            } else {
+                throw new FailedToSpawnActorException(e);
+            }
+        }
+
+        return a;
     }
 }

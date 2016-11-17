@@ -4,7 +4,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
-import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.interfaces.World.IWorld;
 
 

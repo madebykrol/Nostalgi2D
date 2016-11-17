@@ -5,9 +5,10 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.World.RootActor;
-import com.nostalgi.engine.interfaces.Factories.IActorFactory;
-import com.nostalgi.engine.interfaces.Factories.IWallFactory;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWall;
@@ -34,19 +35,16 @@ public abstract class BaseLevel implements ILevel {
 
     private IActor mapRoot = new RootActor();
 
-    private IActorFactory actorFactory;
     private IWorld world;
 
     public BaseLevel(
                      TiledMap map,
-                     IWorld world,
-                     IActorFactory actorFactory) {
-        this(map, world, actorFactory, "Walls", "Actors", "Ground");
+                     IWorld world) {
+        this(map, world,"Walls", "Actors", "Ground");
     }
 
     public BaseLevel(TiledMap map,
                      IWorld world,
-                     IActorFactory actorFactory,
                      String wallsLayer,
                      String actorsLayer,
                      String groundLayer) {
@@ -58,7 +56,6 @@ public abstract class BaseLevel implements ILevel {
 
         this.mapRoot.setPosition(new Vector2(0,0));
 
-        this.actorFactory = actorFactory;
         this.world = world;
     }
 
@@ -135,7 +132,6 @@ public abstract class BaseLevel implements ILevel {
         for(Map.Entry<String, IActor> entry : getActors().entrySet()) {
             IActor actor = entry.getValue();
 
-            this.actorFactory.destroyActor(actor);
         }
     }
 
@@ -152,11 +148,12 @@ public abstract class BaseLevel implements ILevel {
             for(MapObject object : actorsLayer.getObjects()) {
                 String type = (String)object.getProperties().get("Type");
                 try {
-                    mapRoot.addChild(world.spawnActor((Class)Class.forName(type), object, this.mapRoot, getMainLayer().getTileHeight()));
-                } catch (ClassNotFoundException e) {
+                    mapRoot.addChild(world.spawnActor(ClassReflection.forName(type), object, this.mapRoot, getMainLayer().getTileHeight()));
+                } catch (FailedToSpawnActorException e) {
+                    e.printStackTrace();
+                } catch(ReflectionException e) {
                     e.printStackTrace();
                 }
-                //mapRoot.addChild(actorFactory.createActor(object, this.mapRoot, getMainLayer().getTileWidth()));
             }
         }
     }

@@ -1,15 +1,10 @@
 package com.nostalgi.engine.interfaces.World;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
-import com.nostalgi.engine.physics.BoundingVolume;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -213,7 +208,7 @@ public interface IActor extends IWorldObject {
      * @param force
      * @param falloffRadius
      */
-    void applyRadialForce(Vector2 origin, float force, float falloffRadius);
+    void applyForceFromOrigin(Vector2 origin, float force, float falloffRadius);
 
 
 }

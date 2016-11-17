@@ -1,8 +1,6 @@
-package com.nostalig.server;
+package com.nostalgi.server;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /**
  * Created by ksdkrol on 2016-09-19.

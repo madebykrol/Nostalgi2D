@@ -333,7 +333,7 @@ public class BaseActor implements IActor {
     }
 
     @Override
-    public void applyRadialForce(Vector2 origin, float force, float falloffRadius) {
+    public void applyForceFromOrigin(Vector2 origin, float force, float falloffRadius) {
         float angleBetween = Math.abs(MathUtils.atan2(origin.y-this.getPosition().y,  origin.x-this.getPosition().x));
 
         System.out.println(angleBetween);
