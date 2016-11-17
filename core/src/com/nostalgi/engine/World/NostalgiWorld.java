@@ -108,13 +108,15 @@ public class NostalgiWorld implements IWorld {
                 try {
                     Fixture a = contact.getFixtureA();
                     Fixture b = contact.getFixtureB();
+                    if(a.getBody().getUserData() instanceof IActor
+                            && b.getBody().getUserData() instanceof IActor) {
+                        IActor actorA = (IActor) a.getBody().getUserData();
+                        IActor actorB = (IActor) b.getBody().getUserData();
 
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapEnd(actorB, b, a);
-                        actorB.onOverlapEnd(actorA, a, b);
+                        if (actorA != null && actorB != null) {
+                            actorA.onOverlapEnd(actorB, b, a);
+                            actorB.onOverlapEnd(actorA, a, b);
+                        }
                     }
                 } catch (ClassCastException e) {
                     e.printStackTrace();
@@ -245,19 +247,19 @@ public class NostalgiWorld implements IWorld {
 
         Body actorBody = actor.getPhysicsBody();
         if(actorBody == null) {
-            BodyDef playerBodyDef = new BodyDef();
+            BodyDef bodyDef = new BodyDef();
 
-            playerBodyDef.fixedRotation = true;
-            playerBodyDef.position.x = actor.getWorldPosition().x / unitScale;
-            playerBodyDef.position.y = actor.getWorldPosition().y / unitScale;
+            bodyDef.fixedRotation = true;
+            bodyDef.position.x = actor.getWorldPosition().x / unitScale;
+            bodyDef.position.y = actor.getWorldPosition().y / unitScale;
 
             if (actor.isStatic()) {
-                playerBodyDef.type = BodyDef.BodyType.StaticBody;
+                bodyDef.type = BodyDef.BodyType.StaticBody;
             } else {
-                playerBodyDef.type = BodyDef.BodyType.DynamicBody;
+                bodyDef.type = BodyDef.BodyType.DynamicBody;
             }
 
-            actorBody = world.createBody(playerBodyDef);
+            actorBody = world.createBody(bodyDef);
             actorBody.setUserData(actor);
         }
         int bvI = 0;
@@ -555,8 +557,6 @@ public class NostalgiWorld implements IWorld {
                 e.printStackTrace();
             }
 
-
-
             float[] vertices;
             Vector2 position = new Vector2(0,0);
             BoundingVolume bv =  new BoundingVolume();
@@ -575,18 +575,17 @@ public class NostalgiWorld implements IWorld {
                 CircleMapObject obj = (CircleMapObject)mapObject;
                 position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
                 CircleShape circle = new CircleShape();
-                circle.setPosition(position);
                 circle.setRadius(obj.getCircle().radius);
 
                 bv = createBoundingVolume(obj, circle);
             } else  if (mapObject instanceof EllipseMapObject) {
                 EllipseMapObject obj = (EllipseMapObject)mapObject;
-                position = new Vector2(obj.getEllipse().x/unitScale, obj.getEllipse().y/unitScale);
+
                 CircleShape circle = new CircleShape();
 
                 float radius = obj.getEllipse().width  / 2;
 
-                circle.setPosition(new Vector2((obj.getEllipse().x + radius) / unitScale, (obj.getEllipse().y + radius) / unitScale));
+                position = new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale);
                 circle.setRadius(radius/unitScale);
                 bv = createBoundingVolume(obj, circle);
             }
