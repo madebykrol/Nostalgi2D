@@ -191,6 +191,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                     Class c =  ClassReflection.forName((String)GameMode);
                     Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
                     IGameMode gameMode = (IGameMode)ctor.newInstance(world);
+
                     world.setGameMode(gameMode);
                 }
             }

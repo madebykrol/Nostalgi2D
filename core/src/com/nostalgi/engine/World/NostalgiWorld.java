@@ -88,13 +88,15 @@ public class NostalgiWorld implements IWorld {
                 try {
                     Fixture a = contact.getFixtureA();
                     Fixture b = contact.getFixtureB();
+                    if(a.getBody().getUserData() instanceof IActor &&
+                            b.getBody().getUserData() instanceof IActor) {
+                        IActor actorA = (IActor) a.getBody().getUserData();
+                        IActor actorB = (IActor) b.getBody().getUserData();
 
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapBegin(actorB, b, a);
-                        actorB.onOverlapBegin(actorA, a, b);
+                        if (actorA != null && actorB != null) {
+                            actorA.onOverlapBegin(actorB, b, a);
+                            actorB.onOverlapBegin(actorA, a, b);
+                        }
                     }
                 } catch (ClassCastException e) {
                     e.printStackTrace();
@@ -106,13 +108,15 @@ public class NostalgiWorld implements IWorld {
                 try {
                     Fixture a = contact.getFixtureA();
                     Fixture b = contact.getFixtureB();
+                    if(a.getBody().getUserData() instanceof IActor
+                            && b.getBody().getUserData() instanceof IActor) {
+                        IActor actorA = (IActor) a.getBody().getUserData();
+                        IActor actorB = (IActor) b.getBody().getUserData();
 
-                    IActor actorA = (IActor) a.getBody().getUserData();
-                    IActor actorB = (IActor) b.getBody().getUserData();
-
-                    if (actorA != null && actorB != null) {
-                        actorA.onOverlapEnd(actorB, b, a);
-                        actorB.onOverlapEnd(actorA, a, b);
+                        if (actorA != null && actorB != null) {
+                            actorA.onOverlapEnd(actorB, b, a);
+                            actorB.onOverlapEnd(actorA, a, b);
+                        }
                     }
                 } catch (ClassCastException e) {
                     e.printStackTrace();
@@ -122,9 +126,12 @@ public class NostalgiWorld implements IWorld {
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
                 try {
-                    IActor a = (IActor) contact.getFixtureA().getBody().getUserData();
-                    IActor b = (IActor) contact.getFixtureB().getBody().getUserData();
-                    contact.setEnabled(a.blockOnCollision(b, contact) && b.blockOnCollision(a, contact));
+                    if(contact.getFixtureA().getBody().getUserData() instanceof IActor
+                            && contact.getFixtureB().getBody().getUserData() instanceof IActor) {
+                        IActor a = (IActor) contact.getFixtureA().getBody().getUserData();
+                        IActor b = (IActor) contact.getFixtureB().getBody().getUserData();
+                        contact.setEnabled(a.blockOnCollision(b, contact) && b.blockOnCollision(a, contact));
+                    }
                 } catch (ClassCastException e) {
                     e.printStackTrace();
                 }
@@ -243,19 +250,19 @@ public class NostalgiWorld implements IWorld {
 
         Body actorBody = actor.getPhysicsBody();
         if(actorBody == null) {
-            BodyDef playerBodyDef = new BodyDef();
+            BodyDef bodyDef = new BodyDef();
 
-            playerBodyDef.fixedRotation = true;
-            playerBodyDef.position.x = actor.getWorldPosition().x / unitScale;
-            playerBodyDef.position.y = actor.getWorldPosition().y / unitScale;
+            bodyDef.fixedRotation = true;
+            bodyDef.position.x = actor.getWorldPosition().x / unitScale;
+            bodyDef.position.y = actor.getWorldPosition().y / unitScale;
 
             if (actor.isStatic()) {
-                playerBodyDef.type = BodyDef.BodyType.StaticBody;
+                bodyDef.type = BodyDef.BodyType.StaticBody;
             } else {
-                playerBodyDef.type = BodyDef.BodyType.DynamicBody;
+                bodyDef.type = BodyDef.BodyType.DynamicBody;
             }
 
-            actorBody = world.createBody(playerBodyDef);
+            actorBody = world.createBody(bodyDef);
             actorBody.setUserData(actor);
         }
         int bvI = 0;
@@ -488,7 +495,8 @@ public class NostalgiWorld implements IWorld {
               public boolean reportFixture(Fixture fixture) {
                   Object o = fixture.getBody().getUserData();
                   if (o instanceof IActor) {
-                      actors.add((IActor) o);
+                      if(!actors.contains((IActor)o))
+                        actors.add((IActor) o);
                   }
                   return true;
               }
@@ -557,7 +565,6 @@ public class NostalgiWorld implements IWorld {
             BoundingVolume bv =  new BoundingVolume();
             if(mapObject instanceof RectangleMapObject) {
                 Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
-
                 vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
                 bv = createBoundingVolume(mapObject, vertices, unitScale);
                 position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
@@ -571,18 +578,17 @@ public class NostalgiWorld implements IWorld {
                 CircleMapObject obj = (CircleMapObject)mapObject;
                 position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
                 CircleShape circle = new CircleShape();
-                circle.setPosition(position);
                 circle.setRadius(obj.getCircle().radius);
 
                 bv = createBoundingVolume(obj, circle);
             } else  if (mapObject instanceof EllipseMapObject) {
                 EllipseMapObject obj = (EllipseMapObject)mapObject;
-                position = new Vector2(obj.getEllipse().x/unitScale, obj.getEllipse().y/unitScale);
+
                 CircleShape circle = new CircleShape();
 
                 float radius = obj.getEllipse().width  / 2;
 
-                circle.setPosition(new Vector2((obj.getEllipse().x + radius) / unitScale, (obj.getEllipse().y + radius) / unitScale));
+                position = new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale);
                 circle.setRadius(radius/unitScale);
                 bv = createBoundingVolume(obj, circle);
             }
@@ -733,6 +739,7 @@ public class NostalgiWorld implements IWorld {
 
         result[4] = x + width;
         result[5] = y + height;
+
         result[6] = x;
         result[7] = y + height;
 
@@ -742,10 +749,10 @@ public class NostalgiWorld implements IWorld {
     protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException, ReflectionException {
         for(Field field : fields) {
             field.setAccessible(true);
-            Annotation anno = field.getDeclaredAnnotation(NostalgiField.class);
+            Annotation declaredAnnotation = field.getDeclaredAnnotation(NostalgiField.class);
             NostalgiField annotation = null;
-            if(anno != null) {
-                annotation = anno.getAnnotation(NostalgiField.class);
+            if(declaredAnnotation != null) {
+                annotation = declaredAnnotation.getAnnotation(NostalgiField.class);
             }
             if (annotation != null && annotation.fromEditor()) {
                 String fieldName = annotation.fieldName();

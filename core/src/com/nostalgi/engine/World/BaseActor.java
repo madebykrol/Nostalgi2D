@@ -7,11 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
+import com.nostalgi.engine.physics.CollisionCategories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +66,7 @@ public class BaseActor implements IActor {
     @NostalgiField(fieldName = "Name")
     private String name = "Actor"+this.hashCode();
 
-    protected IWorld world;
+    private IWorld world;
 
     private Body physicsBody;
 
@@ -330,17 +333,20 @@ public class BaseActor implements IActor {
     }
 
     @Override
-    public void applyForceFromOrigin(Vector2 origin, float force, float radius) {
-        float angleBetween = MathUtils.atan2(this.getPosition().y-origin.y,  this.getPosition().x-origin.x);
+    public void applyForceFromOrigin(Vector2 origin, float force, float falloffRadius) {
+        float angleBetween = Math.abs(MathUtils.atan2(origin.y-this.getPosition().y,  origin.x-this.getPosition().x));
+
+        System.out.println(angleBetween);
 
         float distanceBetween = this.getPosition().dst(origin);
-        float falloff = radius-distanceBetween;
+        float falloff = 1;
 
         // F/M1 * (R-D) * cos(a)|sin(a)
         float x = ((force / this.getMass()) * (falloff) )* MathUtils.cos(angleBetween);
         float y = ((force / this.getMass()) * (falloff) )* MathUtils.sin(angleBetween);
 
-        this.applyForce(new Vector2(x, y), this.getPhysicsBody().getWorldCenter());
+
+        this.getPhysicsBody().applyLinearImpulse(new Vector2(x, y), this.getPhysicsBody().getWorldCenter(), true);
     }
 
     @Override

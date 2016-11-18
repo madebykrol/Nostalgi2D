@@ -1037,7 +1037,7 @@
    </properties>
    <polygon points="0,0 22.3867,18.0594 21.4133,172.04 -1.94667,190.099 -123.613,192 -123.613,0"/>
   </object>
-  <object id="242" name="Planetoid02" x="1119" y="678" width="127" height="133">
+  <object id="242" name="Planetoid02" x="642" y="46" width="127" height="133">
    <properties>
     <property name="CollisionCategory" value="Actor"/>
     <property name="CollisionMask" value="Actor"/>
@@ -1050,17 +1050,18 @@
    </properties>
    <ellipse/>
   </object>
-  <object id="246" name="Planetoid01" x="1355" y="181">
+  <object id="246" name="Planetoid01" x="1351.29" y="175">
    <properties>
     <property name="CollisionCategory" value="Actor"/>
     <property name="CollisionMask" value="Actor"/>
     <property name="Floor" type="int" value="0"/>
+    <property name="Friction" type="float" value="15"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>
-    <property name="Mass" type="float" value="15"/>
+    <property name="Mass" type="float" value="75"/>
     <property name="Type" value="com.nostalgi.engine.World.GravityActor"/>
    </properties>
-   <polygon points="0,0 -23,26 -29,60 -1,96 28,98 69,60 72,28 44,3"/>
+   <polygon points="0,0 -23.2277,25.7347 -29.2871,59.3878 -1.0099,95.0204 28.2772,97 69.6832,59.3878 72.7129,27.7143 44.4356,2.96939"/>
   </object>
  </objectgroup>
 </map>

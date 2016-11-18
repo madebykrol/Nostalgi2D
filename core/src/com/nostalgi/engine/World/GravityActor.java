@@ -64,7 +64,7 @@ public class GravityActor extends BaseActor {
 
             float distanceBetween = this.getPosition().dst(actor.getPosition());
 
-            float G  = 5000; // Approximation of G for the system.
+            float G  = 50000; // Approximation of G for the system.
 
             // G*M1*M2 / D^2
             float x = (G * (this.getMass() * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.cos(angleBetween);
