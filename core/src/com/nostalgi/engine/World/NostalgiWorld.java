@@ -146,6 +146,9 @@ public class NostalgiWorld implements IWorld {
         return this.gameMode;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setGameMode(IGameMode gameMode) {
         this.gameMode = gameMode;
