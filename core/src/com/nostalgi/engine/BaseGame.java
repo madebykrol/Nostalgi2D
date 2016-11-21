@@ -32,6 +32,10 @@ public abstract class BaseGame extends ApplicationAdapter {
         return this.gameEngine;
     }
 
+    public boolean isHeadless () {
+        return this.headless;
+    }
+
     @Override
     public void render () {
         gameEngine.update();
@@ -48,5 +52,7 @@ public abstract class BaseGame extends ApplicationAdapter {
     public void resize(int width, int height) {
 
     }
+
+
 
 }

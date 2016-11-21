@@ -1010,15 +1010,6 @@
     <property name="Type" value="com.nostalgi.engine.World.FloorChangerActor"/>
    </properties>
   </object>
-  <object id="200" name="MapSwitch1" x="0" y="1012" width="15" height="98">
-   <properties>
-    <property name="Density" type="float" value="1"/>
-    <property name="Friction" type="float" value="1"/>
-    <property name="IsSensor" type="bool" value="true"/>
-    <property name="IsStatic" type="bool" value="true"/>
-    <property name="Type" value="com.nostalgi.engine.World.MapChangerActor"/>
-   </properties>
-  </object>
   <object id="215" name="Water1" x="312" y="351.554">
    <properties>
     <property name="Floor" value="1"/>

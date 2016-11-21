@@ -2,6 +2,7 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
+import com.nostalgi.engine.Utils.Guid;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IWorld;
@@ -20,6 +21,9 @@ public abstract class BaseController implements IController, InputProcessor {
     private ICharacter character;
     private GestureDetector.GestureListener gestureListener;
     private IWorld world;
+    private Guid id;
+
+
 
     public BaseController (IWorld world) {
         this.world = world;
@@ -44,6 +48,16 @@ public abstract class BaseController implements IController, InputProcessor {
     @Override
     public InputProcessor getInputProcessor() {
         return this;
+    }
+
+    @Override
+    public void setControllerId(Guid uuid) {
+        this.id = uuid;
+    }
+
+    @Override
+    public Guid getControllerId() {
+        return this.id;
     }
 
     @Override
@@ -79,5 +93,6 @@ public abstract class BaseController implements IController, InputProcessor {
     public IWorld getWorld() {
         return this.world;
     }
+
 
 }

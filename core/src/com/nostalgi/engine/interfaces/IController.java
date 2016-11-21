@@ -2,6 +2,7 @@ package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
+import com.nostalgi.engine.Utils.Guid;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -37,4 +38,10 @@ public interface IController {
      * @param dTime
      */
     void update(float dTime);
+
+    void setControllerId(Guid uuid);
+
+    Guid getControllerId();
+
+
 }

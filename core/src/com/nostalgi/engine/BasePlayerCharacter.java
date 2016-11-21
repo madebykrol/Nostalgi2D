@@ -1,14 +1,21 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
+import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.BaseActor;
+import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
+import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
@@ -26,7 +33,10 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private float facing;
     private int walkingState;
 
-    public BasePlayerCharacter () {
+    private boolean isMoving;
+    private boolean isJumping;
+
+    public BasePlayerCharacter (IWorld world) {
         this.isStatic(false);
         BoundingVolume boundingVolume = new BoundingVolume();
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
@@ -53,6 +63,48 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         this.setMass(0.25f);
 
         physicsSimulated(true);
+
+        IAnimationFactory animationFactory = new NostalgiAnimationFactory();
+
+        this.addAnimation(AnimationState.WalkingEastAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_east.png",
+                        32, 64, 1, 2, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.WalkingWestAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_west.png",
+                        32, 64, 1, 2, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.WalkingNorthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_north.png",
+                        32, 64, 1, 5, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.WalkingSouthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_walk_south.png",
+                        32, 64, 1, 5, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.IdleFaceSouthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_idle.png",
+                        32, 64, 1, 1, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.IdleFaceNorthAnimation,
+                animationFactory.createAnimation("Spritesheet/char_idle_north.png",
+                        32, 64, 1, 1, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.IdleFaceEastAnimation,
+                animationFactory.createAnimation("Spritesheet/char_idle_east.png",
+                        32, 64, 1, 1, 1f / 6f,
+                        Animation.PlayMode.LOOP));
+
+        this.addAnimation(AnimationState.IdleFaceWestAnimation,
+                animationFactory.createAnimation("Spritesheet/char_idle_west.png",
+                        32, 64, 1, 1, 1f / 6f,
+                        Animation.PlayMode.LOOP));
     }
 
     @Override
@@ -77,6 +129,55 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void tick(float delta) {
+
+        updateAnimation();
+
+        if(!isMoving()) {
+            float facingAngle = getFacingDirection();
+            if (facingAngle >= Direction.NORTH_EAST && facingAngle <= Direction.NORTH_WEST) {
+                setWalkingState(AnimationState.IdleFaceNorthAnimation);
+            }
+
+            if (facingAngle >= Direction.NORTH_WEST && facingAngle <= Direction.SOUTH_WEST) {
+                setWalkingState(AnimationState.IdleFaceWestAnimation);
+            }
+
+            if (facingAngle >= Direction.SOUTH_WEST && facingAngle <= Direction.SOUTH_EAST) {
+                setWalkingState(AnimationState.IdleFaceNorthAnimation);
+            }
+        }
+
+    }
+
+    protected void updateAnimation() {
+
+        if(this.getFacingDirection() == Direction.SOUTH
+                || this.getFacingDirection() == Direction.SOUTH_EAST
+                || this.getFacingDirection() == Direction.SOUTH_WEST) {
+            if(isMoving()) {
+                setWalkingState(AnimationState.WalkingSouthAnimation);
+            }
+        }
+
+        if(this.getFacingDirection() == Direction.EAST) {
+            if(isMoving()) {
+                setWalkingState(AnimationState.WalkingEastAnimation);
+            }
+        }
+
+        if(this.getFacingDirection() == Direction.WEST) {
+            if(isMoving()) {
+                setWalkingState(AnimationState.WalkingWestAnimation);
+            }
+        }
+
+        if(this.getFacingDirection() == Direction.NORTH
+                || this.getFacingDirection() == Direction.NORTH_EAST
+                || this.getFacingDirection() == Direction.NORTH_WEST) {
+            if(isMoving()) {
+                setWalkingState(AnimationState.WalkingNorthAnimation);
+            }
+        }
     }
 
     @Override
@@ -121,7 +222,13 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void face(Vector2 target) {
-        this.facing = (float)Math.acos(this.getWorldPosition().dot(target));
+        float dot = this.getPhysicsBody().getWorldCenter().dot(target);
+        float det = this.getPhysicsBody().getWorldCenter().x * target.y - this.getPhysicsBody().getWorldCenter().y * target.x;
+
+        float angleBetween = MathUtils.atan2(det, dot);
+
+        System.out.println((angleBetween * (float)(180f/Math.PI)));
+        this.face((angleBetween * (float)(180f/Math.PI)));
     }
 
     @Override
@@ -184,12 +291,14 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         direction.scl(velocity);
 
         this.currentVelocity = direction;
+        Body body = this.getPhysicsBody();
+        body.setLinearVelocity(direction);
     }
 
     @Override
     public void stop() {
-        this.currentVelocity.x = 0;
-        this.currentVelocity.y = 0;
+        Body body = this.getPhysicsBody();
+        body.setLinearVelocity(0, 0);
     }
 
     @Override
@@ -207,5 +316,25 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
                     this.getWidth(),
                     this.getHeight());
         }
+    }
+
+    @Override
+    public boolean isMoving() {
+        return this.isMoving;
+    }
+
+    @Override
+    public boolean isMoving(boolean moving) {
+        return this.isMoving = moving;
+    }
+
+    @Override
+    public boolean isJumping() {
+        return this.isJumping;
+    }
+
+    @Override
+    public boolean isJumping(boolean jumping) {
+        return this.isJumping = jumping;
     }
 }

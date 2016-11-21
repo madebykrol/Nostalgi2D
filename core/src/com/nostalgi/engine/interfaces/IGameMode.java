@@ -5,6 +5,7 @@ import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,10 @@ public interface IGameMode extends Disposable{
     <T extends IGameState> void setDefaultGameStateClass(Class<T> defaultClass);
     Class getDefaultGameStateClass();
     void postDefaultGameStateCreation(IGameState gameState);
+
+    <T extends ICharacter> void setDefaultCharacterClass(Class<T> defaultClass);
+    Class getDefaultCharacterClass();
+    void postDefaultCharacterClassCreation(ICharacter character);
 
     <T extends IPlayerState> void setDefaultPlayerStateClass(Class<T> defaultClass);
     Class getDefaultPlayerStateClass();
