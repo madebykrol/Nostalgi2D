@@ -7,6 +7,7 @@ import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
@@ -71,6 +72,21 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
+    public <T extends ICharacter> void setDefaultCharacterClass(Class<T> defaultClass) {
+        this.defaultCharacterClass = defaultClass;
+    }
+
+    @Override
+    public Class getDefaultCharacterClass() {
+        return this.defaultCharacterClass;
+    }
+
+    @Override
+    public void postDefaultCharacterClassCreation(ICharacter character) {
+
+    }
+
+    @Override
     public <T extends IPlayerState> void setDefaultPlayerStateClass(Class<T> defaultClass) {
         this.defaultPlayerStateClass = defaultClass;
     }
@@ -92,7 +108,9 @@ public class BaseGameMode implements IGameMode {
 
     @Override
     public IController getCurrentController() {
-        return this.playerControllers.get(0);
+        if(!this.playerControllers.isEmpty())
+            return this.playerControllers.get(0);
+        return null;
     }
 
     @Override

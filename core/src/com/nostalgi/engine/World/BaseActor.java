@@ -22,7 +22,7 @@ import java.util.HashMap;
 /**
  * Created by Kristoffer on 2016-07-15.
  */
-public class BaseActor implements IActor {
+public abstract class BaseActor implements IActor {
 
     @Replicated
     @NostalgiField(fieldName = "Floor")
@@ -86,10 +86,6 @@ public class BaseActor implements IActor {
 
     public BaseActor() {
 
-    }
-
-    public BaseActor(IWorld world) {
-        this.world = world;
     }
 
     @Override
@@ -335,8 +331,6 @@ public class BaseActor implements IActor {
     @Override
     public void applyForceFromOrigin(Vector2 origin, float force, float falloffRadius) {
         float angleBetween = Math.abs(MathUtils.atan2(origin.y-this.getPosition().y,  origin.x-this.getPosition().x));
-
-        System.out.println(angleBetween);
 
         float distanceBetween = this.getPosition().dst(origin);
         float falloff = 1;

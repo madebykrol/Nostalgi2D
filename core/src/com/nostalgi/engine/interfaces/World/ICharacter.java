@@ -49,4 +49,10 @@ public interface ICharacter extends IActor, Disposable{
 
     float getWidth();
     float getHeight();
+
+    boolean isMoving();
+    boolean isMoving(boolean moving);
+
+    boolean isJumping();
+    boolean isJumping(boolean jumping);
 }

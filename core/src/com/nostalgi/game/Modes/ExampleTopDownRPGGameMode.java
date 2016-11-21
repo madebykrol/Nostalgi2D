@@ -52,67 +52,8 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
 
         this.setHud(hud);
 
-
-        ICharacter defaultPawn = createPlayerCharacter("DefaultPawn1");
-
-        IController playerController = new ExampleTopDownRPGController(world);
-        this.setCurrentController(playerController);
         this.setDefaultControllerClass(ExampleTopDownRPGController.class);
-
-        playerController.possessCharacter(defaultPawn);
-
+        this.setDefaultCharacterClass(BasePlayerCharacter.class);
     }
 
-    private ICharacter createPlayerCharacter(String name) {
-        try {
-            ICharacter playerCharacter = world.spawnActor(BasePlayerCharacter.class, name, true, new Vector2(8, 53));
-            IAnimationFactory animationFactory = new NostalgiAnimationFactory();
-
-            playerCharacter.addAnimation(AnimationState.WalkingEastAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_walk_east.png",
-                            32, 64, 1, 2, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.WalkingWestAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_walk_west.png",
-                            32, 64, 1, 2, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.WalkingNorthAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_walk_north.png",
-                            32, 64, 1, 5, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.WalkingSouthAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_walk_south.png",
-                            32, 64, 1, 5, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.IdleFaceSouthAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_idle.png",
-                            32, 64, 1, 1, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.IdleFaceNorthAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_idle_north.png",
-                            32, 64, 1, 1, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.IdleFaceEastAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_idle_east.png",
-                            32, 64, 1, 1, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            playerCharacter.addAnimation(AnimationState.IdleFaceWestAnimation,
-                    animationFactory.createAnimation("Spritesheet/char_idle_west.png",
-                            32, 64, 1, 1, 1f / 6f,
-                            Animation.PlayMode.LOOP));
-
-            return playerCharacter;
-        }  catch(FailedToSpawnActorException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return null;
-    }
 }

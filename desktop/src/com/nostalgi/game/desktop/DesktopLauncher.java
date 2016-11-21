@@ -15,6 +15,7 @@ public class DesktopLauncher {
 		config.height = cli.getIntArg("height", 1080);
 		config.width = cli.getIntArg("width", 1920);
 		config.fullscreen = cli.getBooleanArg("fullscreen");
+		config.resizable = false;
 
 		ServerConfig serverConfig = new ServerConfig();
 

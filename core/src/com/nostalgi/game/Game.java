@@ -1,8 +1,14 @@
 package com.nostalgi.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseGame;
+import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
@@ -11,7 +17,7 @@ public class Game extends BaseGame {
 
 	NostalgiCamera camera;
 	NostalgiRenderer tiledMapRenderer;
-	StretchViewport viewport;
+	Viewport viewport;
 
 	int w;
 	int h;
@@ -33,10 +39,14 @@ public class Game extends BaseGame {
 				unitScale);
         tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
 
-		viewport = new StretchViewport(w,h,camera);
+		viewport = new StretchViewport(32, 32, camera);
+		viewport.apply();
 
-		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer);
+		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, false);
         this.gameEngine.loadLevel("maps/grasslands");
+
+
+		this.gameEngine.createNewPlayer(new BasePlayerState());
 
 		this.gameEngine.init();
 	}
@@ -49,9 +59,11 @@ public class Game extends BaseGame {
 
 	@Override
 	public void resize(int width, int height) {
-		//viewport.update(width, height);
-
-		//camera.update();
+		viewport.update(width, height);
+		viewport.setWorldHeight(32);
+		viewport.setWorldWidth(32);
+		viewport.apply();
+		camera.update();
 	}
 
 }
