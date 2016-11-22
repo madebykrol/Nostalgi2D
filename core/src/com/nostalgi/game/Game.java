@@ -39,7 +39,7 @@ public class Game extends BaseGame {
 				unitScale);
         tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
 
-		viewport = new StretchViewport(32, 32, camera);
+		viewport = new FitViewport(20, 20, camera);
 		viewport.apply();
 
 		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, false);
@@ -59,10 +59,10 @@ public class Game extends BaseGame {
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height);
-		viewport.setWorldHeight(32);
-		viewport.setWorldWidth(32);
-		viewport.apply();
+		//viewport.update(width, height);
+		//viewport.setWorldHeight(32);
+		//viewport.setWorldWidth(32);
+		//viewport.apply();
 		camera.update();
 	}
 
