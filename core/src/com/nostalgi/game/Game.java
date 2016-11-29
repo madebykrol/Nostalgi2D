@@ -26,7 +26,7 @@ public class Game extends BaseGame {
 	int unitScale = 32;
 
 	public Game(boolean headless) {
-		this(64, 64, 32, headless);
+		this(64, 36, 32, headless);
 	}
 
 	public Game(int virtualWidth, int virtualHeight, int unitScale, boolean headless) {
@@ -48,7 +48,7 @@ public class Game extends BaseGame {
 				unitScale);
         tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
 
-		viewport = new FitViewport(25, 14, camera);
+		viewport = new FitViewport(vW, vH, camera);
 		viewport.apply();
 
 		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, false);
@@ -69,8 +69,6 @@ public class Game extends BaseGame {
 	@Override
 	public void resize(int width, int height) {
 		//viewport.update(width, height);
-		//viewport.setWorldHeight(32);
-		//viewport.setWorldWidth(32);
 		//viewport.apply();
 		camera.update();
 	}

@@ -14,6 +14,10 @@ import java.util.HashMap;
  */
 public interface IActor extends IWorldObject {
 
+
+    IComponent[] getComponents();
+
+
     /**
      * Return the parent to this actor.
      * @return
