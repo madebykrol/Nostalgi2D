@@ -3,6 +3,7 @@ package com.nostalgi.engine;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.IController;
+import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
@@ -25,6 +26,8 @@ public class BaseGameMode implements IGameMode {
     private Class defaultGameStateClass;
     private Class defaultPlayerStateClass;
     private Class defaultCharacterClass;
+
+    private IGameInstance gameInstance;
 
     public BaseGameMode (IWorld world) {
 
@@ -104,6 +107,16 @@ public class BaseGameMode implements IGameMode {
     @Override
     public void tick(float dTime) {
         this.gameState.update(dTime);
+    }
+
+    @Override
+    public void setGameInstance(IGameInstance gameInstance) {
+        this.gameInstance = gameInstance;
+    }
+
+    @Override
+    public IGameInstance getGameInstance() {
+        return this.gameInstance;
     }
 
     @Override

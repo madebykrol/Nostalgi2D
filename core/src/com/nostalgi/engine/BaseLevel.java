@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.World.RootActor;
+import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWall;
@@ -36,7 +37,6 @@ public abstract class BaseLevel implements ILevel {
     private IActor mapRoot = new RootActor();
 
     private IWorld world;
-
     public BaseLevel(
                      TiledMap map,
                      IWorld world) {

@@ -21,6 +21,7 @@ import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
+import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -68,22 +69,25 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private boolean headless;
 
+    private IGameInstance gameInstance;
+
     /**
      *
      * @param camera
      * @param mapRenderer
      */
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), headless, new Box2DDebugRenderer(), false);
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
+        this(camera, mapRenderer, new TmxMapLoader(), new Box2DDebugRenderer(), gameInstance, headless, true);
     }
 
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, boolean headless, Box2DDebugRenderer debugRenderer, boolean debug) {
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, Box2DDebugRenderer debugRenderer,IGameInstance gameInstance, boolean headless,  boolean debug) {
         this.currentCamera = camera;
         this.mapRenderer = renderer;
         this.mapLoader = mapLoader;
         this.debugRenderer = debugRenderer;
         this.debug = debug;
         this.headless = headless;
+        this.gameInstance = gameInstance;
     }
 
     @Override
@@ -239,6 +243,9 @@ public class NostalgiBaseEngine implements IGameEngine {
                     Class c =  ClassReflection.forName((String)GameMode);
                     Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
                     IGameMode gameMode = (IGameMode)ctor.newInstance(world);
+
+                    // Everytime we set a new gameMode we pass the gameInstance.
+                    gameMode.setGameInstance(this.gameInstance);
 
                     // set the game mode on the world.
                     world.setGameMode(gameMode);

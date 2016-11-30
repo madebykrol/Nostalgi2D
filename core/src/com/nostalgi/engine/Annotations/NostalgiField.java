@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 public @interface NostalgiField {
     boolean fromEditor() default true;
     String fieldName() default "";
+    String withMethod() default "";
 }

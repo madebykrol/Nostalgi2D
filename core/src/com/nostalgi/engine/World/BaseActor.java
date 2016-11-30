@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IComponent;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
@@ -344,6 +345,11 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
+    public IComponent[] getComponents() {
+        return new IComponent[0];
+    }
+
+    @Override
     public void createPhysicsBody() {
 
     }
@@ -362,6 +368,8 @@ public abstract class BaseActor implements IActor {
     public void destroy() {
 
     }
+
+
 
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;
