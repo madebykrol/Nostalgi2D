@@ -21,6 +21,7 @@ import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
+import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -63,6 +64,9 @@ public class NostalgiBaseEngine implements IGameEngine {
     // Map loader
     private TmxMapLoader mapLoader;
 
+    // Game Instance
+    private IGameInstance gameInstance;
+
     // Debug
     protected boolean debug;
 
@@ -73,11 +77,11 @@ public class NostalgiBaseEngine implements IGameEngine {
      * @param camera
      * @param mapRenderer
      */
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), headless, new Box2DDebugRenderer(), false);
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
+        this(camera, mapRenderer, new TmxMapLoader(), new Box2DDebugRenderer(), gameInstance, headless,     false);
     }
 
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, boolean headless, Box2DDebugRenderer debugRenderer, boolean debug) {
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, Box2DDebugRenderer debugRenderer, IGameInstance gameInstance, boolean headless, boolean debug) {
         this.currentCamera = camera;
         this.mapRenderer = renderer;
         this.mapLoader = mapLoader;
@@ -244,12 +248,9 @@ public class NostalgiBaseEngine implements IGameEngine {
                     world.setGameMode(gameMode);
                 }
             }
-
-
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -263,7 +264,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         try {
             // and spawn a default pawn.
             // @TODO If the map is set to always spawn a "SpectorCharacter" spawn from that class instead.
-
             ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(8, 53));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
@@ -338,12 +338,12 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(world.getGameMode().getCurrentController() != null) {
             if (world.getGameMode().getCurrentController().getGestureListener() != null)
                 inputProcessor.addProcessor(new GestureDetector(
-                        world.getGameMode().getCurrentController().getGestureListener()));
+                    world.getGameMode().getCurrentController().getGestureListener()));
 
             // Set standard input processor from controller
             if (world.getGameMode().getCurrentController().getInputProcessor() != null)
                 inputProcessor.addProcessor(
-                        world.getGameMode().getCurrentController().getInputProcessor());
+                    world.getGameMode().getCurrentController().getInputProcessor());
 
         }
         Gdx.input.setInputProcessor(inputProcessor);
