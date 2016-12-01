@@ -16,9 +16,11 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
+import com.nostalgi.engine.Factories.WorldFactory;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.World.NostalgiWorld;
+import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
 import com.nostalgi.engine.interfaces.IGameInstance;
@@ -55,6 +57,9 @@ public class NostalgiBaseEngine implements IGameEngine {
     // The network abstraction layer.
     private INetworkLayer networkLayer;
 
+    // The world factory.
+    private IWorldFactory worldFactory;
+
     // Representation of the world
     private IWorld world;
 
@@ -71,16 +76,29 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private IGameInstance gameInstance;
 
+
     /**
+     * Simplest engine constructor, uses default Map loader, world factory and debug renderer.
+     * It also sets the engine to render on each frame by setting headless to false.
      *
+     * @param camera
+     * @param mapRenderer
+     * @param gameInstance
+     */
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance) {
+        this(camera, mapRenderer, gameInstance, false);
+    }
+
+    /**
+     * Use this constructor if you wish to run the engine with default MapLoader, world factory and debug renderer but in headless mode.
      * @param camera
      * @param mapRenderer
      */
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), new Box2DDebugRenderer(), gameInstance, headless, true);
+        this(camera, mapRenderer, new TmxMapLoader(), new WorldFactory(), new Box2DDebugRenderer(), gameInstance, headless, true);
     }
 
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, Box2DDebugRenderer debugRenderer,IGameInstance gameInstance, boolean headless,  boolean debug) {
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, IWorldFactory worldFactory,  Box2DDebugRenderer debugRenderer, IGameInstance gameInstance, boolean headless, boolean debug) {
         this.currentCamera = camera;
         this.mapRenderer = renderer;
         this.mapLoader = mapLoader;
@@ -88,6 +106,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.debug = debug;
         this.headless = headless;
         this.gameInstance = gameInstance;
+        this.worldFactory = worldFactory;
     }
 
     @Override
@@ -213,7 +232,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         Object Type = mapProperties.containsKey("Type") ? map.getProperties().get("Type") : null;
         try {
             // Set the world.
-            world = new NostalgiWorld(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
+            world = worldFactory.create(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
 
             // If the map has a type
             if(Type != null) {
