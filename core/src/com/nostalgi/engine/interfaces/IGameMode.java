@@ -49,4 +49,7 @@ public interface IGameMode extends Disposable{
 
     void tick(float dTime);
 
+    void setGameInstance(IGameInstance gameInstance);
+    IGameInstance getGameInstance();
+
 }

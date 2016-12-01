@@ -1,10 +1,13 @@
 package com.nostalgi.engine.World;
 
+import com.badlogic.gdx.math.GeometryUtils;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IComponent;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
@@ -20,7 +23,6 @@ public class GravityActor extends BaseActor {
 
     public GravityActor () {
         canEverTick = true;
-
     }
 
     @Override
@@ -35,6 +37,20 @@ public class GravityActor extends BaseActor {
         shape2.setRadius(this.getMass()/10);
         boundingVolume2.setShape(shape2);
 
+        if(this.getBoundingVolume(0) != null) {
+            BoundingVolume bv = this.getBoundingVolume(0);
+            if(bv.getShape() instanceof PolygonShape) {
+
+
+            }
+        }
+
+        /*
+        Vector2 wCenter = this.getPhysicsBody().getWorldCenter();
+        Vector2 relativeCenter = new Vector2(this.getWorldPosition().x - wCenter.x, this.getWorldPosition().y - wCenter.y);
+
+        shape2.setPosition(relativeCenter);
+        */
         this.setBoundingVolume(boundingVolume2);
     }
 
@@ -42,7 +58,6 @@ public class GravityActor extends BaseActor {
     public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
         BoundingVolume volume = (BoundingVolume) targetFixture.getUserData();
         if(volume.getVolumeId().equals("gravitywell")) {
-            System.out.println("Begin gravity pull on object");
             if(!actorsInWell.contains(overlapper))
                 actorsInWell.add(overlapper);
         }
@@ -52,10 +67,10 @@ public class GravityActor extends BaseActor {
     public void onOverlapEnd(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
         BoundingVolume volume = (BoundingVolume) targetFixture.getUserData();
         if(volume.getVolumeId().equals("gravitywell")) {
-            System.out.println("End gravity pull on object");
             actorsInWell.remove(overlapper);
         }
     }
+
 
     @Override
     public void tick(float time) {

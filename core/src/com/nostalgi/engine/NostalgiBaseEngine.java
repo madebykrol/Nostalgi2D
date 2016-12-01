@@ -64,13 +64,12 @@ public class NostalgiBaseEngine implements IGameEngine {
     // Map loader
     private TmxMapLoader mapLoader;
 
-    // Game Instance
-    private IGameInstance gameInstance;
-
     // Debug
     protected boolean debug;
 
     private boolean headless;
+
+    private IGameInstance gameInstance;
 
     /**
      *
@@ -78,16 +77,17 @@ public class NostalgiBaseEngine implements IGameEngine {
      * @param mapRenderer
      */
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), new Box2DDebugRenderer(), gameInstance, headless,     false);
+        this(camera, mapRenderer, new TmxMapLoader(), new Box2DDebugRenderer(), gameInstance, headless, true);
     }
 
-    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, Box2DDebugRenderer debugRenderer, IGameInstance gameInstance, boolean headless, boolean debug) {
+    public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, Box2DDebugRenderer debugRenderer,IGameInstance gameInstance, boolean headless,  boolean debug) {
         this.currentCamera = camera;
         this.mapRenderer = renderer;
         this.mapLoader = mapLoader;
         this.debugRenderer = debugRenderer;
         this.debug = debug;
         this.headless = headless;
+        this.gameInstance = gameInstance;
     }
 
     @Override
@@ -244,13 +244,19 @@ public class NostalgiBaseEngine implements IGameEngine {
                     Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
                     IGameMode gameMode = (IGameMode)ctor.newInstance(world);
 
+                    // Everytime we set a new gameMode we pass the gameInstance.
+                    gameMode.setGameInstance(this.gameInstance);
+
                     // set the game mode on the world.
                     world.setGameMode(gameMode);
                 }
             }
+
+
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -264,6 +270,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         try {
             // and spawn a default pawn.
             // @TODO If the map is set to always spawn a "SpectorCharacter" spawn from that class instead.
+
             ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(8, 53));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
@@ -338,12 +345,12 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(world.getGameMode().getCurrentController() != null) {
             if (world.getGameMode().getCurrentController().getGestureListener() != null)
                 inputProcessor.addProcessor(new GestureDetector(
-                    world.getGameMode().getCurrentController().getGestureListener()));
+                        world.getGameMode().getCurrentController().getGestureListener()));
 
             // Set standard input processor from controller
             if (world.getGameMode().getCurrentController().getInputProcessor() != null)
                 inputProcessor.addProcessor(
-                    world.getGameMode().getCurrentController().getInputProcessor());
+                        world.getGameMode().getCurrentController().getInputProcessor());
 
         }
         Gdx.input.setInputProcessor(inputProcessor);

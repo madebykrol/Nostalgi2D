@@ -21,9 +21,19 @@ public class Game extends BaseGame {
 
 	int w;
 	int h;
+	int vW;
+	int vH;
+	int unitScale = 32;
 
 	public Game(boolean headless) {
+		this(64, 36, 32, headless);
+	}
+
+	public Game(int virtualWidth, int virtualHeight, int unitScale, boolean headless) {
 		super(headless, false);
+		this.unitScale = unitScale;
+		this.vW = virtualWidth;
+		this.vH = virtualHeight;
 	}
 
 
@@ -32,14 +42,13 @@ public class Game extends BaseGame {
 
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
-        int unitScale = 32;
 
 		camera = new NostalgiCamera(
 				w, h,
 				unitScale);
         tiledMapRenderer = new NostalgiRenderer((1/(float)unitScale));
 
-		viewport = new FitViewport(20, 20, camera);
+		viewport = new FitViewport(vW, vH, camera);
 		viewport.apply();
 
 		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, null, false);
@@ -60,8 +69,6 @@ public class Game extends BaseGame {
 	@Override
 	public void resize(int width, int height) {
 		//viewport.update(width, height);
-		//viewport.setWorldHeight(32);
-		//viewport.setWorldWidth(32);
 		//viewport.apply();
 		camera.update();
 	}
