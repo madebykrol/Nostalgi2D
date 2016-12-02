@@ -12,11 +12,18 @@ public class PathNode implements IPathNode {
     private Vector2 position;
     private Polygon triangle;
     private int index;
+    private int floor;
 
-    public PathNode(Vector2 position, Polygon triangle, int index) {
+    public PathNode(Vector2 position, Polygon triangle, int floor, int index) {
         this.position = position;
         this.triangle = triangle;
         this.index = index;
+        this.floor = floor;
+    }
+
+    @Override
+    public int getFloor() {
+        return this.floor;
     }
 
     @Override

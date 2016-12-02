@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="325">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="353">
  <properties>
   <property name="GameMode" value="com.nostalgi.game.Modes.ExampleTopDownRPGGameMode"/>
   <property name="GravityX" type="float" value="0"/>
@@ -1060,6 +1060,9 @@
   </object>
  </objectgroup>
  <objectgroup color="#007400" name="NavMesh">
+  <properties>
+   <property name="Floor" type="int" value="1"/>
+  </properties>
   <object id="275" x="4" y="505">
    <polygon points="0,0 149,1 143.356,54"/>
   </object>
@@ -1093,8 +1096,8 @@
   <object id="295" x="697" y="327">
    <polygon points="0,0 0,171 146,0"/>
   </object>
-  <object id="296" x="695" y="501.046">
-   <polygon points="0,0 146.92,-168.046 148,3.95402"/>
+  <object id="296" x="695" y="500.816">
+   <polygon points="0,0 145.927,-177.816 147,4.1839"/>
   </object>
   <object id="297" x="706" y="245">
    <polygon points="0,0 1,81.8824 58,87"/>
@@ -1164,6 +1167,87 @@
   </object>
   <object id="323" x="155" y="481">
    <polygon points="0,0 -2,78 155,79"/>
+  </object>
+  <object id="325" x="839" y="482.025">
+   <polygon points="0,0 294,-1.025 0,80.975"/>
+  </object>
+  <object id="326" x="839" y="560">
+   <polygon points="0,0 291.919,2 293,-77"/>
+  </object>
+  <object id="327" x="991" y="557.088">
+   <polygon points="0,0 1,210.912 140,-2.08824"/>
+  </object>
+  <object id="328" x="993" y="768">
+   <polygon points="0,0 139,1 137,-214"/>
+  </object>
+  <object id="329" x="993" y="770">
+   <polygon points="0,0 1,97 140,0"/>
+  </object>
+  <object id="330" x="1133" y="770">
+   <polygon points="0,0 -1,96 -139,95"/>
+  </object>
+  <object id="331" x="992" y="867">
+   <polygon points="0,0 -1,58 140,0"/>
+  </object>
+  <object id="332" x="1134" y="924">
+   <polygon points="0,0 -4,-63 -142,1"/>
+  </object>
+  <object id="333" x="834" y="833">
+   <polygon points="0,0 60,1 58,66"/>
+  </object>
+  <object id="334" x="834" y="897">
+   <polygon points="0,0 2,-66 59,0"/>
+  </object>
+  <object id="335" x="832" y="900">
+   <polygon points="0,0 0,139 159,-4"/>
+  </object>
+  <object id="336" x="991" y="896">
+   <polygon points="0,0 -1,142 -159,139"/>
+  </object>
+  <object id="337" x="1134" y="926">
+   <polygon points="0,0 3,114 -145,113"/>
+  </object>
+  <object id="338" x="986" y="923">
+   <polygon points="0,0 0,118 157,-1"/>
+  </object>
+  <object id="339" x="480" y="769">
+   <polygon points="0,0 1,60 159,0"/>
+  </object>
+  <object id="340" x="639" y="769">
+   <polygon points="0,0 0,64 -160,59"/>
+  </object>
+  <object id="341" x="479" y="640">
+   <polygon points="0,0 3,65 161,65"/>
+  </object>
+  <object id="342" x="640" y="705">
+   <polygon points="0,0 1,-66 -162,-64"/>
+  </object>
+  <object id="343" x="638" y="640">
+   <polygon points="0,0 -1,188 101,0"/>
+  </object>
+  <object id="344" x="739" y="828">
+   <polygon points="0,0 -103,-1 -2,-189"/>
+  </object>
+  <object id="345" x="669" y="640">
+   <polygon points="0,0 4,-63 105,-64"/>
+  </object>
+  <object id="346" x="774" y="576">
+   <polygon points="0,0 -1,62 -108,64"/>
+  </object>
+  <object id="347" x="734" y="638">
+   <polygon points="0,0 161,2 163,97"/>
+  </object>
+  <object id="348" x="734" y="733">
+   <polygon points="0,0 164,3 0,-99"/>
+  </object>
+  <object id="350" x="799" y="715">
+   <polygon points="0,0 1,117 128,121 129,14"/>
+  </object>
+  <object id="351" x="728" y="731">
+   <polygon points="0,0 78,3 80,73"/>
+  </object>
+  <object id="352" x="808" y="804">
+   <polygon points="0,0 -81,-1 -81,-73"/>
   </object>
  </objectgroup>
 </map>

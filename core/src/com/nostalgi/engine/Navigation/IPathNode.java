@@ -10,7 +10,7 @@ import com.nostalgi.engine.interfaces.World.IActor;
 
 public interface IPathNode {
 
-
+    int getFloor();
     Polygon getPolygon();
     Vector2 getPosition();
     int getIndex();

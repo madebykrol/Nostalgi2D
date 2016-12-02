@@ -20,6 +20,7 @@ public class NavigationMesh implements INavMesh{
     private HashMap<Integer, IPathNode> nodes;
     private MapLayer meshLayer;
     private int unitScale;
+    private int floor;
 
     public NavigationMesh(MapLayer meshLayer, int unitScale) {
        this.meshLayer = meshLayer;
@@ -31,18 +32,23 @@ public class NavigationMesh implements INavMesh{
         nodes = new HashMap<Integer, IPathNode>();
         MapObjects polys = meshLayer.getObjects();
 
+        if(this.meshLayer.getProperties().containsKey("Floor")) {
+            this.floor = Integer.parseInt((String)this.meshLayer.getProperties().get("Floor"));
+        }
+
+
         int nodeIndex = 1;
         for(MapObject poly : polys) {
             if(poly instanceof PolygonMapObject) {
                 PolygonMapObject polygonMapObject = (PolygonMapObject)poly;
 
                 Polygon polygon = polygonMapObject.getPolygon();
-                float[] verts = polygon.getTransformedVertices();
+                float[] vertices = polygon.getTransformedVertices();
 
-                Vector2 center  = GeometryUtils.triangleCentroid(verts[0] / unitScale, verts[1] / unitScale, verts[2] / unitScale, verts[3] / unitScale, verts[4] / unitScale, verts[5] / unitScale, new Vector2(polygon.getX(), polygon.getY()));
+                Vector2 center  = GeometryUtils.triangleCentroid(vertices[0] / unitScale, vertices[1] / unitScale, vertices[2] / unitScale, vertices[3] / unitScale, vertices[4] / unitScale, vertices[5] / unitScale, new Vector2(polygon.getX(), polygon.getY()));
 
                 center = new Vector2(center.x, center.y);
-                IPathNode node = new PathNode(center, polygon, nodeIndex++);
+                IPathNode node = new PathNode(center, polygon, floor, nodeIndex++);
                 addNode(node);
             }
         }
