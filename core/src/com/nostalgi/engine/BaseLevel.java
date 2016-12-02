@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
+import com.nostalgi.engine.Navigation.INavMesh;
 import com.nostalgi.engine.Navigation.NavigationMesh;
 import com.nostalgi.engine.World.RootActor;
 import com.nostalgi.engine.interfaces.IGameMode;
@@ -38,6 +39,8 @@ public abstract class BaseLevel implements ILevel {
     private IActor mapRoot = new RootActor();
 
     private IWorld world;
+
+    public INavMesh navMesh;
 
     public BaseLevel(
                      TiledMap map,
@@ -182,7 +185,11 @@ public abstract class BaseLevel implements ILevel {
         this.initActors();
         this.initWalls();
 
-        NavigationMesh mesh = new NavigationMesh();
-        mesh.buildMesh(map.getLayers().get("NavMesh"));
+        this.navMesh = new NavigationMesh(map.getLayers().get("NavMesh"), this.getTileSize());
+        this.navMesh.generate();
+    }
+
+    public INavMesh getNavMesh() {
+        return this.navMesh;
     }
 }

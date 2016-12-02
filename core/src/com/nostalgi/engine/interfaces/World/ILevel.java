@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.LevelCameraBounds;
+import com.nostalgi.engine.Navigation.INavMesh;
 import com.nostalgi.engine.interfaces.IGameMode;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public interface ILevel extends Disposable {
 
     void initWalls();
     void initActors();
+
+    INavMesh getNavMesh();
 
     void onLoad();
 }
