@@ -44,6 +44,7 @@ The game state tracks the current game across maps.
 <li>Animated tiles</li>
 <li>SpawnerActor</li>
 <li>Spatial sound sources</li>
+<li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
 <li>Level travelling</li>
 <li>Basic AI Controller</li>
 <li>Network / Multiplayer capabilities</li>
