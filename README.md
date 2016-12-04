@@ -41,9 +41,10 @@ The game state tracks the current game across maps.
 <li><s>AABB Querying</s></li>
 <li><s>Multiple shape / fixtures per physics body on actors</s></li>
 <li><s>Floors and layered rendering (4 floors default)</s></li>
-<li>Animated tiles</li>
-<li>SpawnerActor</li>
 <li>Spatial sound sources</li>
+<li>Animated tiles</li>
+<li>Lighting effects</li>
+<li>SpawnerActor</li>
 <li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
 <li>Level travelling</li>
 <li>Basic AI Controller</li>
