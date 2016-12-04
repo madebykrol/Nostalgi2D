@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
+import com.nostalgi.engine.Navigation.IPathFoundCallback;
+import com.nostalgi.engine.Navigation.IPathNode;
 import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
@@ -21,13 +23,14 @@ import java.util.ArrayList;
 /**
  * Created by ksdkrol on 2016-09-14.
  */
-public class ExampleTopDownRPGController extends BaseController {
+public class ExampleTopDownRPGController extends BaseController implements IPathFoundCallback {
 
     private boolean leftIsPressed = false;
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
 
+    private ArrayList<IPathNode> path;
 
     public ExampleTopDownRPGController(IWorld world) {
         super(world);
@@ -38,16 +41,32 @@ public class ExampleTopDownRPGController extends BaseController {
 
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
+
         if (currentPossessedCharacter != null) {
-            handleMovement(currentPossessedCharacter, dTime);
+
+            if(path != null && !path.isEmpty()) {
+                IPathNode nextNode = getWorld().getNavigationSystem().getNextWayPoint(path, currentPossessedCharacter.getPhysicsBody().getWorldCenter());
+                if(nextNode != null) {
+                    this.getCurrentPossessedCharacter().face(nextNode.getPosition());
+                    this.getCurrentPossessedCharacter().moveForward(5);
+                    this.getCurrentPossessedCharacter().isMoving(true);
+                } else {
+                    this.getCurrentPossessedCharacter().stop();
+                }
+            } else {
+                handleMovement(currentPossessedCharacter, dTime);
+            }
+
             handleLookingAtHudChanges(currentPossessedCharacter, dTime);
         }
+
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         IWorld world = getWorld();
         Vector2 worldPos2D = world.unproject(new Vector2(screenX, screenY));
+
 
         ArrayList<IActor> actors = world.actorsCloseToLocation(worldPos2D, 0f);
         if(!actors.isEmpty()) {
@@ -61,14 +80,10 @@ public class ExampleTopDownRPGController extends BaseController {
             } else {
                 this.getCurrentPossessedCharacter().face(topActor.getPhysicsBody().getWorldCenter());
             }
+        } else {
+            world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, this);
         }
 
-        ArrayList<IActor> actors2 = world.actorsCloseToLocation(worldPos2D, 4f);
-        if(!actors2.isEmpty()) {
-            for(IActor currActor : actors2) {
-                currActor.applyForceFromOrigin(worldPos2D, 500000, 4);
-            }
-        }
         return false;
     }
 
@@ -165,5 +180,10 @@ public class ExampleTopDownRPGController extends BaseController {
             currentPossessedCharacter.stop();
             currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
         }
+    }
+
+    @Override
+    public void onPathFound(ArrayList<IPathNode> path) {
+        this.path = path;
     }
 }

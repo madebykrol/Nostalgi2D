@@ -30,6 +30,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
+import com.nostalgi.engine.Navigation.INavigationSystem;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
@@ -71,11 +72,14 @@ public class NostalgiWorld implements IWorld {
     private static final String COLLISION_CATEGORY = "CollisionCategory";
     private static final String COLLISION_MASK = "CollisionMask";
 
+    private INavigationSystem navSystem;
 
-    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera) {
+
+    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera, INavigationSystem navSystem) {
         this.world = world;
         this.camera = camera;
         this.renderer = mapRenderer;
+        this.navSystem = navSystem;
         world.setContactListener(initializeCollisionDetectionObservers());
     }
 
@@ -143,6 +147,21 @@ public class NostalgiWorld implements IWorld {
             }
         };
 
+    }
+
+    @Override
+    public OrthographicCamera getCurrentCamera() {
+        return this.camera;
+    }
+
+    @Override
+    public void setCurrentCamera(OrthographicCamera camera) {
+        this.camera = camera;
+    }
+
+    @Override
+    public INavigationSystem getNavigationSystem() {
+        return this.navSystem;
     }
 
     /**

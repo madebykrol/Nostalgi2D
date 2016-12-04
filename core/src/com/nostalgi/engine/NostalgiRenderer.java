@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -93,20 +94,7 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
             }
         }
 
-        for(IPathNode node : getCurrentLevel().getNavMesh().getNodes().values()) {
-
-            Pixmap myPixMap = new Pixmap(1, 1, Pixmap.Format.RGB888);
-            myPixMap.setColor(Color.BLACK);
-            myPixMap.fillRectangle(0, 0, 1, 1);
-            this.getBatch().draw(new Texture(myPixMap), node.getPosition().x-0.5f, node.getPosition().y-0.5f);
-        }
-
         endRender();
-
-
-
-
-
     }
 
     @Override

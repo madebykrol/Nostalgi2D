@@ -183,6 +183,10 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         if(debug)
             debugRenderer.render(world.getPhysicsWorld(), currentCamera.combined);
+
+
+//        mapRenderer.getCurrentLevel().getNavMesh().drawNeighbors(this.currentCamera);
+//        mapRenderer.getCurrentLevel().getNavMesh().drawNodes(this.currentCamera);
     }
 
     @Override
@@ -252,6 +256,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
                     // Add it to the renderer.
                     mapRenderer.loadLevel(lvl);
+                    world.getNavigationSystem().loadNavMesh(lvl.getNavMesh());
 
                     // set bounds for the world on the edges of the map
                     world.setWorldBounds(lvl.getCameraBounds());

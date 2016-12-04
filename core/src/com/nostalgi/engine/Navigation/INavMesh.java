@@ -1,9 +1,13 @@
 package com.nostalgi.engine.Navigation;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IActor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -21,9 +25,12 @@ public interface INavMesh {
     void addNode(IPathNode node);
     IPathNode getNode(int key);
 
-    IPathNode getNodeCloseToActor(IActor actor);
-
-    IPathNode getNodeCloseToPoint(Vector2 point);
-
     HashMap<Integer, IPathNode> getNodes();
+
+    int getUnitScale();
+
+    void drawNodes(OrthographicCamera camera);
+    void drawNeighbors(OrthographicCamera camera);
+    boolean pointInTriangle(Vector2 currentPoint, Polygon triangle);
+    void reset();
  }

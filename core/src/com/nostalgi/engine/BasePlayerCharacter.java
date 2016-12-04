@@ -19,6 +19,8 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
+import org.omg.CORBA.MARSHAL;
+
 /**
  * Created by ksdkrol on 2016-07-04.
  */
@@ -142,39 +144,34 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
                 setWalkingState(AnimationState.IdleFaceWestAnimation);
             }
 
+            if (facingAngle >= Direction.NORTH_EAST && facingAngle <= Direction.SOUTH_EAST) {
+                setWalkingState(AnimationState.IdleFaceEastAnimation);
+            }
+
             if (facingAngle >= Direction.SOUTH_WEST && facingAngle <= Direction.SOUTH_EAST) {
-                setWalkingState(AnimationState.IdleFaceNorthAnimation);
+                setWalkingState(AnimationState.IdleFaceSouthAnimation);
             }
         }
 
     }
 
     protected void updateAnimation() {
-
-        if(this.getFacingDirection() == Direction.SOUTH
-                || this.getFacingDirection() == Direction.SOUTH_EAST
-                || this.getFacingDirection() == Direction.SOUTH_WEST) {
-            if(isMoving()) {
+        System.out.println(Math.abs(this.getFacingDirection()));
+        if (isMoving()) {
+            float facingDirection = Math.abs(this.getFacingDirection());
+            if (facingDirection >= Direction.SOUTH_WEST && facingDirection <= Direction.SOUTH_EAST) {
                 setWalkingState(AnimationState.WalkingSouthAnimation);
             }
-        }
 
-        if(this.getFacingDirection() == Direction.EAST) {
-            if(isMoving()) {
-                setWalkingState(AnimationState.WalkingEastAnimation);
-            }
-        }
-
-        if(this.getFacingDirection() == Direction.WEST) {
-            if(isMoving()) {
+            if (facingDirection >= Direction.NORTH_WEST && facingDirection <= Direction.SOUTH_WEST){
                 setWalkingState(AnimationState.WalkingWestAnimation);
             }
-        }
 
-        if(this.getFacingDirection() == Direction.NORTH
-                || this.getFacingDirection() == Direction.NORTH_EAST
-                || this.getFacingDirection() == Direction.NORTH_WEST) {
-            if(isMoving()) {
+            if (facingDirection >= Direction.NORTH_EAST && facingDirection <= Direction.SOUTH_EAST){
+                setWalkingState(AnimationState.WalkingEastAnimation);
+            }
+
+            if (facingDirection >= Direction.NORTH_EAST && facingDirection <= Direction.NORTH_WEST) {
                 setWalkingState(AnimationState.WalkingNorthAnimation);
             }
         }
@@ -222,13 +219,12 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void face(Vector2 target) {
-        float dot = this.getPhysicsBody().getWorldCenter().dot(target);
-        float det = this.getPhysicsBody().getWorldCenter().x * target.y - this.getPhysicsBody().getWorldCenter().y * target.x;
+        float dy = target.y - this.getPhysicsBody().getWorldCenter().y;
+        float dx = target.x - this.getPhysicsBody().getWorldCenter().x;
 
-        float angleBetween = MathUtils.atan2(det, dot);
+        double angleBetween = Math.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
-        System.out.println((angleBetween * (float)(180f/Math.PI)));
-        this.face((angleBetween * (float)(180f/Math.PI)));
+        this.face((float)angleBetween);
     }
 
     @Override
