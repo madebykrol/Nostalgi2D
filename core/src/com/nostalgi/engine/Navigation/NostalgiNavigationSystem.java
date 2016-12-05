@@ -95,8 +95,6 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
 
     protected ArrayList<IPathNode> findPath(IPathNode start, IPathNode finish) {
-
-
         if ((start == null || finish == null) || start.getPosition().x == finish.getPosition().x && start.getPosition().y == finish.getPosition().y) {
             return new ArrayList<IPathNode>();
         }

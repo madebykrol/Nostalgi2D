@@ -28,4 +28,6 @@ public interface IPathNode {
     void setParent(IPathNode parent);
     IPathNode getParent();
 
+    IPathNode copy();
+
 }

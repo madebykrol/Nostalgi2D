@@ -39,7 +39,6 @@ public abstract class BaseLevel implements ILevel {
     private IActor mapRoot = new RootActor();
 
     private IWorld world;
-
     public INavMesh navMesh;
 
     public BaseLevel(

@@ -1,5 +1,6 @@
 package com.nostalgi.engine.Navigation;
 
+import com.badlogic.gdx.math.Path;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
@@ -88,6 +89,13 @@ public class PathNode implements IPathNode {
     @Override
     public IPathNode getParent() {
         return this.parent;
+    }
+
+    @Override
+    public IPathNode copy() {
+        PathNode cpy = new PathNode(this.position, this.triangle, this.floors, this.index);
+
+        return cpy;
     }
 
 }
