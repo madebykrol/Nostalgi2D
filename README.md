@@ -47,7 +47,7 @@ The game state tracks the current game across maps.
 <li>SpawnerActor</li>
 <li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
 <li>Level travelling</li>
-<li>Basic AI Controller</li>
+<li>Behavior trees</li>
 <li>Network / Multiplayer capabilities</li>
 <li>Custom map editor instead of Tiled</li>
 </ul>
