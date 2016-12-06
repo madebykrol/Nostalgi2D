@@ -95,6 +95,11 @@ public class PathNode implements IPathNode {
     public IPathNode copy() {
         PathNode cpy = new PathNode(this.position, this.triangle, this.floors, this.index);
 
+        for(IPathNode neighbor : this.neighbors.values()) {
+            cpy.addNeighbor(neighbor);
+        }
+        cpy.parent = this.parent;
+
         return cpy;
     }
 

@@ -1,4 +1,5 @@
 package com.nostalgi.engine.World;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.CircleMapObject;
@@ -41,8 +42,12 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
+import com.nostalgi.engine.physics.ILightingSystem;
 import com.nostalgi.engine.physics.TraceHit;
 import java.util.ArrayList;
+
+import box2dLight.Light;
+import box2dLight.RayHandler;
 
 /**
  * Created by Kristoffer on 2016-07-23.
@@ -73,6 +78,10 @@ public class NostalgiWorld implements IWorld {
     private static final String COLLISION_MASK = "CollisionMask";
 
     private INavigationSystem navSystem;
+
+    private ILightingSystem lightSystem;
+
+    private RayHandler rayHandler;
 
 
     public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera, INavigationSystem navSystem) {
@@ -514,7 +523,7 @@ public class NostalgiWorld implements IWorld {
               public boolean reportFixture(Fixture fixture) {
                   Object o = fixture.getBody().getUserData();
                   if (o instanceof IActor) {
-                      if(!actors.contains((IActor)o))
+                      if(!actors.contains(o))
                         actors.add((IActor) o);
                   }
                   return true;
@@ -667,6 +676,16 @@ public class NostalgiWorld implements IWorld {
     }
 
     @Override
+    public <T extends Light> T createLightSource(Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public void updateAmbientLight(Color ambientLight) {
+
+    }
+
+    @Override
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
@@ -728,6 +747,11 @@ public class NostalgiWorld implements IWorld {
         // Set these positions
         this.camera.position.set(x1, y1, 0);
         this.camera.update();
+    }
+
+    @Override
+    public void applyLight() {
+
     }
 
     /**

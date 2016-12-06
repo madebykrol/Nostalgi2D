@@ -1,5 +1,6 @@
 package com.nostalgi.engine.interfaces.World;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,8 @@ import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.physics.TraceHit;
 
 import java.util.ArrayList;
+
+import box2dLight.Light;
 
 /**
  * World abstraction.
@@ -237,6 +240,9 @@ public interface IWorld {
     IWall createWall(MapObject object, Vector2 mapOrigin);
 
 
+    <T extends Light> T createLightSource(Class<T> type);
+
+    void updateAmbientLight(Color ambientLight);
 
     /**
      * Set the current projecting camera.
@@ -269,8 +275,23 @@ public interface IWorld {
      */
     void setWorldBounds(int left, int bottom, int width, int height);
 
+    /**
+     * Move the camera within the level bounds.
+     * @param position
+     */
     void setCameraPositionSafe(Vector2 position);
+
+    /**
+     * Move the camera within the level bounds.
+     * @param x
+     * @param y
+     */
     void setCameraPositionSafe(float x, float y);
+
+    /**
+     * Apply lights to the scene.
+     */
+    void applyLight();
 
 
     /**

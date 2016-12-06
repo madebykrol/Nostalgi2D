@@ -130,10 +130,10 @@ public class NostalgiBaseEngine implements IGameEngine {
         ICharacter currentCharacter = world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
         // Check if we are in authoritative mode (Server). (Single player games are always authoritative.)
-        if(world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
+        if(this.world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
             // Tick the gamemode.
-            world.getGameMode().tick(dTime);
+            this.world.getGameMode().tick(dTime);
 
             // Get updates from controller.
             for(IController controller :  world.getGameMode().getControllers()) {
@@ -150,7 +150,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
             // Tick the world
-            world.tick();
+            this.world.tick();
             // Tick all the actors.
             tickActors(mapRenderer.getCurrentLevel().getActors(), dTime);
 
@@ -167,10 +167,13 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         this.currentCamera.update();
 
-        this.getWorld().getGameMode().tick(dTime);
+        this.world.getGameMode().tick(dTime);
 
         // Set view
         this.mapRenderer.setView(this.currentCamera);
+
+        // Apply light to the scene.
+        this.world.applyLight();
     }
 
     @Override
