@@ -1,5 +1,6 @@
 package com.nostalgi.engine.Hud;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,12 +14,16 @@ public class HudText extends Actor {
     protected float x;
     protected float y;
 
-    public HudText(String text, float screenX, float screenY){
+    public HudText(String text, float screenX, float screenY, Color color){
         font = new BitmapFont();
-        font.setColor(0.5f,0.4f,0,1);   //Brown is an underrated Colour
+        font.setColor(color);   //Brown is an underrated Colour
         this.text = text;
         this.x = screenX;
         this.y = screenY;
+    }
+
+    public void updateColor(Color color) {
+        font.setColor(color);
     }
 
     public void update(String text) {

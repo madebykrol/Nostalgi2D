@@ -60,14 +60,15 @@ public abstract class BaseActor implements IActor {
     private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
 
     @Replicated
+    private ArrayList<IComponent> components;
+
+    @Replicated
     private Animation currentAnimation;
 
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
 
     @NostalgiField(fieldName = "Name")
     private String name = "Actor"+this.hashCode();
-
-    private IWorld world;
 
     private Body physicsBody;
 
@@ -208,7 +209,13 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void tick(float delta) {}
+    public void tick(float delta) {
+        if(this.components != null) {
+            for (IComponent component : components) {
+                component.tick(delta);
+            }
+        }
+    }
 
     @Override
     public int getFloorLevel() {
@@ -228,11 +235,6 @@ public abstract class BaseActor implements IActor {
     public boolean fixtureNeedsUpdate(boolean update) {
         this.fixtureNeedsUpdate = update;
         return update;
-    }
-
-    @Override
-    public void setWorld(IWorld world) {
-        this.world = world;
     }
 
     @Override
@@ -345,8 +347,8 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public IComponent[] getComponents() {
-        return new IComponent[0];
+    public ArrayList<IComponent> getComponents() {
+        return this.components;
     }
 
     @Override
@@ -368,8 +370,6 @@ public abstract class BaseActor implements IActor {
     public void destroy() {
 
     }
-
-
 
     public void transformationHasUpdated() {
         this.transformationNeedsUpdate = true;

@@ -3,10 +3,6 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -14,7 +10,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
@@ -23,8 +18,6 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.WorldFactory;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
-import com.nostalgi.engine.Navigation.IPathNode;
-import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
@@ -36,7 +29,6 @@ import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.Render.NostalgiCamera;
-import com.sun.prism.PixelFormat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +93,7 @@ public class NostalgiBaseEngine implements IGameEngine {
      * @param mapRenderer
      */
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), new WorldFactory(), new Box2DDebugRenderer(), gameInstance, headless, true);
+        this(camera, mapRenderer, new TmxMapLoader(), new WorldFactory(), new Box2DDebugRenderer(), gameInstance, headless, false);
     }
 
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, IWorldFactory worldFactory,  Box2DDebugRenderer debugRenderer, IGameInstance gameInstance, boolean headless, boolean debug) {
@@ -171,14 +163,13 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Set view
         this.mapRenderer.setView(this.currentCamera);
-
-        // Apply light to the scene.
-        this.world.applyLight();
     }
 
     @Override
     public void render() {
         this.mapRenderer.render(Gdx.graphics.getDeltaTime());
+        // Apply light to the scene.
+        this.world.applyLight();
 
         if(world.getGameMode().getHud() != null) {
             world.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -187,14 +178,10 @@ public class NostalgiBaseEngine implements IGameEngine {
         if(debug)
             debugRenderer.render(world.getPhysicsWorld(), currentCamera.combined);
 
-
-//        mapRenderer.getCurrentLevel().getNavMesh().drawNeighbors(this.currentCamera);
-//        mapRenderer.getCurrentLevel().getNavMesh().drawNodes(this.currentCamera);
     }
 
     @Override
     public void dispose() {
-        world.getGameMode().dispose();
         this.world.dispose();
     }
 

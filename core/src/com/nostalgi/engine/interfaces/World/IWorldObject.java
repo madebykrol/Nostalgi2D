@@ -38,7 +38,6 @@ public interface IWorldObject {
     int getFloorLevel();
     void setFloorLevel(int floor);
 
-    void setWorld(IWorld world);
 
     boolean isStatic();
     boolean isStatic(boolean isStatic);
@@ -61,7 +60,4 @@ public interface IWorldObject {
 
     void setName(String name);
     String getName();
-
-
-
 }

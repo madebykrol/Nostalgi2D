@@ -1,6 +1,8 @@
 package com.nostalgi.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -9,15 +11,15 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.nostalgi.engine.BaseGame;
 import com.nostalgi.engine.BasePlayerState;
+import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.World.PointLightActor;
 
 public class Game extends BaseGame {
 
-	NostalgiCamera camera;
 	NostalgiRenderer tiledMapRenderer;
-	Viewport viewport;
 
 	int w;
 	int h;
@@ -56,6 +58,14 @@ public class Game extends BaseGame {
 
 
 		this.gameEngine.createNewPlayer(new BasePlayerState());
+		this.gameEngine.getWorld().getLightingSystem().updateAmbientLight(new Color(0.05f, 0.05f, 0.05f, 0.1f));
+
+		try {
+			this.gameEngine.getWorld().spawnActor(PointLightActor.class, "Light 1", false, new Vector2(5f, 5f), this.gameEngine.getWorld().getGameMode().getCurrentController().getCurrentPossessedCharacter(), null);
+		} catch (FailedToSpawnActorException e) {
+			e.printStackTrace();
+		}
+
 
 		this.gameEngine.init();
 	}
@@ -63,14 +73,6 @@ public class Game extends BaseGame {
 	@Override
 	public void dispose() {
 		this.gameEngine.dispose();
-	}
-
-
-	@Override
-	public void resize(int width, int height) {
-		//viewport.update(width, height);
-		//viewport.apply();
-		camera.update();
 	}
 
 }

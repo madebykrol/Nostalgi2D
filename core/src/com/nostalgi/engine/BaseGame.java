@@ -3,6 +3,8 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.interfaces.IGameEngine;
 
 /**
@@ -11,6 +13,8 @@ import com.nostalgi.engine.interfaces.IGameEngine;
 public abstract class BaseGame extends ApplicationAdapter {
 
     protected IGameEngine gameEngine;
+    protected NostalgiCamera camera;
+    protected Viewport viewport;
 
     private boolean headless = false;
     private boolean isListenServer = false;
@@ -50,7 +54,9 @@ public abstract class BaseGame extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-
+        viewport.update(width, height);
+        viewport.apply();
+        camera.update();
     }
 
 

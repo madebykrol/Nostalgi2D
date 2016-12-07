@@ -41,6 +41,7 @@ import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
+import com.nostalgi.engine.physics.Box2DLights;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.physics.ILightingSystem;
 import com.nostalgi.engine.physics.TraceHit;
@@ -84,12 +85,14 @@ public class NostalgiWorld implements IWorld {
     private RayHandler rayHandler;
 
 
-    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera, INavigationSystem navSystem) {
+    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera, INavigationSystem navSystem, ILightingSystem lightSystem) {
         this.world = world;
         this.camera = camera;
         this.renderer = mapRenderer;
         this.navSystem = navSystem;
+        this.lightSystem = lightSystem;
         world.setContactListener(initializeCollisionDetectionObservers());
+
     }
 
 
@@ -676,16 +679,6 @@ public class NostalgiWorld implements IWorld {
     }
 
     @Override
-    public <T extends Light> T createLightSource(Class<T> type) {
-        return null;
-    }
-
-    @Override
-    public void updateAmbientLight(Color ambientLight) {
-
-    }
-
-    @Override
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
@@ -751,7 +744,17 @@ public class NostalgiWorld implements IWorld {
 
     @Override
     public void applyLight() {
+        this.lightSystem.updateAndRender(camera);
+    }
 
+    @Override
+    public ILightingSystem getLightingSystem() {
+        return this.lightSystem;
+    }
+
+    @Override
+    public void setLightingSystem(ILightingSystem lightingSystem) {
+        this.lightSystem = lightingSystem;
     }
 
     /**
@@ -759,6 +762,8 @@ public class NostalgiWorld implements IWorld {
      */
     @Override
     public void dispose() {
+        gameMode.dispose();
+        lightSystem.dispose();
         world.dispose();
     }
 

@@ -213,13 +213,6 @@ public class Wall implements IWall {
 
     }
 
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void setWorld(IWorld world) {
-
-    }
 
     /**
      * @inheritDoc

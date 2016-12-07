@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public interface IActor extends IWorldObject {
 
 
-    IComponent[] getComponents();
+    ArrayList<IComponent> getComponents();
 
 
     /**

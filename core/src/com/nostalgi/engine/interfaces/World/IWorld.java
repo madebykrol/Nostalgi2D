@@ -11,6 +11,7 @@ import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
+import com.nostalgi.engine.physics.ILightingSystem;
 import com.nostalgi.engine.physics.TraceHit;
 
 import java.util.ArrayList;
@@ -239,11 +240,6 @@ public interface IWorld {
     IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale);
     IWall createWall(MapObject object, Vector2 mapOrigin);
 
-
-    <T extends Light> T createLightSource(Class<T> type);
-
-    void updateAmbientLight(Color ambientLight);
-
     /**
      * Set the current projecting camera.
      * @param camera
@@ -292,6 +288,9 @@ public interface IWorld {
      * Apply lights to the scene.
      */
     void applyLight();
+
+    ILightingSystem getLightingSystem();
+    void setLightingSystem(ILightingSystem lightingSystem);
 
 
     /**

@@ -131,7 +131,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void tick(float delta) {
-
+        super.tick(delta);
         updateAnimation();
 
         if(!isMoving()) {
@@ -156,7 +156,6 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     }
 
     protected void updateAnimation() {
-        System.out.println(Math.abs(this.getFacingDirection()));
         if (isMoving()) {
             float facingDirection = Math.abs(this.getFacingDirection());
             if (facingDirection >= Direction.SOUTH_WEST && facingDirection <= Direction.SOUTH_EAST) {
