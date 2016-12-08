@@ -86,6 +86,8 @@ public abstract class BaseActor implements IActor {
 
     private boolean fixtureNeedsUpdate = false;
 
+    private float rotation;
+
     public BaseActor() {
 
     }
@@ -139,6 +141,16 @@ public abstract class BaseActor implements IActor {
     public void setPosition(Vector2 position) {
         this.position = position;
         this.transformationNeedsUpdate = true;
+    }
+
+    @Override
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
+
+    @Override
+    public float getRotation() {
+        return this.rotation;
     }
 
     @Override
@@ -352,12 +364,12 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void createPhysicsBody() {
+    public void postCreatePhysicsBody() {
 
     }
 
     @Override
-    public void onSpawn() {
+    public void postSpawn() {
 
     }
 
@@ -369,10 +381,6 @@ public abstract class BaseActor implements IActor {
     @Override
     public void destroy() {
 
-    }
-
-    public void transformationHasUpdated() {
-        this.transformationNeedsUpdate = true;
     }
     private void doWorldTransformation() {
         if(this.transformationNeedsUpdate) {

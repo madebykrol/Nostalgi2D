@@ -159,13 +159,13 @@ public interface IActor extends IWorldObject {
      * This method is called right before createBody
      *
      */
-    void createPhysicsBody();
+    void postCreatePhysicsBody();
 
     /**
      * Called as soon as actor is ready and added to the level.
      * The actor has not yet been rendered at this point, but it's part of the scene and can begin to tick.
      */
-    void onSpawn();
+    void postSpawn();
 
     /**
      * Called as soon as the actor has been removed from the scene.

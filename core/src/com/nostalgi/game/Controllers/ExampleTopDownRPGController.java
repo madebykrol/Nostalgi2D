@@ -47,7 +47,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
             if(path != null && !path.isEmpty()) {
                 IPathNode nextNode = getWorld().getNavigationSystem().getNextWayPoint(path, currentPossessedCharacter.getPhysicsBody().getWorldCenter());
                 if(nextNode != null) {
-                    this.getCurrentPossessedCharacter().face(nextNode.getPosition());
+                    this.getCurrentPossessedCharacter().lookAt(nextNode.getPosition());
                     this.getCurrentPossessedCharacter().moveForward(5);
                     this.getCurrentPossessedCharacter().isMoving(true);
                 } else {
@@ -78,7 +78,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                     module.isVisible(!module.isVisible());
                 }
             } else {
-                this.getCurrentPossessedCharacter().face(topActor.getPhysicsBody().getWorldCenter());
+                this.getCurrentPossessedCharacter().lookAt(topActor.getPhysicsBody().getWorldCenter());
             }
         } else {
             world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, this);
@@ -95,19 +95,19 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
 
         if(keycode == Input.Keys.LEFT) {
             this.leftIsPressed = true;
-            currentPossessedCharacter.face(Direction.WEST);
+            currentPossessedCharacter.setRotation(Direction.WEST);
         }
         if(keycode == Input.Keys.RIGHT) {
             this.rightIsPressed = true;
-            currentPossessedCharacter.face(Direction.EAST);
+            currentPossessedCharacter.setRotation(Direction.EAST);
         }
         if(keycode == Input.Keys.UP) {
             this.upIsPressed = true;
-            currentPossessedCharacter.face(Direction.NORTH);
+            currentPossessedCharacter.setRotation(Direction.NORTH);
         }
         if(keycode == Input.Keys.DOWN) {
             this.downIsPressed = true;
-            currentPossessedCharacter.face(Direction.SOUTH);
+            currentPossessedCharacter.setRotation(Direction.SOUTH);
         }
 
         return true;
@@ -131,7 +131,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         ArrayList<Class> filters = new ArrayList<Class>();
         filters.add(BasePlayerCharacter.class);
         filters.add(Wall.class);
-        ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getFacingDirection(), 1.5f, filters, false);
+        ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getRotation(), 1.5f, filters, false);
         ExampleHudModule mainHud = (ExampleHudModule) world.getGameMode().getHud().getModule("Main");
 
         for(TraceHit hit : seeing) {
@@ -155,21 +155,21 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
 
     private void handleMovement(ICharacter currentPossessedCharacter, float dTime) {
         if(upIsPressed && rightIsPressed) {
-            currentPossessedCharacter.face(Direction.NORTH_EAST);
+            currentPossessedCharacter.setRotation(Direction.NORTH_EAST);
         } else if (upIsPressed && leftIsPressed) {
-            currentPossessedCharacter.face(Direction.NORTH_WEST);
+            currentPossessedCharacter.setRotation(Direction.NORTH_WEST);
         } else if (downIsPressed && rightIsPressed) {
-            currentPossessedCharacter.face(Direction.SOUTH_EAST);
+            currentPossessedCharacter.setRotation(Direction.SOUTH_EAST);
         } else if(downIsPressed && leftIsPressed) {
-            currentPossessedCharacter.face(Direction.SOUTH_WEST);
+            currentPossessedCharacter.setRotation(Direction.SOUTH_WEST);
         } else if(downIsPressed) {
-            currentPossessedCharacter.face(Direction.SOUTH);
+            currentPossessedCharacter.setRotation(Direction.SOUTH);
         } else if(upIsPressed) {
-            currentPossessedCharacter.face(Direction.NORTH);
+            currentPossessedCharacter.setRotation(Direction.NORTH);
         } else if(leftIsPressed) {
-            currentPossessedCharacter.face(Direction.WEST);
+            currentPossessedCharacter.setRotation(Direction.WEST);
         } else if(rightIsPressed) {
-            currentPossessedCharacter.face(Direction.EAST);
+            currentPossessedCharacter.setRotation(Direction.EAST);
         }
 
         if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {

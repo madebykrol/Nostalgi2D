@@ -24,9 +24,8 @@ public interface ICharacter extends IActor, Disposable{
     IController getCurrentController();
 
     Sprite getStaticSprite(float deltaT);
-    void face(float direction);
-    void face(Vector2 target);
-    float getFacingDirection();
+    void lookAt(Vector2 target);
+    float getRotation();
 
     void setWalkingState(int state);
     int getWalkingState();

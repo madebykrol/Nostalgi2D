@@ -28,6 +28,18 @@ public interface IWorldObject {
      */
     void setPosition(Vector2 position);
 
+    /**
+     * Get rotation in radians
+     * @return
+     */
+    float getRotation();
+
+    /**
+     * Set rotation in radians
+     * @param rotation
+     */
+    void setRotation(float rotation);
+
     void setBoundingVolume(BoundingVolume body);
     BoundingVolume getBoundingVolume(int index);
 
@@ -37,7 +49,6 @@ public interface IWorldObject {
     void setPhysicsBody(Body body);
     int getFloorLevel();
     void setFloorLevel(int floor);
-
 
     boolean isStatic();
     boolean isStatic(boolean isStatic);

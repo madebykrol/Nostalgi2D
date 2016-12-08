@@ -1,5 +1,4 @@
 package com.nostalgi.engine.World;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.CircleMapObject;
@@ -41,13 +40,11 @@ import com.nostalgi.engine.interfaces.World.IWall;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.BoundingVolume;
-import com.nostalgi.engine.physics.Box2DLights;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.engine.physics.ILightingSystem;
 import com.nostalgi.engine.physics.TraceHit;
 import java.util.ArrayList;
 
-import box2dLight.Light;
 import box2dLight.RayHandler;
 
 /**
@@ -568,8 +565,8 @@ public class NostalgiWorld implements IWorld {
             createBody(a);
         }
 
-        a.createPhysicsBody();
-        a.onSpawn();
+        a.postCreatePhysicsBody();
+        a.postSpawn();
         return (T)a;
     }
 
@@ -631,7 +628,7 @@ public class NostalgiWorld implements IWorld {
 
             actor.setName(mapObject.getName());
 
-            actor.createPhysicsBody();
+            actor.postCreatePhysicsBody();
             createBody(actor);
             return (T)actor;
         } catch(IllegalAccessException e) {

@@ -19,8 +19,6 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
-import org.omg.CORBA.MARSHAL;
-
 /**
  * Created by ksdkrol on 2016-07-04.
  */
@@ -32,13 +30,12 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private float height = 2f;
 
     private Vector2 currentVelocity = new Vector2(0.0f, 0.0f);
-    private float facing;
     private int walkingState;
 
     private boolean isMoving;
     private boolean isJumping;
 
-    public BasePlayerCharacter (IWorld world) {
+    public BasePlayerCharacter () {
         this.isStatic(false);
         BoundingVolume boundingVolume = new BoundingVolume();
         boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
@@ -135,7 +132,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         updateAnimation();
 
         if(!isMoving()) {
-            float facingAngle = getFacingDirection();
+            float facingAngle = getRotation();
             if (facingAngle >= Direction.NORTH_EAST && facingAngle <= Direction.NORTH_WEST) {
                 setWalkingState(AnimationState.IdleFaceNorthAnimation);
             }
@@ -157,7 +154,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     protected void updateAnimation() {
         if (isMoving()) {
-            float facingDirection = Math.abs(this.getFacingDirection());
+            float facingDirection = Math.abs(this.getRotation());
             if (facingDirection >= Direction.SOUTH_WEST && facingDirection <= Direction.SOUTH_EAST) {
                 setWalkingState(AnimationState.WalkingSouthAnimation);
             }
@@ -211,25 +208,18 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         return null;
     }
 
-    @Override
-    public void face(float dir) {
-        this.facing = dir;
-    }
 
     @Override
-    public void face(Vector2 target) {
+    public void lookAt(Vector2 target) {
         float dy = target.y - this.getPhysicsBody().getWorldCenter().y;
         float dx = target.x - this.getPhysicsBody().getWorldCenter().x;
 
         double angleBetween = Math.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
-        this.face((float)angleBetween);
+        this.setRotation((float)angleBetween);
     }
 
-    @Override
-    public float getFacingDirection() {
-        return this.facing;
-    }
+
 
     @Override
     public void setWalkingState(int state) {
@@ -280,8 +270,8 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public void moveForward(float velocity) {
         Vector2 direction = new Vector2(
-                (float) Math.cos(Math.toRadians(this.getFacingDirection())),
-                (float) Math.sin(Math.toRadians(this.getFacingDirection())));
+                (float) Math.cos(Math.toRadians(this.getRotation())),
+                (float) Math.sin(Math.toRadians(this.getRotation())));
 
         direction.scl(velocity);
 

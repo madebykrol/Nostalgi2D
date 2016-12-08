@@ -26,7 +26,7 @@ public class GravityActor extends BaseActor {
     }
 
     @Override
-    public void createPhysicsBody() {
+    public void postCreatePhysicsBody() {
         BoundingVolume boundingVolume2 = new BoundingVolume();
         boundingVolume2.isSensor(true);
         boundingVolume2.setVolumeId("gravitywell");

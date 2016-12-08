@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import box2dLight.ChainLight;
+import box2dLight.ConeLight;
+import box2dLight.DirectionalLight;
 import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -41,11 +44,32 @@ public class Box2DLights implements ILightingSystem<Light> {
     }
 
     @Override
-    public <T extends Light> T createLightSource(Class<T> type, Vector2 position) {
-        PointLight light = new PointLight(
-                rayHandler, 40, null, 5, position.x, position.y);
+    public Light createPointLight(int rays,  Color color,
+                                  float distance, Vector2 position) {
+        return new PointLight(rayHandler, rays, color, distance, position.x, position.y);
+    }
 
-        return (T)light;
+    @Override
+    public Light createConeLight(int rays, Color color, float distance, Vector2 position, float directionDegree, float coneDegree) {
+        return new ConeLight(
+                rayHandler, rays, color,
+                distance, position.x, position.y, directionDegree, coneDegree);
+    }
+
+    @Override
+    public Light createDirectionalLight(int rays, Color color, float directionDegree) {
+        return new DirectionalLight(rayHandler, rays, color, directionDegree);
+    }
+
+    public Light createChainLight(int rays, Color color,
+                                  float distance, int rayDirection, float[] chain) {
+        return new ChainLight(rayHandler, rays, color, distance, rayDirection, chain);
+    }
+
+    @Override
+    public Light createChainLight(int rays, Color color,
+                                  float distance, int rayDirection) {
+        return this.createChainLight(rays, color, distance,rayDirection, new float[]{0f});
     }
 
     @Override

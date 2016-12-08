@@ -115,6 +115,22 @@ public class Wall implements IWall {
      * @inheritDoc
      */
     @Override
+    public float getRotation() {
+        return 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void setRotation(float rotation) {
+
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void setBoundingVolume(BoundingVolume body) {
 
     }
@@ -262,11 +278,17 @@ public class Wall implements IWall {
 
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public float getFriction() {
         return 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setFriction(float friction) {
 

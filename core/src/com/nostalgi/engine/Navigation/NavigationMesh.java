@@ -194,9 +194,7 @@ public class NavigationMesh implements INavMesh{
                 ((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
         float gamma = 1.0f - alpha - beta;
 
-        boolean barycentricMethod = (alpha > 0 && beta > 0 && gamma > 0) ? true : false;
-
-        if (barycentricMethod) {
+        if ((alpha > 0 && beta > 0 && gamma > 0) ? true : false) {
             return true;
         }
         else if (isPointBetweenTwoOtherPoints(currentPoint, p1, p2) ||
@@ -211,13 +209,11 @@ public class NavigationMesh implements INavMesh{
 
     @Override
     public void reset() {
-            for (IPathNode entry : nodes.values()) {
-                IPathNode node = entry;
-                node.setParent(null);
-                node.setCost(9999);
-            }
+        for (IPathNode entry : nodes.values()) {
+            entry.setParent(null);
+            entry.setCost(9999);
+        }
     }
-
 
     private boolean isPointBetweenTwoOtherPoints(Vector2 currentPoint, Vector2 p1, Vector2 p2) {
         float dxc = currentPoint.x - p1.x;

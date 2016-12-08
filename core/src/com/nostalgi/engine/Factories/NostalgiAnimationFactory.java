@@ -33,8 +33,8 @@ public class NostalgiAnimationFactory implements IAnimationFactory {
         }
 
         TextureRegion[][] tmpFrames = TextureRegion.split(texturePool.get(spriteSheet), 32, 64);
-
         TextureRegion[] animationFrames = new TextureRegion[spriteRows * spriteCols];
+
         int index = 0;
 
         for (int i = 0; i < spriteCols; i++){
@@ -44,7 +44,7 @@ public class NostalgiAnimationFactory implements IAnimationFactory {
         }
 
         Animation a = new Animation(1f/6f, animationFrames);
-        a.setPlayMode(Animation.PlayMode.LOOP);
+        a.setPlayMode(playMode);
 
         return a;
     }
