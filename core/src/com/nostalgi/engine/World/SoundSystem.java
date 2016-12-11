@@ -1,9 +1,8 @@
 package com.nostalgi.engine.World;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.*;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.Utils.NMath;
 
 import java.util.HashMap;
 
@@ -36,5 +35,14 @@ public class SoundSystem implements ISoundSystem {
             return this.sounds.get(name);
         }
         return null;
+    }
+
+    @Override
+    public float calculatePan(Vector2 soundPosition, Vector2 playerPosition) {
+
+        float angleBetween = NMath.angleBetween(soundPosition, playerPosition);
+
+
+        return 0;
     }
 }

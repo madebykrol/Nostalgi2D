@@ -138,15 +138,14 @@ public class ExampleTopDownRPGCharacter extends BasePlayerCharacter implements I
             }
 
             if(walkingSoundReference != null) {
-                walkingSoundReference.pause();
+                walkingSoundReference.setLooping(false);
+                walkingSoundReference = null;
             }
 
         } else {
             if(walkingSoundReference == null) {
                 walkingSoundReference = this.walkingInGrass.play(1f, 0.75f, 0f);
                 walkingSoundReference.setLooping(true);
-            } else {
-                walkingSoundReference.resume();
             }
         }
 

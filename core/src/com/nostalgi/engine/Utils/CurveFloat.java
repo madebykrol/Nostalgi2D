@@ -16,6 +16,10 @@ public class CurveFloat {
         this.stop = stop;
     }
 
+    public CurveFloat(ICurve curve) {
+
+    }
+
     /**
      * Returns the scalar value between 0, 1 for this curve on the time line.
      * Curves have time on the x-axis, and scalar value on the y-axis.
@@ -26,12 +30,12 @@ public class CurveFloat {
      * @return
      */
     public final float curve(float deltaTime) {
-        if(this.stop <= progress || this.start >= progress) {
+        if(this.stop <= progress) {
             reset();
             return 0f;
         }
         progress += deltaTime;
-        return this.f(progress);
+        return NMath.norm(this.f(progress), 0f,1f);
     }
 
     public float f(float x){

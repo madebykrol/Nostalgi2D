@@ -590,11 +590,8 @@ public class NostalgiWorld implements IWorld {
 
 
             try {
-                // Set base class fields
-                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type.getSuperclass()));
-
                 // Set class fields.
-                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type));
+                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type), type);
             } catch (ReflectionException e) {
                 e.printStackTrace();
             }
@@ -812,7 +809,7 @@ public class NostalgiWorld implements IWorld {
         return result;
     }
 
-    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException, ReflectionException {
+    protected void setFields(IActor actor, MapObject object, Field[] fields, Class type) throws IllegalAccessException, ReflectionException {
         for(Field field : fields) {
             field.setAccessible(true);
             Annotation declaredAnnotation = field.getDeclaredAnnotation(NostalgiField.class);
@@ -871,6 +868,13 @@ public class NostalgiWorld implements IWorld {
                 }
             }
             field.setAccessible(false);
+        }
+
+
+        String superClassName = type.getSuperclass().getSimpleName();
+        if(!type.getSuperclass().getSimpleName().equals("Object")) {
+            // Set base class fields
+            setFields(actor, object, ClassReflection.getDeclaredFields(type.getSuperclass()), type.getSuperclass());
         }
     }
 
