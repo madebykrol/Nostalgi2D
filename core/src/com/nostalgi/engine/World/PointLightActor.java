@@ -2,6 +2,7 @@ package com.nostalgi.engine.World;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.Utils.CurveFloat;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.ILight;
 
@@ -17,10 +18,12 @@ public class PointLightActor extends BaseActor implements ILight{
 
     private IWorld world;
     private Light light;
-
+    private CurveFloat sinCurve;
     public PointLightActor(IWorld world) {
         this.world = world;
         this.canEverTick = true;
+
+        this.sinCurve = new CurveFloat(0, 1.01f);
     }
 
     @Override
@@ -38,6 +41,11 @@ public class PointLightActor extends BaseActor implements ILight{
         this.light.setPosition(this.getParent().getWorldPosition());
         this.light.setDirection(this.getParent().getRotation());
         this.light.setStaticLight(false);
+        Color c = this.light.getColor();
+
+        c.a = sinCurve.curve(dTime);
+
+        this.light.setColor(c);
     }
 
     @Override

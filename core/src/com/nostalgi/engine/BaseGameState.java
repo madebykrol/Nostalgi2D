@@ -24,7 +24,7 @@ public class BaseGameState implements IGameState {
     private ArrayList<IPlayerState> players = new ArrayList<IPlayerState>();
 
     @Replicated
-    private GameState gameState = GameState.STOPPED;
+    private GameState gameState = GameState.RUNNING;
 
     NetworkRole networkRole;
 

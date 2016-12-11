@@ -159,20 +159,19 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         this.currentCamera.update();
 
-        this.world.getGameMode().tick(dTime);
-
         // Set view
         this.mapRenderer.setView(this.currentCamera);
     }
 
     @Override
     public void render() {
-        this.mapRenderer.render(Gdx.graphics.getDeltaTime());
+        float dTime = Gdx.graphics.getDeltaTime();
+        this.mapRenderer.render(dTime);
         // Apply light to the scene.
         this.world.applyLight();
 
         if(world.getGameMode().getHud() != null) {
-            world.getGameMode().getHud().draw(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+            world.getGameMode().getHud().draw(Math.min(dTime, 1 / 30f));
         }
 
         if(debug)
