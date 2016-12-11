@@ -19,6 +19,7 @@ import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.game.Actors.ExampleTopDownRPGCharacter;
 import com.nostalgi.game.Controllers.ExampleTopDownRPGController;
 import com.nostalgi.game.Hud.ExampleHudModule;
 
@@ -53,7 +54,7 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
         this.setHud(hud);
 
         this.setDefaultControllerClass(ExampleTopDownRPGController.class);
-        this.setDefaultCharacterClass(BasePlayerCharacter.class);
+        this.setDefaultCharacterClass(ExampleTopDownRPGCharacter.class);
     }
 
 }

@@ -1,23 +1,15 @@
 package com.nostalgi.engine;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
-import com.nostalgi.engine.States.AnimationState;
+import com.nostalgi.engine.Utils.NMath;
 import com.nostalgi.engine.World.BaseActor;
-import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
-import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.engine.physics.BoundingVolume;
-import com.nostalgi.engine.physics.CollisionCategories;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -36,74 +28,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private boolean isJumping;
 
     public BasePlayerCharacter () {
-        this.isStatic(false);
-        BoundingVolume boundingVolume = new BoundingVolume();
-        boundingVolume.setCollisionCategory(CollisionCategories.CATEGORY_PLAYER);
-        boundingVolume.setCollisionMask(CollisionCategories.MASK_PLAYER);
-        boundingVolume.isSensor(false);
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.5f, 0.25f, new Vector2(0,-0.25f), 0);
-        boundingVolume.setShape(shape);
-        boundingVolume.setVolumeId("feet");
-
-        this.setBoundingVolume(boundingVolume);
-
-        BoundingVolume boundingVolume2 = new BoundingVolume();
-        boundingVolume2.isSensor(false);
-        boundingVolume2.setVolumeId("head");
-
-        PolygonShape shape2 = new PolygonShape();
-        shape2.setAsBox(0.5f, 0.75f, new Vector2(0,0.75f), 0);
-        boundingVolume2.setShape(shape2);
-
-        this.setBoundingVolume(boundingVolume2);
-
-        this.setMass(0.25f);
-
-        physicsSimulated(true);
-
-        IAnimationFactory animationFactory = new NostalgiAnimationFactory();
-
-        this.addAnimation(AnimationState.WalkingEastAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_east.png",
-                        32, 64, 1, 2, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.WalkingWestAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_west.png",
-                        32, 64, 1, 2, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.WalkingNorthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_north.png",
-                        32, 64, 1, 5, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.WalkingSouthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_walk_south.png",
-                        32, 64, 1, 5, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.IdleFaceSouthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_idle.png",
-                        32, 64, 1, 1, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.IdleFaceNorthAnimation,
-                animationFactory.createAnimation("Spritesheet/char_idle_north.png",
-                        32, 64, 1, 1, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.IdleFaceEastAnimation,
-                animationFactory.createAnimation("Spritesheet/char_idle_east.png",
-                        32, 64, 1, 1, 1f / 6f,
-                        Animation.PlayMode.LOOP));
-
-        this.addAnimation(AnimationState.IdleFaceWestAnimation,
-                animationFactory.createAnimation("Spritesheet/char_idle_west.png",
-                        32, 64, 1, 1, 1f / 6f,
-                        Animation.PlayMode.LOOP));
     }
 
     @Override
@@ -123,55 +48,14 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public boolean canEverTick() {
-        return true;
+        return this.canEverTick;
     }
 
     @Override
     public void tick(float delta) {
         super.tick(delta);
-        updateAnimation();
-
-        if(!isMoving()) {
-            float facingAngle = getRotation();
-            if (facingAngle >= Direction.NORTH_EAST && facingAngle <= Direction.NORTH_WEST) {
-                setWalkingState(AnimationState.IdleFaceNorthAnimation);
-            }
-
-            if (facingAngle >= Direction.NORTH_WEST && facingAngle <= Direction.SOUTH_WEST) {
-                setWalkingState(AnimationState.IdleFaceWestAnimation);
-            }
-
-            if (facingAngle >= Direction.NORTH_EAST && facingAngle <= Direction.SOUTH_EAST) {
-                setWalkingState(AnimationState.IdleFaceEastAnimation);
-            }
-
-            if (facingAngle >= Direction.SOUTH_WEST && facingAngle <= Direction.SOUTH_EAST) {
-                setWalkingState(AnimationState.IdleFaceSouthAnimation);
-            }
-        }
-
     }
 
-    protected void updateAnimation() {
-        if (isMoving()) {
-            float facingDirection = Math.abs(this.getRotation());
-            if (facingDirection >= Direction.SOUTH_WEST && facingDirection <= Direction.SOUTH_EAST) {
-                setWalkingState(AnimationState.WalkingSouthAnimation);
-            }
-
-            if (facingDirection >= Direction.NORTH_WEST && facingDirection <= Direction.SOUTH_WEST){
-                setWalkingState(AnimationState.WalkingWestAnimation);
-            }
-
-            if (facingDirection >= Direction.NORTH_EAST && facingDirection <= Direction.SOUTH_EAST){
-                setWalkingState(AnimationState.WalkingEastAnimation);
-            }
-
-            if (facingDirection >= Direction.NORTH_EAST && facingDirection <= Direction.NORTH_WEST) {
-                setWalkingState(AnimationState.WalkingNorthAnimation);
-            }
-        }
-    }
 
     @Override
     public IItem getEquipmentItem(int slot) {
@@ -211,15 +95,10 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void lookAt(Vector2 target) {
-        float dy = target.y - this.getPhysicsBody().getWorldCenter().y;
-        float dx = target.x - this.getPhysicsBody().getWorldCenter().x;
-
-        double angleBetween = Math.atan2(dy, dx) * MathUtils.radiansToDegrees;
+        double angleBetween = NMath.angleBetween(this.getPhysicsBody().getWorldCenter(), target);
 
         this.setRotation((float)angleBetween);
     }
-
-
 
     @Override
     public void setWalkingState(int state) {
@@ -278,6 +157,7 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
         this.currentVelocity = direction;
         Body body = this.getPhysicsBody();
         body.setLinearVelocity(direction);
+        this.isMoving(true);
     }
 
     @Override

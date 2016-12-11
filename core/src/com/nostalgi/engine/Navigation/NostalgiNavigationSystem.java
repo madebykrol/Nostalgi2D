@@ -27,7 +27,9 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         ArrayList<IPathNode> touchedNodes = new ArrayList<IPathNode>();
         for(IPathNode node : this.currentNavMesh.getNodes().values()) {
             // we need to translate the point from unit space to pixel space.
-            if(currentNavMesh.pointInTriangle(new Vector2(point.x * currentNavMesh.getUnitScale(), point.y * currentNavMesh.getUnitScale()), node.getPolygon())) {
+            if(currentNavMesh.pointInTriangle(new Vector2(
+                    point.x * currentNavMesh.getUnitScale(),
+                    point.y * currentNavMesh.getUnitScale()), node.getPolygon())) {
                 return node;
             }
         }
@@ -80,9 +82,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // do something important here, asynchronously to the rendering thread
                 final ArrayList<IPathNode> result = findPath(start, finish);
-                // post a Runnable to the rendering thread that processes the result
                 callback.onPathFound(result);
             }
         }).start();

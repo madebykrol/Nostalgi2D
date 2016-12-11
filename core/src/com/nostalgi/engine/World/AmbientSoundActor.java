@@ -36,15 +36,20 @@ public class AmbientSoundActor extends BaseActor {
     @NostalgiField(fieldName = "Falloff Distance")
     private float falloffDistance;
 
-    private Sound sound;
+    private ISound sound;
+    private ISound.ISoundReference soundRef;
+
+    private IWorld world;
 
 
-    public AmbientSoundActor() {
+    public AmbientSoundActor(IWorld world) {
+        this.world = world;
 
+        this.canEverTick = true;
     }
 
-    public AmbientSoundActor(String soundWave, boolean loop, float radius, float falloffDistance) {
-        this();
+    public AmbientSoundActor(IWorld world, String soundWave, boolean loop, float radius, float falloffDistance) {
+        this(world);
 
         this.soundWave = soundWave;
         this.loop = loop;
@@ -54,24 +59,25 @@ public class AmbientSoundActor extends BaseActor {
         createSound(soundWave);
     }
 
-    @Override
-    public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
-        BoundingVolume volume = (BoundingVolume) targetFixture.getUserData();
-        if(volume.getVolumeId().equals("gravitywell")) {
-            System.out.println("Begin gravity pull on object");
-        }
-    }
-
-    @Override
-    public void onOverlapEnd(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
-        BoundingVolume volume = (BoundingVolume) targetFixture.getUserData();
-        if(volume.getVolumeId().equals("gravitywell")) {
-            System.out.println("End gravity pull on object");
-        }
-    }
-
     public void createSound(String soundWave) {
-        this.sound = Gdx.audio.newSound(Gdx.files.internal(soundWave));
+        this.sound = this.world.getSoundSystem().createSound(this.getName()+"soundwave", soundWave);
+    }
+
+    public void tick(float deltaTime) {
+        IActor relativeToCheck = this.world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
+        if(this.getPosition().dst(relativeToCheck.getPosition()) <= this.radius+this.falloffDistance) {
+            if(this.soundRef == null) {
+                this.soundRef = this.sound.play(1f, 1f, 0f);
+                this.soundRef.setLooping(this.loop);
+            }  else {
+                this.soundRef.resume();
+            }
+        } else {
+            if(this.soundRef != null) {
+                this.soundRef.stop();
+                this.soundRef = null;
+            }
+        }
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.reflect.Annotation;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
@@ -79,15 +80,25 @@ public class NostalgiWorld implements IWorld {
 
     private ILightingSystem lightSystem;
 
-    private RayHandler rayHandler;
+    private ITimeManagementSystem timeManagementSystem;
+
+    private ISoundSystem soundSystem;
 
 
-    public NostalgiWorld(World world, NostalgiRenderer mapRenderer, OrthographicCamera camera, INavigationSystem navSystem, ILightingSystem lightSystem) {
+    public NostalgiWorld(World world,
+                         NostalgiRenderer mapRenderer,
+                         OrthographicCamera camera,
+                         INavigationSystem navSystem,
+                         ILightingSystem lightSystem,
+                         ISoundSystem soundSystem,
+                         ITimeManagementSystem timeManagementSystem) {
         this.world = world;
         this.camera = camera;
         this.renderer = mapRenderer;
         this.navSystem = navSystem;
         this.lightSystem = lightSystem;
+        this.soundSystem = soundSystem;
+        this.timeManagementSystem = timeManagementSystem;
         world.setContactListener(initializeCollisionDetectionObservers());
 
     }
@@ -579,11 +590,8 @@ public class NostalgiWorld implements IWorld {
 
 
             try {
-                // Set base class fields
-                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type.getSuperclass()));
-
                 // Set class fields.
-                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type));
+                setFields(actor, mapObject, ClassReflection.getDeclaredFields(type), type);
             } catch (ReflectionException e) {
                 e.printStackTrace();
             }
@@ -754,6 +762,16 @@ public class NostalgiWorld implements IWorld {
         this.lightSystem = lightingSystem;
     }
 
+    @Override
+    public void setSoundSystem(ISoundSystem soundSystem) {
+        this.soundSystem = soundSystem;
+    }
+
+    @Override
+    public ISoundSystem getSoundSystem() {
+        return this.soundSystem;
+    }
+
     /**
      * @inheritDoc
      */
@@ -791,7 +809,7 @@ public class NostalgiWorld implements IWorld {
         return result;
     }
 
-    protected void setFields(IActor actor, MapObject object, Field[] fields) throws IllegalAccessException, ReflectionException {
+    protected void setFields(IActor actor, MapObject object, Field[] fields, Class type) throws IllegalAccessException, ReflectionException {
         for(Field field : fields) {
             field.setAccessible(true);
             Annotation declaredAnnotation = field.getDeclaredAnnotation(NostalgiField.class);
@@ -805,20 +823,58 @@ public class NostalgiWorld implements IWorld {
                     fieldName = field.getName();
                 }
 
+                String methodName = annotation.withMethod();
+                Method withMethod = null;
+                if(methodName != null && !methodName.isEmpty()) {
+                    Method[] methods = ClassReflection.getMethods(actor.getClass());
+                    for(Method m :  methods ) {
+                        if(m.getName().equals(methodName)) {
+                            withMethod = m;
+                        }
+                    }
+                }
+
                 String propertyValue = getObjectProperty(object, fieldName);
                 if (propertyValue != null && !propertyValue.isEmpty()) {
                     if (field.getType() == int.class) {
-                        field.set(actor, Integer.parseInt(propertyValue));
+                        int data = Integer.parseInt(propertyValue);
+                        if(withMethod != null) {
+                            withMethod.invoke(actor, data);
+                        } else {
+                            field.set(actor, data);
+                        }
                     } else if (field.getType() == float.class) {
-                        field.set(actor, Float.parseFloat(propertyValue));
+                        float data = Float.parseFloat(propertyValue);
+                        if(withMethod != null) {
+                            withMethod.invoke(actor, data);
+                        } else {
+                            field.set(actor, data);
+                        }
                     } else if (field.getType() == boolean.class) {
-                        field.set(actor, Boolean.parseBoolean(propertyValue));
+                        boolean data = Boolean.parseBoolean(propertyValue);
+                        if(withMethod != null) {
+                            withMethod.invoke(actor, data);
+                        } else {
+                            field.set(actor, data);
+                        }
                     } else if (field.getType() == String.class) {
-                        field.set(actor, propertyValue);
+                        String data = propertyValue;
+                        if(withMethod != null) {
+                            withMethod.invoke(actor, data);
+                        } else {
+                            field.set(actor, data);
+                        }
                     }
                 }
             }
             field.setAccessible(false);
+        }
+
+
+        String superClassName = type.getSuperclass().getSimpleName();
+        if(!type.getSuperclass().getSimpleName().equals("Object")) {
+            // Set base class fields
+            setFields(actor, object, ClassReflection.getDeclaredFields(type.getSuperclass()), type.getSuperclass());
         }
     }
 

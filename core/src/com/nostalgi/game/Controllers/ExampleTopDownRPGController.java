@@ -37,21 +37,20 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     }
 
     @Override
-    public void update(float dTime) {
+    public void tick(float dTime) {
 
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
-
 
         if (currentPossessedCharacter != null) {
 
             if(path != null && !path.isEmpty()) {
-                IPathNode nextNode = getWorld().getNavigationSystem().getNextWayPoint(path, currentPossessedCharacter.getPhysicsBody().getWorldCenter());
+                IPathNode nextNode = this.getWorld().getNavigationSystem().getNextWayPoint(path,
+                        currentPossessedCharacter.getPhysicsBody().getWorldCenter());
                 if(nextNode != null) {
-                    this.getCurrentPossessedCharacter().lookAt(nextNode.getPosition());
-                    this.getCurrentPossessedCharacter().moveForward(5);
-                    this.getCurrentPossessedCharacter().isMoving(true);
+                    currentPossessedCharacter.lookAt(nextNode.getPosition());
+                    currentPossessedCharacter.moveForward(5);
                 } else {
-                    this.getCurrentPossessedCharacter().stop();
+                    currentPossessedCharacter.stop();
                 }
             } else {
                 handleMovement(currentPossessedCharacter, dTime);

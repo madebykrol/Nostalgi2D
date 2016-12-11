@@ -113,14 +113,14 @@ public interface IActor extends IWorldObject {
     boolean isAnimated();
 
     /**
-     * Returns whether this actor needs update on its bounding volume fixtures.
+     * Returns whether this actor needs tick on its bounding volume fixtures.
      * This usually occurs when the player changes floor in a dungeon or on the map.
      * @return
      */
     boolean fixtureNeedsUpdate();
 
     /**
-     * Set wheter or not this actors bounding volumes needs update.
+     * Set wheter or not this actors bounding volumes needs tick.
      * @param update
      * @return
      */

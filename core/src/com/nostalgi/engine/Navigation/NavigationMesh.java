@@ -46,7 +46,7 @@ public class NavigationMesh implements INavMesh{
                 int[] floors = new int[4];
                 if(poly.getProperties().containsKey("Floor")) {
                     String floorString = (String)poly.getProperties().get("Floor");
-                    String[] floorStrings = floorString.split(":");
+                    String[] floorStrings = floorString.split(",");
 
                     for(int i = 0; i < floorStrings.length; i++) {
                         floors[i] = Integer.parseInt(floorStrings[i]);
@@ -82,7 +82,7 @@ public class NavigationMesh implements INavMesh{
                         y += 2;
                     }
 
-                    if (numSharedVertices >= 1) {
+                    if (numSharedVertices >= 2) {
                         currentNode.addNeighbor(neighborNode);
                     }
                 }

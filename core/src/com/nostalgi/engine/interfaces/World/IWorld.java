@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
+import com.nostalgi.engine.World.ISoundSystem;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.physics.ILightingSystem;
@@ -289,8 +290,21 @@ public interface IWorld {
      */
     void applyLight();
 
+    /**
+     *
+     * @return
+     */
     ILightingSystem getLightingSystem();
+
+    /**
+     *
+     * @param lightingSystem
+     */
     void setLightingSystem(ILightingSystem lightingSystem);
+
+    void setSoundSystem(ISoundSystem soundSystem);
+
+    ISoundSystem getSoundSystem();
 
 
     /**
