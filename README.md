@@ -42,7 +42,7 @@ The game state tracks the current game across maps.
 <li><s>Multiple shape / fixtures per physics body on actors</s></li>
 <li><s>Floors and layered rendering (4 floors default)</s></li>
 <li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
-<li>Spatial sound sources</li>
+<li><s>Spatial sound sources</s>(Alpha - Unstable)</li>
 <li>Lighting effects</li>
 <li>SpawnerActor</li>
 <li>Timelines</li>
