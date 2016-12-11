@@ -34,10 +34,10 @@ public interface IController {
     InputProcessor getInputProcessor();
 
     /**
-     * Update, this is called as often as possible.
+     * Tick this controller, this is called as often as possible, typically once per frame
      * @param dTime
      */
-    void update(float dTime);
+    void tick(float dTime);
 
     void setControllerId(Guid uuid);
 

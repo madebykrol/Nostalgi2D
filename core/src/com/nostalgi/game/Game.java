@@ -58,7 +58,7 @@ public class Game extends BaseGame {
 
 
 		this.gameEngine.createNewPlayer(new BasePlayerState());
-		this.gameEngine.getWorld().getLightingSystem().updateAmbientLight(new Color(0.05f, 0.05f, 0.05f, 0.1f));
+		this.gameEngine.getWorld().getLightingSystem().updateAmbientLight(new Color(0.00f, 0.00f, 0.00f, 0.1f));
 
 		try {
 			this.gameEngine.getWorld().spawnActor(PointLightActor.class, "Light 1", false, new Vector2(5f, 5f), this.gameEngine.getWorld().getGameMode().getCurrentController().getCurrentPossessedCharacter(), null);

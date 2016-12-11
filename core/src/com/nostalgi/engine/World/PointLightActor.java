@@ -17,6 +17,7 @@ public class PointLightActor extends BaseActor implements ILight{
 
     private IWorld world;
     private Light light;
+    private boolean ignoreParent;
 
     public PointLightActor(IWorld world) {
         this.world = world;

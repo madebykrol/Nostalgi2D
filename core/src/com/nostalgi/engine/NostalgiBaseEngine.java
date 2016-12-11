@@ -132,9 +132,9 @@ public class NostalgiBaseEngine implements IGameEngine {
                 ICharacter character = controller.getCurrentPossessedCharacter();
 
                 // Tick the controller
-                controller.update(dTime);
+                controller.tick(dTime);
 
-                // In case something has changed on the character that require a update on the physics body
+                // In case something has changed on the character that require a tick on the physics body
                 // We do it here.
                 // Commonly this is done after a character has changed floor on a level.
                 if (character.fixtureNeedsUpdate()) {
