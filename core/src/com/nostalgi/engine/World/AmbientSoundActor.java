@@ -64,15 +64,19 @@ public class AmbientSoundActor extends BaseActor {
     }
 
     public void tick(float deltaTime) {
+        ISoundSystem soundSystem = this.world.getSoundSystem();
         IActor relativeToCheck = this.world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
         if(this.getPosition().dst(relativeToCheck.getPosition()) <= this.radius+this.falloffDistance) {
             if(this.soundRef == null) {
-                this.soundRef = this.sound.play(1f, 1f, 0f);
+                this.soundRef = this.sound.play(0f,
+                        1f, soundSystem.calculatePan(this.getPosition(), relativeToCheck.getPosition()));
                 this.soundRef.setLooping(this.loop);
             }  else {
+                this.soundRef.setVolume(soundSystem.calculateVolume(this.radius, this.falloffDistance, this.getPosition(), relativeToCheck.getPosition()));
                 this.soundRef.resume();
             }
         } else {
+
             if(this.soundRef != null) {
                 this.soundRef.stop();
                 this.soundRef = null;

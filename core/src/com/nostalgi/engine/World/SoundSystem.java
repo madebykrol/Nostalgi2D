@@ -43,6 +43,30 @@ public class SoundSystem implements ISoundSystem {
         float angleBetween = NMath.angleBetween(soundPosition, playerPosition);
 
 
+
+        return 0;
+    }
+
+    @Override
+    public float calculateVolume(float radius, float falloffRadius, Vector2 soundPosition, Vector2 playerPosition) {
+
+        float distanceBetween = soundPosition.dst(playerPosition);
+
+        float maximumDistance = radius + falloffRadius;
+
+        if(maximumDistance - distanceBetween > 0) {
+
+            float absDistance = Math.abs(maximumDistance - distanceBetween);
+            if(absDistance <=  radius && absDistance <= maximumDistance) {
+
+                System.out.println(absDistance / maximumDistance);
+
+                return absDistance / maximumDistance;
+            }
+
+            return 1;
+        }
+
         return 0;
     }
 }

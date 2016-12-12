@@ -93,7 +93,7 @@ public class NostalgiBaseEngine implements IGameEngine {
      * @param mapRenderer
      */
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer mapRenderer, IGameInstance gameInstance, boolean headless) {
-        this(camera, mapRenderer, new TmxMapLoader(), new WorldFactory(), new Box2DDebugRenderer(), gameInstance, headless, false);
+        this(camera, mapRenderer, new TmxMapLoader(), new WorldFactory(), new Box2DDebugRenderer(), gameInstance, headless, true);
     }
 
     public NostalgiBaseEngine(NostalgiCamera camera, NostalgiRenderer renderer, TmxMapLoader mapLoader, IWorldFactory worldFactory,  Box2DDebugRenderer debugRenderer, IGameInstance gameInstance, boolean headless, boolean debug) {

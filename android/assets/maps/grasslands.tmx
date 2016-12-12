@@ -1032,26 +1032,31 @@
    </properties>
    <polygon points="0,0 22.3867,18.0594 21.4133,172.04 -1.94667,190.099 -123.613,192 -123.613,0"/>
   </object>
-  <object id="246" name="Planetoid01" x="1351.29" y="175">
+  <object id="246" name="Planetoid01" x="1410.08" y="499">
    <properties>
     <property name="CollisionCategory" value="Actor"/>
     <property name="CollisionMask" value="Actor"/>
-    <property name="Floor" type="int" value="0"/>
+    <property name="CreatePhysicsBody" type="bool" value="true"/>
+    <property name="Floor" type="int" value="1"/>
     <property name="Friction" type="float" value="15"/>
+    <property name="GravitationRadius" type="float" value="10"/>
+    <property name="IsKinematic" type="bool" value="false"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>
-    <property name="Mass" type="float" value="75"/>
+    <property name="Mass" type="float" value="100"/>
     <property name="Type" value="com.nostalgi.engine.World.GravityActor"/>
    </properties>
-   <polygon points="0,0 -23.2277,25.7347 -29.2871,59.3878 -1.0099,95.0204 28.2772,97 69.6832,59.3878 72.7129,27.7143 44.4356,2.96939"/>
+   <polygon points="0,0 -12.7525,15.6531 -16.0792,36.1225 -0.554455,57.7959 15.5247,59 38.2574,36.1225 39.9208,16.8572 24.396,1.80612"/>
   </object>
   <object id="1164" x="870.667" y="360" width="44" height="44">
    <properties>
-    <property name="Falloff Distance" type="float" value="1"/>
+    <property name="Falloff Distance" type="float" value="4"/>
     <property name="Loop" type="bool" value="true"/>
-    <property name="Radius" type="float" value="3"/>
+    <property name="PhysicsSimulated" type="bool" value="false"/>
+    <property name="Radius" type="float" value="5"/>
     <property name="SoundWave" value="sound/OOT_Sword_Clang_Bombable.wav"/>
     <property name="Type" value="com.nostalgi.engine.World.AmbientSoundActor"/>
+    <property name="Volume" type="float" value="100"/>
    </properties>
    <ellipse/>
   </object>

@@ -62,7 +62,7 @@ public class Game extends BaseGame {
 
 		/*
 		try {
-			//this.gameEngine.getWorld().spawnActor(PointLightActor.class, "Light 1", false, new Vector2(5f, 5f), this.gameEngine.getWorld().getGameMode().getCurrentController().getCurrentPossessedCharacter(), null);
+			this.gameEngine.getWorld().spawnActor(PointLightActor.class, "Light 1", false, new Vector2(5f, 5f), this.gameEngine.getWorld().getGameMode().getCurrentController().getCurrentPossessedCharacter(), null);
 		} catch (FailedToSpawnActorException e) {
 			e.printStackTrace();
 		}

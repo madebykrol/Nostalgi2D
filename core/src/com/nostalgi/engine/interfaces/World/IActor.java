@@ -154,12 +154,6 @@ public interface IActor extends IWorldObject {
      */
     void onOverlapEnd(IActor instigator, Fixture instigatorFixture, Fixture targetFixture);
 
-    /**
-     * Last chance for actor to add bounding volumes before its being spawned to the world.
-     * This method is called right before createBody
-     *
-     */
-    void postCreatePhysicsBody();
 
     /**
      * Called as soon as actor is ready and added to the level.
@@ -215,5 +209,18 @@ public interface IActor extends IWorldObject {
      */
     void applyForceFromOrigin(Vector2 origin, float force, float falloffRadius);
 
+
+    /**
+     * Gets / Sets if this actor should be created with a physics body when spawned.
+     * @return
+     */
+    boolean shouldCreatePhysicsBody();
+
+    /**
+     * Gets / Sets if this actor should be created with a physics body when spawned.
+     * @param shouldCreate
+     * @return
+     */
+    boolean shouldCreatePhysicsBody(boolean shouldCreate);
 
 }

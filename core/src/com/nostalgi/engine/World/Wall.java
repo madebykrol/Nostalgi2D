@@ -47,6 +47,11 @@ public class Wall implements IWall {
         return "Wall-"+this.hashCode();
     }
 
+    @Override
+    public void preCreatePhysicsBody() {
+
+    }
+
     /**
      * @inheritDoc
      */
@@ -246,6 +251,16 @@ public class Wall implements IWall {
         return false;
     }
 
+    @Override
+    public boolean isKinematic() {
+        return false;
+    }
+
+    @Override
+    public boolean isKinematic(boolean isKinematic) {
+        return false;
+    }
+
     /**
      * @inheritDoc
      */
@@ -260,22 +275,6 @@ public class Wall implements IWall {
     @Override
     public boolean isSensor(boolean isSenor) {
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public float getDensity() {
-        return 0;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void setDensity(float density) {
-
     }
 
     /**
@@ -307,15 +306,10 @@ public class Wall implements IWall {
      */
     @Override
     public float getMass() {
-        return 0;
-    }
+        if(this.getPhysicsBody() != null)
+            return this.getPhysicsBody().getMass();
 
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public void setMass(float mass) {
-
+        return 0.0f;
     }
 
 }

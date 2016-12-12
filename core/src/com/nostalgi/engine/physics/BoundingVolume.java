@@ -13,6 +13,7 @@ public class BoundingVolume {
     private Shape shape = new PolygonShape();
     private short collisionMask = -1;
     private short collisionCategory = 0;
+    private float density = 0f;
     private boolean autoRotate = false;
     private Vector2 relativePosition = new Vector2();
     private String volumeId;
@@ -68,5 +69,13 @@ public class BoundingVolume {
 
     public void setVolumeId(String volumeId) {
         this.volumeId = volumeId;
+    }
+
+    public void setDensity(float density) {
+        this.density = density;
+    }
+
+    public float getDensity() {
+        return this.density;
     }
 }

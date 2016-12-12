@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.nostalgi.engine.Annotations.NostalgiField;
+import com.nostalgi.engine.Utils.NMath;
+import com.nostalgi.engine.Utils.PolygonUtils;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IComponent;
 import com.nostalgi.engine.physics.BoundingVolume;
@@ -19,6 +22,12 @@ import java.util.ArrayList;
 
 public class GravityActor extends BaseActor {
 
+    @NostalgiField(fieldName = "GravitationRadius")
+    private float gravitationRadius = 0;
+
+    @NostalgiField(fieldName = "Mass")
+    private float mass = 0f;
+
     private ArrayList<IActor> actorsInWell = new ArrayList<IActor>();
 
     public GravityActor () {
@@ -26,31 +35,30 @@ public class GravityActor extends BaseActor {
     }
 
     @Override
-    public void postCreatePhysicsBody() {
+    public void preCreatePhysicsBody() {
         BoundingVolume boundingVolume2 = new BoundingVolume();
         boundingVolume2.isSensor(true);
         boundingVolume2.setVolumeId("gravitywell");
         boundingVolume2.setCollisionCategory(CollisionCategories.CATEGORY_TRIGGER);
         boundingVolume2.setCollisionMask(CollisionCategories.MASK_TRIGGER);
+        boundingVolume2.setDensity(0);
 
         CircleShape shape2 = new CircleShape();
-        shape2.setRadius(this.getMass()/10);
-        boundingVolume2.setShape(shape2);
+        shape2.setRadius(this.gravitationRadius);
 
+        Vector2 center = new Vector2();
         if(this.getBoundingVolume(0) != null) {
             BoundingVolume bv = this.getBoundingVolume(0);
+
             if(bv.getShape() instanceof PolygonShape) {
-
-
+                PolygonShape ps = (PolygonShape) bv.getShape();
+                float[] vertices = PolygonUtils.getVertsFromPolygon(ps);
+                GeometryUtils.polygonCentroid(vertices, 0, vertices.length, center);
             }
         }
+        shape2.setPosition(center);
+        boundingVolume2.setShape(shape2);
 
-        /*
-        Vector2 wCenter = this.getPhysicsBody().getWorldCenter();
-        Vector2 relativeCenter = new Vector2(this.getWorldPosition().x - wCenter.x, this.getWorldPosition().y - wCenter.y);
-
-        shape2.setPosition(relativeCenter);
-        */
         this.setBoundingVolume(boundingVolume2);
     }
 
@@ -75,15 +83,14 @@ public class GravityActor extends BaseActor {
     @Override
     public void tick(float time) {
         for(IActor actor : actorsInWell) {
-            float angleBetween = MathUtils.atan2(this.getPosition().y - actor.getPosition().y, this.getPosition().x - actor.getPosition().x);
+            float angleBetween = Math.abs(NMath.angleBetween(actor.getPosition(), this.getPosition()) * MathUtils.degreesToRadians);
 
             float distanceBetween = this.getPosition().dst(actor.getPosition());
 
-            float G  = 50000; // Approximation of G for the system.
-
+            float G  = 50; // Approximation of G for the system.
             // G*M1*M2 / D^2
-            float x = (G * (this.getMass() * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.cos(angleBetween);
-            float y = (G * (this.getMass() * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.sin(angleBetween);
+            float x = (G * (mass * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.cos(angleBetween);
+            float y = (G * (mass * actor.getMass()) / (distanceBetween*distanceBetween)) * MathUtils.sin(angleBetween);
 
             actor.applyForce(new Vector2(x, y), actor.getPhysicsBody().getWorldCenter());
         }

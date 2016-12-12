@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
@@ -46,8 +47,6 @@ import com.nostalgi.engine.physics.ILightingSystem;
 import com.nostalgi.engine.physics.TraceHit;
 import java.util.ArrayList;
 
-import box2dLight.RayHandler;
-
 /**
  * Created by Kristoffer on 2016-07-23.
  */
@@ -72,6 +71,7 @@ public class NostalgiWorld implements IWorld {
 
     private static final String SENSOR = "IsSensor";
     private static final String TYPE = "Type";
+    private static final String DENSITY = "Density";
 
     private static final String COLLISION_CATEGORY = "CollisionCategory";
     private static final String COLLISION_MASK = "CollisionMask";
@@ -297,7 +297,10 @@ public class NostalgiWorld implements IWorld {
 
             if (actor.isStatic()) {
                 bodyDef.type = BodyDef.BodyType.StaticBody;
-            } else {
+            } else if( actor.isKinematic()) {
+                bodyDef.type = BodyDef.BodyType.KinematicBody;
+            }
+            else {
                 bodyDef.type = BodyDef.BodyType.DynamicBody;
             }
 
@@ -305,16 +308,18 @@ public class NostalgiWorld implements IWorld {
             actorBody.setUserData(actor);
         }
         int bvI = 0;
+        float sumDensity = 0;
         for(BoundingVolume bv : actor.getBoundingVolumes()) {
 
             FixtureDef blockingBounds = new FixtureDef();
 
-            blockingBounds.density = actor.getDensity();
+            blockingBounds.density = bv.getDensity();
             blockingBounds.friction = actor.getFriction();
             blockingBounds.shape = bv.getShape();
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
             blockingBounds.isSensor = bv.isSensor();
 
+            sumDensity += bv.getDensity();
             if(bvI == 0) {
                 blockingBounds.filter.maskBits = (short) (bv.getCollisionMask() | CollisionCategories.floorFromInt(actor.getFloorLevel()));
             } else {
@@ -325,6 +330,9 @@ public class NostalgiWorld implements IWorld {
             f.setUserData(bv);
             bvI++;
         }
+
+
+
         actor.setPhysicsBody(actorBody);
 
         return actorBody;
@@ -410,7 +418,7 @@ public class NostalgiWorld implements IWorld {
             for (BoundingVolume bv : actor.getBoundingVolumes()) {
                 FixtureDef blockingBounds = new FixtureDef();
 
-                blockingBounds.density = actor.getDensity();
+                blockingBounds.density = bv.getDensity();
                 blockingBounds.friction = actor.getFriction();
                 blockingBounds.shape = bv.getShape();
                 blockingBounds.filter.categoryBits = bv.getCollisionCategory();
@@ -423,7 +431,11 @@ public class NostalgiWorld implements IWorld {
                 f.setUserData(bv);
                 bvI++;
             }
+
+            playerBody.resetMassData();
         }
+
+
     }
 
     /**
@@ -576,7 +588,7 @@ public class NostalgiWorld implements IWorld {
             createBody(a);
         }
 
-        a.postCreatePhysicsBody();
+        a.preCreatePhysicsBody();
         a.postSpawn();
         return (T)a;
     }
@@ -587,7 +599,7 @@ public class NostalgiWorld implements IWorld {
     {
         try {
             IActor actor = createActorInstance(type);
-
+            actor.setName(mapObject.getName());
 
             try {
                 // Set class fields.
@@ -601,43 +613,48 @@ public class NostalgiWorld implements IWorld {
             BoundingVolume bv =  new BoundingVolume();
             if(mapObject instanceof RectangleMapObject) {
                 Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
-                vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
-                bv = createBoundingVolume(mapObject, vertices, unitScale);
                 position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
+                if(actor.shouldCreatePhysicsBody()) {
+                    vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
+                    bv = createBoundingVolume(mapObject, vertices, unitScale);
+                }
+
             } else if(mapObject instanceof PolygonMapObject) {
                 PolygonMapObject obj = (PolygonMapObject) mapObject;
-                vertices = obj.getPolygon().getVertices();
                 position = new Vector2(obj.getPolygon().getX()/unitScale, obj.getPolygon().getY()/unitScale);
-                bv = createBoundingVolume(mapObject, vertices, unitScale);
+                if(actor.shouldCreatePhysicsBody()) {
+                    vertices = obj.getPolygon().getVertices();
+                    bv = createBoundingVolume(mapObject, vertices, unitScale);
+                }
             } else if(mapObject instanceof CircleMapObject) {
 
                 CircleMapObject obj = (CircleMapObject)mapObject;
                 position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
-                CircleShape circle = new CircleShape();
-                circle.setRadius(obj.getCircle().radius);
-
-                bv = createBoundingVolume(obj, circle);
+                if(actor.shouldCreatePhysicsBody()) {
+                    CircleShape circle = new CircleShape();
+                    circle.setRadius(obj.getCircle().radius);
+                    bv = createBoundingVolume(obj, circle);
+                }
             } else  if (mapObject instanceof EllipseMapObject) {
                 EllipseMapObject obj = (EllipseMapObject)mapObject;
-
                 CircleShape circle = new CircleShape();
-
                 float radius = obj.getEllipse().width  / 2;
-
                 position = new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale);
-                circle.setRadius(radius/unitScale);
-                bv = createBoundingVolume(obj, circle);
+                if(actor.shouldCreatePhysicsBody()) {
+                    circle.setRadius(radius / unitScale);
+                    bv = createBoundingVolume(obj, circle);
+                }
             }
 
-            bv.setVolumeId("base");
-
             actor.setPosition(position);
-            actor.setBoundingVolume(bv);
 
-            actor.setName(mapObject.getName());
+            if(actor.shouldCreatePhysicsBody()) {
+                bv.setVolumeId("base");
+                actor.setBoundingVolume(bv);
+                actor.preCreatePhysicsBody();
+                createBody(actor);
+            }
 
-            actor.postCreatePhysicsBody();
-            createBody(actor);
             return (T)actor;
         } catch(IllegalAccessException e) {
             return null;
@@ -910,6 +927,15 @@ public class NostalgiWorld implements IWorld {
                 mask = CollisionCategories.maskFromString(collisionMask);
             }
             bv.setCollisionMask(mask);
+        }
+
+        String density = getObjectProperty(object, DENSITY);
+        if(density != null) {
+            try {
+                bv.setDensity(Float.parseFloat(density));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
 
         return bv;

@@ -53,12 +53,11 @@ public interface IWorldObject {
     boolean isStatic();
     boolean isStatic(boolean isStatic);
 
+    boolean isKinematic();
+    boolean isKinematic(boolean isKinematic);
+
     boolean isSensor();
     boolean isSensor(boolean isSenor);
-
-    float getDensity();
-
-    void setDensity(float density);
 
     float getFriction();
 
@@ -67,8 +66,14 @@ public interface IWorldObject {
     void draw(Batch batch, float timeElapsed);
 
     float getMass();
-    void setMass(float mass);
 
     void setName(String name);
     String getName();
+
+    /**
+     * Last chance for actor to add bounding volumes before its being spawned to the world.
+     * This method is called right before createBody
+     *
+     */
+    void preCreatePhysicsBody();
 }

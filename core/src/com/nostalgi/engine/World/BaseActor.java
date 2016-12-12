@@ -32,11 +32,11 @@ public abstract class BaseActor implements IActor {
     @NostalgiField(fieldName = "PhysicsSimulated")
     private boolean physicsSimulated;
 
-    @NostalgiField(fieldName = "Mass")
-    private float mass;
+    @NostalgiField(fieldName = "Weight")
+    private float weight;
 
-    private IActor parent;
-    private HashMap<String, IActor> children = new HashMap<String, IActor>();
+    @NostalgiField(fieldName = "CreatePhysicsBody")
+    private boolean createPhysicsBody = true;
 
     @Replicated
     protected boolean canEverTick;
@@ -57,36 +57,38 @@ public abstract class BaseActor implements IActor {
     private boolean transformationNeedsUpdate = true;
 
     @Replicated
-    private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
-
-    @Replicated
-    private ArrayList<IComponent> components;
-
-    @Replicated
     private Animation currentAnimation;
-
-    private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
 
     @NostalgiField(fieldName = "Name")
     private String name = "Actor"+this.hashCode();
 
-    private Body physicsBody;
-
-
-    private boolean isReplicated = false;
-
-    @NostalgiField(fieldName = "Density")
-    private float density = 100f;
     @NostalgiField(fieldName = "Friction")
     private float friction = 1f;
     @NostalgiField(fieldName = "IsStatic")
     private boolean isStatic = false;
     @NostalgiField(fieldName = "IsSensor")
     private boolean isSensor = false;
+    @NostalgiField(fieldName = "IsKinematic")
+    private boolean isKinematic = false;
+
+
+    private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
+
+    private ArrayList<IComponent> components;
 
     private boolean fixtureNeedsUpdate = false;
 
     private float rotation;
+
+    private IActor parent;
+
+    private HashMap<String, IActor> children = new HashMap<String, IActor>();
+
+    private Body physicsBody;
+
+    private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
+
+    private boolean isReplicated = false;
 
     public BaseActor() {
 
@@ -255,16 +257,6 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public float getDensity() {
-        return density;
-    }
-
-    @Override
-    public void setDensity(float density) {
-        this.density = density;
-    }
-
-    @Override
     public float getFriction() {
         return friction;
     }
@@ -283,6 +275,16 @@ public abstract class BaseActor implements IActor {
     public Body getPhysicsBody() {
 
         return physicsBody;
+    }
+
+    @Override
+    public boolean isKinematic() {
+        return this.isKinematic;
+    }
+
+    @Override
+    public boolean  isKinematic(boolean isKinematic) {
+        return this.isKinematic = isKinematic;
     }
 
     @Override
@@ -307,12 +309,9 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public float getMass() {
-        return this.mass;
-    }
-
-    @Override
-    public void setMass(float mass) {
-        this.mass = mass;
+        if(this.getPhysicsBody() != null)
+            return this.getPhysicsBody().getMass();
+        return 0.0f;
     }
 
     @Override
@@ -364,8 +363,19 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void postCreatePhysicsBody() {
+    public void preCreatePhysicsBody() {
 
+    }
+
+    @Override
+    public boolean shouldCreatePhysicsBody() {
+        return this.createPhysicsBody;
+    }
+
+    @Override
+    public boolean shouldCreatePhysicsBody(boolean shouldCreate) {
+        this.createPhysicsBody = shouldCreate;
+        return shouldCreate;
     }
 
     @Override
@@ -382,6 +392,8 @@ public abstract class BaseActor implements IActor {
     public void destroy() {
 
     }
+
+
     private void doWorldTransformation() {
         if(this.transformationNeedsUpdate) {
             if(this.parent != null) {

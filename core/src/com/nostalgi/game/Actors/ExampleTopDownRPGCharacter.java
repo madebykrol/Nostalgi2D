@@ -45,7 +45,9 @@ public class ExampleTopDownRPGCharacter extends BasePlayerCharacter implements I
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(0.5f, 0.25f, new Vector2(0,-0.25f), 0);
         boundingVolume.setShape(shape);
+
         boundingVolume.setVolumeId("feet");
+        boundingVolume.setDensity(200);
 
         this.setBoundingVolume(boundingVolume);
 
@@ -58,8 +60,6 @@ public class ExampleTopDownRPGCharacter extends BasePlayerCharacter implements I
         boundingVolume2.setShape(shape2);
 
         this.setBoundingVolume(boundingVolume2);
-
-        this.setMass(0.25f);
 
         physicsSimulated(true);
 

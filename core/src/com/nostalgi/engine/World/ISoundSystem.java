@@ -1,5 +1,6 @@
 package com.nostalgi.engine.World;
 
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -20,5 +21,15 @@ public interface ISoundSystem {
      * @return
      */
     float calculatePan(Vector2 soundPosition, Vector2 playerPosition);
+
+    /**
+     *
+     * @param radius
+     * @param falloffRadius
+     * @param soundPosition
+     * @param playerPosition
+     * @return
+     */
+    float calculateVolume(float radius, float falloffRadius, Vector2 soundPosition, Vector2 playerPosition);
 
 }
