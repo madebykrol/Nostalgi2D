@@ -10,6 +10,7 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
 import com.nostalgi.engine.World.ISoundSystem;
+import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.physics.ILightingSystem;
@@ -305,7 +306,6 @@ public interface IWorld {
     void setSoundSystem(ISoundSystem soundSystem);
 
     ISoundSystem getSoundSystem();
-
 
     /**
      * Dispose of the current physics world state. Typically called when the game is shutting down.

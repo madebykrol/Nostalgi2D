@@ -1048,7 +1048,7 @@
    </properties>
    <polygon points="0,0 -12.7525,15.6531 -16.0792,36.1225 -0.554455,57.7959 15.5247,59 38.2574,36.1225 39.9208,16.8572 24.396,1.80612"/>
   </object>
-  <object id="1164" x="870.667" y="360" width="44" height="44">
+  <object id="1164" x="1405.67" y="918" width="44" height="44">
    <properties>
     <property name="Falloff Distance" type="float" value="4"/>
     <property name="Loop" type="bool" value="true"/>

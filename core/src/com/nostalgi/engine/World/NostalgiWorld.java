@@ -34,6 +34,7 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
 import com.nostalgi.engine.NostalgiRenderer;
+import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -83,7 +84,6 @@ public class NostalgiWorld implements IWorld {
     private ITimeManagementSystem timeManagementSystem;
 
     private ISoundSystem soundSystem;
-
 
     public NostalgiWorld(World world,
                          NostalgiRenderer mapRenderer,

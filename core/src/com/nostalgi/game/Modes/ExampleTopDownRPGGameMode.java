@@ -55,6 +55,7 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
 
         this.setDefaultControllerClass(ExampleTopDownRPGController.class);
         this.setDefaultCharacterClass(ExampleTopDownRPGCharacter.class);
+
     }
 
 }

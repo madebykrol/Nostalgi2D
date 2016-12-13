@@ -115,6 +115,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     @Override
     public void update() {
+
         // Time difference since last frame.
         float dTime = Gdx.graphics.getDeltaTime();
 
@@ -293,6 +294,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(8, 53));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
+
             } catch (ReflectionException e) {
                 if(e.getCause() instanceof NoSuchMethodException) {
                     try {

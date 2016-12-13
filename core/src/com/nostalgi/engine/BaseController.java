@@ -3,6 +3,7 @@ package com.nostalgi.engine;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.nostalgi.engine.Utils.Guid;
+import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IWorld;
@@ -22,6 +23,7 @@ public abstract class BaseController implements IController, InputProcessor {
     private GestureDetector.GestureListener gestureListener;
     private IWorld world;
     private Guid id;
+    private IPlayerState playerState;
 
 
 
@@ -94,5 +96,11 @@ public abstract class BaseController implements IController, InputProcessor {
         return this.world;
     }
 
+    public void setPlayerState(IPlayerState playerState) {
+        this.playerState = playerState;
+    }
 
+    public IPlayerState getPlayerState() {
+        return this.playerState;
+    }
 }

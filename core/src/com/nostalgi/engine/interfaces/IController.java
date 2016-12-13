@@ -3,6 +3,7 @@ package com.nostalgi.engine.interfaces;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.nostalgi.engine.Utils.Guid;
+import com.nostalgi.engine.interfaces.States.IPlayerState;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -43,5 +44,6 @@ public interface IController {
 
     Guid getControllerId();
 
-
+    void setPlayerState(IPlayerState playerState);
+    IPlayerState getPlayerState();
 }

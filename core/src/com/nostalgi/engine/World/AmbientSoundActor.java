@@ -72,7 +72,9 @@ public class AmbientSoundActor extends BaseActor {
                         1f, soundSystem.calculatePan(this.getPosition(), relativeToCheck.getPosition()));
                 this.soundRef.setLooping(this.loop);
             }  else {
-                this.soundRef.setVolume(soundSystem.calculateVolume(this.radius, this.falloffDistance, this.getPosition(), relativeToCheck.getPosition()));
+                this.soundRef.setPan(
+                        soundSystem.calculatePan(this.getPosition(), relativeToCheck.getPosition()),
+                        soundSystem.calculateVolume(this.radius, this.falloffDistance, this.getPosition(), relativeToCheck.getPosition()));
                 this.soundRef.resume();
             }
         } else {
