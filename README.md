@@ -30,7 +30,7 @@ Actors are the objects that brings life to your game. It could be characters, do
 The game mode is what governs the rules of your game. Each map is associated with a game mode.
 
 ### GameState
-The game state tracks the current game across maps.
+The current state of the game. This state is associated with the current played map, for example it can track of pickups that has been picked up and that will be reset after a while
 
 ## Roadmap
 <ul>
