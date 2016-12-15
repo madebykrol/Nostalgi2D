@@ -1,4 +1,6 @@
-package com.nostalgi.engine.World;
+package com.nostalgi.engine.World.Audio;
+
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
@@ -6,12 +8,14 @@ import java.util.ArrayList;
  * Created by Krille on 11/12/2016.
  */
 
-public class Sound implements ISound {
+public class Sound implements com.nostalgi.engine.World.Audio.ISound {
 
     private com.badlogic.gdx.audio.Sound sound;
+    private ISoundEventListener soundEventListener;
 
-    public Sound(com.badlogic.gdx.audio.Sound sound) {
+    public Sound(com.badlogic.gdx.audio.Sound sound, ISoundEventListener soundEventListener) {
         this.sound = sound;
+        this.soundEventListener = soundEventListener;
     }
 
 

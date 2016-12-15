@@ -2,8 +2,8 @@ package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.BaseController;
-import com.nostalgi.engine.BasePlayerCharacter;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Navigation.IPathFoundCallback;
 import com.nostalgi.engine.Navigation.IPathNode;
@@ -128,7 +128,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     private void handleLookingAtHudChanges(ICharacter currentPossessedCharacter, float dTime) {
         IWorld world = getWorld();
         ArrayList<Class> filters = new ArrayList<Class>();
-        filters.add(BasePlayerCharacter.class);
+        filters.add(BaseCharacter.class);
         filters.add(Wall.class);
         ArrayList<TraceHit> seeing = world.rayTrace(currentPossessedCharacter.getWorldPosition(), currentPossessedCharacter.getRotation(), 1.5f, filters, false);
         ExampleHudModule mainHud = (ExampleHudModule) world.getGameMode().getHud().getModule("Main");

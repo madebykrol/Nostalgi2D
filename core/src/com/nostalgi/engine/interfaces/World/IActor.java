@@ -214,13 +214,13 @@ public interface IActor extends IWorldObject {
      * Gets / Sets if this actor should be created with a physics body when spawned.
      * @return
      */
-    boolean shouldCreatePhysicsBody();
+    boolean shouldCreatePhysicsBodyFromMapObject();
 
     /**
      * Gets / Sets if this actor should be created with a physics body when spawned.
      * @param shouldCreate
      * @return
      */
-    boolean shouldCreatePhysicsBody(boolean shouldCreate);
+    boolean shouldCreatePhysicsBodyFromMapObject(boolean shouldCreate);
 
 }

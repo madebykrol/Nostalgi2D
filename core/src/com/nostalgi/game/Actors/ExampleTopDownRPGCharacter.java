@@ -1,25 +1,15 @@
 package com.nostalgi.game.Actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.nostalgi.engine.BasePlayerCharacter;
+import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
-import com.nostalgi.engine.Stat;
 import com.nostalgi.engine.States.AnimationState;
-import com.nostalgi.engine.World.BaseActor;
-import com.nostalgi.engine.World.ISound;
-import com.nostalgi.engine.World.Sound;
+import com.nostalgi.engine.World.Audio.ISound;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
-import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.ICharacter;
-import com.nostalgi.engine.interfaces.World.IItem;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
@@ -27,7 +17,7 @@ import com.nostalgi.engine.physics.CollisionCategories;
 /**
  * Created by ksdkrol on 2016-07-04.
  */
-public class ExampleTopDownRPGCharacter extends BasePlayerCharacter implements ICharacter {
+public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharacter {
 
     private IWorld world;
 
@@ -64,7 +54,7 @@ public class ExampleTopDownRPGCharacter extends BasePlayerCharacter implements I
         physicsSimulated(true);
 
         // Load the sound.
-        this.walkingInGrass = this.world.getSoundSystem().createSound("walking-in-grass",
+        this.walkingInGrass = this.world.getSoundSystem().createSound(
                 "sound/OOT_Steps_Grass1.wav");
 
         IAnimationFactory animationFactory = new NostalgiAnimationFactory();

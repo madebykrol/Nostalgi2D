@@ -14,7 +14,7 @@ import com.nostalgi.engine.interfaces.World.IItem;
 /**
  * Created by ksdkrol on 2016-07-04.
  */
-public class BasePlayerCharacter extends BaseActor implements ICharacter {
+public class BaseCharacter extends BaseActor implements ICharacter {
 
     private IController currentController;
 
@@ -27,7 +27,11 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     private boolean isMoving;
     private boolean isJumping;
 
-    public BasePlayerCharacter () {
+    private Class aiControllerClass;
+    private boolean shouldSpawnWithAiController;
+    private boolean shouldBePossessedOnSpawn;
+
+    public BaseCharacter() {
 
     }
 
@@ -85,6 +89,36 @@ public class BasePlayerCharacter extends BaseActor implements ICharacter {
     @Override
     public IController getCurrentController() {
         return this.currentController;
+    }
+
+    @Override
+    public <T extends IController> void setAIControllerClass(Class<T> defaultClass) {
+        this.aiControllerClass = defaultClass;
+    }
+
+    @Override
+    public Class getAIControllerClass() {
+        return this.aiControllerClass;
+    }
+
+    @Override
+    public boolean shouldSpawnWithAiController() {
+        return shouldSpawnWithAiController;
+    }
+
+    @Override
+    public boolean shouldSpawnWithAiController(boolean should) {
+        return this.shouldSpawnWithAiController = should;
+    }
+
+    @Override
+    public boolean shouldBePossessedOnSpawn() {
+        return this.shouldBePossessedOnSpawn;
+    }
+
+    @Override
+    public boolean shouldBePossessedOnSpawn(boolean should) {
+        return this.shouldBePossessedOnSpawn = should;
     }
 
     @Override

@@ -1,6 +1,5 @@
-package com.nostalgi.engine.World;
+package com.nostalgi.engine.World.Audio;
 
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -8,8 +7,11 @@ import com.badlogic.gdx.math.Vector2;
  */
 public interface ISoundSystem {
 
-    ISound createSound(String name, String soundFile);
-    ISound getLoadedSound(String name);
+    ISound createSound(String soundFile);
+    ISound getLoadedSound(String fileName);
+    IMusic getLoadedMusic(String fileName);
+
+    IMusic createMusic(String soundFile);
 
     /**
      * Calculate a value between -1 and 1
@@ -31,5 +33,7 @@ public interface ISoundSystem {
      * @return
      */
     float calculateVolume(float radius, float falloffRadius, Vector2 soundPosition, Vector2 playerPosition);
+
+    void setNoiseListener(INoiseListener noiseListener);
 
 }

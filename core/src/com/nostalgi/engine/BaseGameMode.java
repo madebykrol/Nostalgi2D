@@ -26,6 +26,7 @@ public class BaseGameMode implements IGameMode {
     private Class defaultGameStateClass;
     private Class defaultPlayerStateClass;
     private Class defaultCharacterClass;
+    private Class defaultAIControllerClass;
 
     private IGameInstance gameInstance;
 
@@ -42,6 +43,21 @@ public class BaseGameMode implements IGameMode {
     @Override
     public void setGameState(IGameState gameState) {
         this.gameState = gameState;
+    }
+
+    @Override
+    public <T extends IController> void setDefaultAIControllerClass(Class<T> defaultClass) {
+        defaultAIControllerClass = defaultClass;
+    }
+
+    @Override
+    public Class getDefaultAIControllerClass() {
+        return defaultAIControllerClass;
+    }
+
+    @Override
+    public void postDefaultAIControllerCreation(IController controller) {
+
     }
 
     @Override

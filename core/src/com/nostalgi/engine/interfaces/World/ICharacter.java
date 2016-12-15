@@ -23,6 +23,15 @@ public interface ICharacter extends IActor, Disposable{
     void setCurrentController(IController controller);
     IController getCurrentController();
 
+    <T extends IController> void setAIControllerClass(Class<T> defaultClass);
+    Class getAIControllerClass();
+
+    boolean shouldSpawnWithAiController();
+    boolean shouldSpawnWithAiController(boolean should);
+
+    boolean shouldBePossessedOnSpawn();
+    boolean shouldBePossessedOnSpawn(boolean should);
+
     Sprite getStaticSprite(float deltaT);
     void lookAt(Vector2 target);
     float getRotation();

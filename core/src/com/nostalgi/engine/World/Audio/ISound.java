@@ -1,4 +1,4 @@
-package com.nostalgi.engine.World;
+package com.nostalgi.engine.World.Audio;
 
 import com.badlogic.gdx.utils.Disposable;
 

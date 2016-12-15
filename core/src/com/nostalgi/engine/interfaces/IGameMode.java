@@ -17,6 +17,10 @@ public interface IGameMode extends Disposable{
     IGameState getGameState();
     void setGameState(IGameState gameState);
 
+    <T extends IController> void setDefaultAIControllerClass(Class<T> defaultClass);
+    Class getDefaultAIControllerClass();
+    void postDefaultAIControllerCreation(IController controller);
+
     <T extends IController> void setDefaultControllerClass(Class<T> defaultClass);
     Class getDefaultControllerClass();
     void postDefaultControllerCreation(IController controller);

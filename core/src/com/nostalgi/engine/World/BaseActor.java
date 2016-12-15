@@ -7,15 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Annotations.Replicated;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IComponent;
-import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
-import com.nostalgi.engine.physics.CollisionCategories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +31,8 @@ public abstract class BaseActor implements IActor {
     @NostalgiField(fieldName = "Weight")
     private float weight;
 
-    @NostalgiField(fieldName = "CreatePhysicsBody")
-    private boolean createPhysicsBody = true;
+    @NostalgiField(fieldName = "CreatePhysicsBodyFromMapObject")
+    private boolean createPhysicsBodyFromMapObject = true;
 
     @Replicated
     protected boolean canEverTick;
@@ -368,13 +364,13 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public boolean shouldCreatePhysicsBody() {
-        return this.createPhysicsBody;
+    public boolean shouldCreatePhysicsBodyFromMapObject() {
+        return this.createPhysicsBodyFromMapObject;
     }
 
     @Override
-    public boolean shouldCreatePhysicsBody(boolean shouldCreate) {
-        this.createPhysicsBody = shouldCreate;
+    public boolean shouldCreatePhysicsBodyFromMapObject(boolean shouldCreate) {
+        this.createPhysicsBodyFromMapObject = shouldCreate;
         return shouldCreate;
     }
 

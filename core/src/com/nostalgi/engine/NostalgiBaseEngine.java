@@ -154,11 +154,12 @@ public class NostalgiBaseEngine implements IGameEngine {
         }
 
         // Update camera
-        if(this.currentCamera != null && this.currentCamera.followPlayerCharacter()) {
+        if(this.currentCamera != null) {
             this.getWorld().setCameraPositionSafe(currentCharacter.getWorldPosition());
+            this.currentCamera.update();
         }
 
-        this.currentCamera.update();
+
 
         // Set view
         this.mapRenderer.setView(this.currentCamera);
@@ -294,7 +295,6 @@ public class NostalgiBaseEngine implements IGameEngine {
             ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(8, 53));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
-
             } catch (ReflectionException e) {
                 if(e.getCause() instanceof NoSuchMethodException) {
                     try {
@@ -303,6 +303,15 @@ public class NostalgiBaseEngine implements IGameEngine {
                         e.printStackTrace();
                     }
                 }
+            }
+            try {
+                if (playerStateClass != null) {
+                    IPlayerState playerState = (IPlayerState) ClassReflection.getConstructor(playerStateClass).newInstance();
+                    if(controller != null)
+                        controller.setPlayerState(playerState);
+                }
+            } catch (ReflectionException e) {
+                e.printStackTrace();
             }
             // Possess the freshly spawned character.
             controller.possessCharacter(playerCharacter);

@@ -68,7 +68,17 @@ public abstract class BaseController implements IController, InputProcessor {
     }
 
     @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
     public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 

@@ -1,22 +1,10 @@
 package com.nostalgi.engine.World;
 
-import com.badlogic.gdx.Audio;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.nostalgi.engine.Annotations.NostalgiField;
+import com.nostalgi.engine.World.Audio.ISound;
+import com.nostalgi.engine.World.Audio.ISoundSystem;
 import com.nostalgi.engine.interfaces.World.IActor;
-import com.nostalgi.engine.interfaces.World.IComponent;
 import com.nostalgi.engine.interfaces.World.IWorld;
-import com.nostalgi.engine.physics.BoundingVolume;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Krille on 15/11/2016.
@@ -60,7 +48,7 @@ public class AmbientSoundActor extends BaseActor {
     }
 
     public void createSound(String soundWave) {
-        this.sound = this.world.getSoundSystem().createSound(this.getName()+"soundwave", soundWave);
+        this.sound = this.world.getSoundSystem().createSound(soundWave);
     }
 
     public void tick(float deltaTime) {
@@ -73,9 +61,8 @@ public class AmbientSoundActor extends BaseActor {
                 this.soundRef.setLooping(this.loop);
             }  else {
                 this.soundRef.setPan(
-                        soundSystem.calculatePan(this.getPosition(), relativeToCheck.getPosition()),
-                        soundSystem.calculateVolume(this.radius, this.falloffDistance, this.getPosition(), relativeToCheck.getPosition()));
-                this.soundRef.resume();
+                    soundSystem.calculatePan(this.getPosition(), relativeToCheck.getPosition()),
+                    soundSystem.calculateVolume(this.radius, this.falloffDistance, this.getPosition(), relativeToCheck.getPosition()));
             }
         } else {
 
