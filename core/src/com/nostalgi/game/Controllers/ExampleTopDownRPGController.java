@@ -80,7 +80,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                 this.getCurrentPossessedCharacter().lookAt(topActor.getPhysicsBody().getWorldCenter());
             }
         } else {
-            world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, this);
+            world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, world, this);
         }
 
         return false;

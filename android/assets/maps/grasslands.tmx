@@ -6632,14 +6632,15 @@
    </properties>
    <polygon points="0,0 22.3867,18.0594 21.4133,172.04 -1.94667,190.099 -123.613,192 -123.613,0"/>
   </object>
-  <object id="246" name="Planetoid01" x="1361.08" y="198">
+  <object id="246" name="Planetoid01" x="761.08" y="530">
    <properties>
+    <property name="BlockNavMesh" type="bool" value="true"/>
     <property name="CollisionCategory" value="Actor"/>
     <property name="CollisionMask" value="Actor"/>
     <property name="CreatePhysicsBodyFromMapObject" type="bool" value="true"/>
     <property name="Floor" type="int" value="1"/>
     <property name="Friction" type="float" value="15"/>
-    <property name="GravitationRadius" type="float" value="10"/>
+    <property name="GravitationRadius" type="float" value="0"/>
     <property name="IsKinematic" type="bool" value="false"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>

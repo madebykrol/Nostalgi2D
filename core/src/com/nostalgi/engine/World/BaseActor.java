@@ -67,7 +67,6 @@ public abstract class BaseActor implements IActor {
     @NostalgiField(fieldName = "IsKinematic")
     private boolean isKinematic = false;
 
-
     private ArrayList<BoundingVolume> boundingVolumes = new ArrayList<BoundingVolume>();
 
     private ArrayList<IComponent> components;
@@ -85,6 +84,10 @@ public abstract class BaseActor implements IActor {
     private HashMap<Integer, Animation> animations = new HashMap<Integer, Animation>();
 
     private boolean isReplicated = false;
+
+    @Replicated
+    @NostalgiField(fieldName = "BlockNavMesh")
+    private boolean blocksNavMesh;
 
     public BaseActor() {
 
@@ -346,8 +349,8 @@ public abstract class BaseActor implements IActor {
         float falloff = 1;
 
         // F/M1 * (R-D) * cos(a)|sin(a)
-        float x = ((force / this.getMass()) * (falloff) )* MathUtils.cos(angleBetween);
-        float y = ((force / this.getMass()) * (falloff) )* MathUtils.sin(angleBetween);
+        float x = ((force / this.getMass()) * (falloff) * distanceBetween)* MathUtils.cos(angleBetween);
+        float y = ((force / this.getMass()) * (falloff) * distanceBetween)* MathUtils.sin(angleBetween);
 
 
         this.getPhysicsBody().applyLinearImpulse(new Vector2(x, y), this.getPhysicsBody().getWorldCenter(), true);
@@ -372,6 +375,16 @@ public abstract class BaseActor implements IActor {
     public boolean shouldCreatePhysicsBodyFromMapObject(boolean shouldCreate) {
         this.createPhysicsBodyFromMapObject = shouldCreate;
         return shouldCreate;
+    }
+
+    @Override
+    public boolean blocksNavMesh()  {
+        return this.blocksNavMesh;
+    }
+
+    @Override
+    public boolean blocksNavMesh(boolean blocks)  {
+        return this.blocksNavMesh = blocks;
     }
 
     @Override
@@ -405,4 +418,5 @@ public abstract class BaseActor implements IActor {
             this.transformationNeedsUpdate = false;
         }
     }
+
 }

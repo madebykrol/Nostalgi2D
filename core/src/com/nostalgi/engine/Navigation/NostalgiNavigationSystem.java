@@ -2,7 +2,9 @@ package com.nostalgi.engine.Navigation;
 
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import java.util.Collections;
 public class NostalgiNavigationSystem implements INavigationSystem {
 
     private INavMesh currentNavMesh;
+    private IWorld world;
 
     public void loadNavMesh(INavMesh mesh) {
         this.currentNavMesh = mesh;
@@ -47,7 +50,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         return returnNode;
     }
 
-    public ArrayList<IPathNode> findPath(Vector2 start, Vector2 finish) {
+    public ArrayList<IPathNode> findPath(Vector2 start, Vector2 finish, IWorld world) {
 
         this.currentNavMesh.reset();
 
@@ -64,7 +67,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
 
         // Find path.
-        path.addAll(findPath(firstWayPoint, goalWayPoint));
+        path.addAll(findPath(firstWayPoint, goalWayPoint, world));
 
         path.set(path.size()-1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
 
@@ -73,28 +76,28 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         return path;
     }
 
-    public ArrayList<IPathNode> findPath(IActor player, IActor target){
-        return findPath(player.getWorldPosition(), target.getWorldPosition());
+    public ArrayList<IPathNode> findPath(IActor player, IActor target, IWorld world){
+        return findPath(player.getWorldPosition(), target.getWorldPosition(), world);
     }
 
     @Override
-    public void findPathAsync(final Vector2 start, final Vector2 finish, final IPathFoundCallback callback) {
+    public void findPathAsync(final Vector2 start, final Vector2 finish, final IWorld world, final IPathFoundCallback callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final ArrayList<IPathNode> result = findPath(start, finish);
+                final ArrayList<IPathNode> result = findPath(start, finish, world);
                 callback.onPathFound(result);
             }
         }).start();
     }
 
     @Override
-    public void findPathAsync(IActor player, IActor target, IPathFoundCallback callback) {
-        this.findPathAsync(player.getWorldPosition(), target.getWorldPosition(), callback);
+    public void findPathAsync(IActor player, IActor target, IWorld world, IPathFoundCallback callback) {
+        this.findPathAsync(player.getWorldPosition(), target.getWorldPosition(), world, callback);
     }
 
 
-    protected ArrayList<IPathNode> findPath(IPathNode start, IPathNode finish) {
+    protected ArrayList<IPathNode> findPath(IPathNode start, IPathNode finish, IWorld world) {
         if ((start == null || finish == null) || start.getPosition().x == finish.getPosition().x && start.getPosition().y == finish.getPosition().y) {
             return new ArrayList<IPathNode>();
         }
@@ -113,7 +116,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
             ArrayList<IPathNode> newReachable = getUnexploredNeighbors(node, explored);
             for (IPathNode newNode : newReachable) {
-                if (!reachable.contains(newNode)) {
+                if (!reachable.contains(newNode) && !nodeIsObstructed(newNode, world)) {
                     reachable.add(newNode);
                 }
 
@@ -132,6 +135,15 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         return new ArrayList<IPathNode>();
     }
 
+    private boolean nodeIsObstructed(IPathNode node, IWorld world) {
+        ArrayList<IActor> actors = world.actorsCloseToLocation(node.getPosition(), 0.5f);
+        for(IActor actor : actors) {
+            if(actor.blocksNavMesh())
+                return true;
+        }
+
+        return false;
+    }
 
     private float calculateCost(IPathNode startNode, IPathNode endNode) {
         return Math.abs(startNode.getPosition().x - endNode.getPosition().x) + Math.abs(startNode.getPosition().y - endNode.getPosition().y);

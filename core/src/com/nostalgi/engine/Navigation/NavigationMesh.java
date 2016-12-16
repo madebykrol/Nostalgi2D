@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.GeometryUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.interfaces.World.IActor;
+import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
