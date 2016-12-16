@@ -55,9 +55,9 @@ public class Game extends BaseGame {
 
 		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, new GameInstance(), false);
         this.gameEngine.loadLevel("maps/grasslands");
+		this.gameEngine.getWorld().getLightingSystem().updateAmbientLight(new Color(0.00f, 0.00f, 0.00f, 1f));
 
-
-		this.gameEngine.createNewPlayer(new BasePlayerState());
+		this.gameEngine.createNewPlayer(new ExamplePlayerState());
 
 		this.gameEngine.init();
 	}

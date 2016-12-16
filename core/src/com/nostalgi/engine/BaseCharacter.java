@@ -27,9 +27,9 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     private boolean isMoving;
     private boolean isJumping;
 
-    private Class aiControllerClass;
-    private boolean shouldSpawnWithAiController;
-    private boolean shouldBePossessedOnSpawn;
+    private Class aiControllerClass = null;
+    private boolean shouldSpawnWithAiController = false;
+    private boolean shouldBePossessedOnSpawn = false;
 
     public BaseCharacter() {
 

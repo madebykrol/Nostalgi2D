@@ -184,8 +184,10 @@ public abstract class BaseLevel implements ILevel {
         this.initActors();
         this.initWalls();
 
-        this.navMesh = new NavigationMesh(map.getLayers().get("NavMesh"), this.getTileSize());
-        this.navMesh.generate();
+        if(map.getLayers().get("NavMesh") != null) {
+            this.navMesh = new NavigationMesh(map.getLayers().get("NavMesh"), this.getTileSize());
+            this.navMesh.generate();
+        }
     }
 
     public INavMesh getNavMesh() {

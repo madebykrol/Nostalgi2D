@@ -695,7 +695,6 @@ public class NostalgiWorld implements IWorld {
                     e.printStackTrace();
                 }
             }
-
             return cActor;
         }
 

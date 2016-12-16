@@ -119,8 +119,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Time difference since last frame.
         float dTime = Gdx.graphics.getDeltaTime();
 
-        // Update game mode.
-        ICharacter currentCharacter = world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
 
         // Check if we are in authoritative mode (Server). (Single player games are always authoritative.)
         if(this.world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
@@ -155,14 +153,18 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Update camera
         if(this.currentCamera != null) {
-            this.getWorld().setCameraPositionSafe(currentCharacter.getWorldPosition());
+            ICharacter currentCharacter = world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
+
+            if(currentCharacter != null) {
+                this.getWorld().setCameraPositionSafe(currentCharacter.getWorldPosition());
+            }
             this.currentCamera.update();
+
+            // Set view
+            this.mapRenderer.setView(this.currentCamera);
         }
 
 
-
-        // Set view
-        this.mapRenderer.setView(this.currentCamera);
     }
 
     @Override
@@ -304,6 +306,7 @@ public class NostalgiBaseEngine implements IGameEngine {
                     }
                 }
             }
+
             try {
                 if (playerStateClass != null) {
                     IPlayerState playerState = (IPlayerState) ClassReflection.getConstructor(playerStateClass).newInstance();
