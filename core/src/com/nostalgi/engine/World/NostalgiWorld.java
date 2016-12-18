@@ -681,11 +681,11 @@ public class NostalgiWorld implements IWorld {
                 try {
                     if(cActor.shouldSpawnWithAiController()) {
                         IController controller = (IController) ClassReflection.getConstructor(
-                                cActor.getAIControllerClass().getClass(),
+                                cActor.getAIControllerClass(),
                                 IWorld.class
                         ).newInstance(this);
 
-                        this.getGameMode().addController(controller);
+                        this.getGameMode().addAIController(controller);
 
                         if(cActor.shouldBePossessedOnSpawn()) {
                             controller.possessCharacter(cActor);

@@ -43,8 +43,10 @@ public interface IGameMode extends Disposable{
 
     IController getController(int player);
     void addController(IController controller);
+    void addAIController(IController controller);
 
     ArrayList<IController> getControllers();
+    ArrayList<IController> getAIController();
 
     IActor choosePlayerStart(IController player);
 
@@ -55,5 +57,7 @@ public interface IGameMode extends Disposable{
 
     void setGameInstance(IGameInstance gameInstance);
     IGameInstance getGameInstance();
+
+    void init();
 
 }

@@ -20,6 +20,7 @@ public class BaseGameMode implements IGameMode {
 
     private IGameState gameState;
     private ArrayList<IController> playerControllers =  new ArrayList<IController>();
+    private ArrayList<IController>  aiControllers = new ArrayList<IController>();
     private IHud hud;
     private final NetworkRole isAuthority;
     private Class defaultControllerClass;
@@ -30,8 +31,10 @@ public class BaseGameMode implements IGameMode {
 
     private IGameInstance gameInstance;
 
-    public BaseGameMode (IWorld world) {
+    private IWorld world;
 
+    public BaseGameMode (IWorld world) {
+        this.world = world;
         this.isAuthority = NetworkRole.ROLE_AUTHORITY;
     }
 
@@ -162,8 +165,18 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
+    public void addAIController(IController controller) {
+        this.aiControllers.add(controller);
+    }
+
+    @Override
     public ArrayList<IController> getControllers() {
         return this.playerControllers;
+    }
+
+    @Override
+    public ArrayList<IController> getAIController() {
+        return aiControllers;
     }
 
     @Override
@@ -183,6 +196,11 @@ public class BaseGameMode implements IGameMode {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void init() {
 
     }
 }

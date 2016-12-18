@@ -198,6 +198,7 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     public void stop() {
         Body body = this.getPhysicsBody();
         body.setLinearVelocity(0, 0);
+        this.isMoving(false);
     }
 
     @Override

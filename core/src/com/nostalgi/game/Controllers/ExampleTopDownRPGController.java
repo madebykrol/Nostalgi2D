@@ -175,7 +175,6 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
             currentPossessedCharacter.moveForward(5);
             currentPossessedCharacter.isMoving(true);
         } else {
-            currentPossessedCharacter.isMoving(false);
             currentPossessedCharacter.stop();
             currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
         }

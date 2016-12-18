@@ -16,6 +16,7 @@ import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.World.PointLightActor;
+import com.nostalgi.game.Actors.ExampleTopDownRPGAICharacter;
 
 public class Game extends BaseGame {
 

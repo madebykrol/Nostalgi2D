@@ -8,11 +8,11 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by Krille on 03/12/2016.
  */
-
 public class NostalgiNavigationSystem implements INavigationSystem {
 
     private INavMesh currentNavMesh;
@@ -76,8 +76,8 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         return path;
     }
 
-    public ArrayList<IPathNode> findPath(IActor player, IActor target, IWorld world){
-        return findPath(player.getWorldPosition(), target.getWorldPosition(), world);
+    public synchronized ArrayList<IPathNode> findPath(IActor from, IActor to, IWorld world){
+        return findPath(from.getWorldPosition(), to.getWorldPosition(), world);
     }
 
     @Override
@@ -92,21 +92,23 @@ public class NostalgiNavigationSystem implements INavigationSystem {
     }
 
     @Override
-    public void findPathAsync(IActor player, IActor target, IWorld world, IPathFoundCallback callback) {
-        this.findPathAsync(player.getWorldPosition(), target.getWorldPosition(), world, callback);
+    public void findPathAsync(IActor from, IActor to, IWorld world, IPathFoundCallback callback) {
+        this.findPathAsync(from.getWorldPosition(), to.getWorldPosition(), world, callback);
     }
 
 
-    protected ArrayList<IPathNode> findPath(IPathNode start, IPathNode finish, IWorld world) {
-        if ((start == null || finish == null) || start.getPosition().x == finish.getPosition().x && start.getPosition().y == finish.getPosition().y) {
+    protected ArrayList<IPathNode> findPath(IPathNode n1, IPathNode n2, IWorld world) {
+        if ((n1 == null || n2 == null) || n1.getPosition().x == n2.getPosition().x && n1.getPosition().y == n2.getPosition().y) {
             return new ArrayList<IPathNode>();
         }
 
         ArrayList<IPathNode> reachable = new ArrayList<IPathNode>();
         ArrayList<IPathNode> explored = new ArrayList<IPathNode>();
+        ArrayList<IPathNode> path = new ArrayList<IPathNode>();
 
-        start.setCost(1);
-        reachable.add(start);
+
+        n1.setCost(1);
+        reachable.add(n1);
 
         while (reachable.size() > 0) {
             IPathNode node = chooseNode(reachable);
@@ -116,6 +118,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
             ArrayList<IPathNode> newReachable = getUnexploredNeighbors(node, explored);
             for (IPathNode newNode : newReachable) {
+
                 if (!reachable.contains(newNode) && !nodeIsObstructed(newNode, world)) {
                     reachable.add(newNode);
                 }
@@ -127,12 +130,12 @@ public class NostalgiNavigationSystem implements INavigationSystem {
                 }
             }
 
-            if (node.getIndex() == finish.getIndex()) {
-                return buildPath(finish);
+            if (node.getIndex() == n2.getIndex()) {
+                path = buildPath(n2);
             }
         }
 
-        return new ArrayList<IPathNode>();
+        return path;
     }
 
     private boolean nodeIsObstructed(IPathNode node, IWorld world) {
@@ -198,5 +201,9 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         }
 
         return path;
+    }
+
+    private class NodeRef {
+
     }
 }

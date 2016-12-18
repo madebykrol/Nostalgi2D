@@ -30,6 +30,7 @@ import com.nostalgi.engine.interfaces.World.ILevel;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.Render.NostalgiCamera;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,6 +112,8 @@ public class NostalgiBaseEngine implements IGameEngine {
     public void init() {
         // init input
         this.initInput();
+
+        this.getWorld().getGameMode().init();
     }
 
     @Override
@@ -126,8 +129,10 @@ public class NostalgiBaseEngine implements IGameEngine {
             // Tick the gamemode.
             this.world.getGameMode().tick(dTime);
 
+            ArrayList<IController> controllers = world.getGameMode().getControllers();
+            controllers.addAll(world.getGameMode().getAIController());
             // Get updates from controller.
-            for(IController controller :  world.getGameMode().getControllers()) {
+            for(IController controller :  controllers) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
 
                 // Tick the controller
@@ -140,6 +145,8 @@ public class NostalgiBaseEngine implements IGameEngine {
                     world.updateBody(character);
                 }
             }
+
+
             // Tick the world
             this.world.tick();
             // Tick all the actors.
@@ -267,11 +274,13 @@ public class NostalgiBaseEngine implements IGameEngine {
                     Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
                     IGameMode gameMode = (IGameMode)ctor.newInstance(world);
 
+
                     // Everytime we set a new gameMode we pass the gameInstance.
                     gameMode.setGameInstance(this.gameInstance);
 
                     // set the game mode on the world.
                     world.setGameMode(gameMode);
+
                 }
             }
 
@@ -294,7 +303,7 @@ public class NostalgiBaseEngine implements IGameEngine {
             // and spawn a default pawn.
             // @TODO If the map is set to always spawn a "SpectorCharacter" spawn from that class instead.
 
-            ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(8, 53));
+            ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(32, 26));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
             } catch (ReflectionException e) {

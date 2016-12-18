@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="2807">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" nextobjectid="2811">
  <properties>
   <property name="GameMode" value="com.nostalgi.game.Modes.ExampleTopDownRPGGameMode"/>
   <property name="GravityX" type="float" value="0"/>
@@ -6324,6 +6324,12 @@
   <object id="2804" x="0" y="1472">
    <polygon points="0,0 32,32 0,32"/>
   </object>
+  <object id="2809" x="672" y="576">
+   <polygon points="0,0 -14,49 0,64"/>
+  </object>
+  <object id="2810" x="672" y="640">
+   <polygon points="0,0 -32,0 -14,-12"/>
+  </object>
  </objectgroup>
  <objectgroup color="#ff0000" name="Walls" offsetx="1" offsety="-1">
   <properties>
@@ -6632,7 +6638,7 @@
    </properties>
    <polygon points="0,0 22.3867,18.0594 21.4133,172.04 -1.94667,190.099 -123.613,192 -123.613,0"/>
   </object>
-  <object id="246" name="Planetoid01" x="761.08" y="530">
+  <object id="246" name="Planetoid01" x="1360.08" y="197">
    <properties>
     <property name="BlockNavMesh" type="bool" value="true"/>
     <property name="CollisionCategory" value="Actor"/>
@@ -6640,7 +6646,7 @@
     <property name="CreatePhysicsBodyFromMapObject" type="bool" value="true"/>
     <property name="Floor" type="int" value="1"/>
     <property name="Friction" type="float" value="15"/>
-    <property name="GravitationRadius" type="float" value="0"/>
+    <property name="GravitationRadius" type="float" value="2"/>
     <property name="IsKinematic" type="bool" value="false"/>
     <property name="IsSensor" type="bool" value="false"/>
     <property name="IsStatic" type="bool" value="true"/>

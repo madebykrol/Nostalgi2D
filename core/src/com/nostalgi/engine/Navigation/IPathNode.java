@@ -27,13 +27,5 @@ public interface IPathNode {
 
     void setParent(IPathNode parent);
     IPathNode getParent();
-
-    /**
-     * Make a copy of this node.
-     * Referencing same parents and same neighbors.
-     *
-     * @return
-     */
-    IPathNode copy();
-
+    IPathNode clone();
 }
