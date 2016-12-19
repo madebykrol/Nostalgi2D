@@ -32,7 +32,7 @@ public class ExampleNPCAIController extends BaseController implements INoiseList
 
         System.out.println("Woopah We have possessed a character.");
 
-        // locatePlayer();
+        //locatePlayer();
     }
 
     @Override
@@ -57,6 +57,7 @@ public class ExampleNPCAIController extends BaseController implements INoiseList
             if(this.getCurrentPossessedCharacter().isMoving()) {
                 currentPossessedCharacter.stop();
                 currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
+                //locatePlayer();
             }
         }
 

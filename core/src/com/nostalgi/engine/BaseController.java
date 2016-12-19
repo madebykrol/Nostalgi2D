@@ -2,11 +2,15 @@ package com.nostalgi.engine;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
+import com.nostalgi.engine.Navigation.IPathNode;
 import com.nostalgi.engine.Utils.Guid;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IWorld;
+
+import java.util.ArrayList;
 
 
 /**
@@ -17,7 +21,7 @@ import com.nostalgi.engine.interfaces.World.IWorld;
  */
 
 
-public abstract class BaseController implements IController, InputProcessor {
+public abstract class BaseController implements IController, InputProcessor, GestureDetector.GestureListener {
 
     private ICharacter character;
     private GestureDetector.GestureListener gestureListener;
@@ -44,7 +48,7 @@ public abstract class BaseController implements IController, InputProcessor {
 
     @Override
     public GestureDetector.GestureListener getGestureListener() {
-        return gestureListener;
+        return this;
     }
 
     @Override
@@ -83,6 +87,11 @@ public abstract class BaseController implements IController, InputProcessor {
     }
 
     @Override
+    public boolean touchDown(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return false;
     }
@@ -112,5 +121,45 @@ public abstract class BaseController implements IController, InputProcessor {
 
     public IPlayerState getPlayerState() {
         return this.playerState;
+    }
+
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean longPress(float x, float y) {
+        return false;
+    }
+
+    @Override
+    public boolean fling(float velocityX, float velocityY, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean pan(float x, float y, float deltaX, float deltaY) {
+        return false;
+    }
+
+    @Override
+    public boolean panStop(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean zoom(float initialDistance, float distance) {
+        return false;
+    }
+
+    @Override
+    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+        return false;
+    }
+
+    @Override
+    public void pinchStop() {
+
     }
 }
