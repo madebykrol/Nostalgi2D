@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.physics.TraceHit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,20 +57,25 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
         ArrayList<IPathNode> path = new ArrayList<IPathNode>();
         float[] verts = new float[]{0f, 0f,0f,0f,0f,0f};
-
-
-        IPathNode firstWayPoint = getNodeCloseToPoint(start);
-        IPathNode goalWayPoint = getNodeCloseToPoint(finish);
-        if(firstWayPoint == null || goalWayPoint == null) {
-            return path;
-        }
         // add end location as a node on the path.
         path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
 
-        // Find path.
-        path.addAll(findPath(firstWayPoint, goalWayPoint, world));
+        // First up we need to set see if we can draw a straight line between start -> finish
+        ArrayList<Class> filter = new ArrayList<Class>();
+        filter.add(world.getGameMode().getCurrentController().getCurrentPossessedCharacter().getClass());
+        if(world.rayTrace(start, finish, filter, true).size() > 0) {
 
-        path.set(path.size()-1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
+            IPathNode firstWayPoint = getNodeCloseToPoint(start);
+            IPathNode goalWayPoint = getNodeCloseToPoint(finish);
+            if (firstWayPoint == null || goalWayPoint == null) {
+                return path;
+            }
+
+            // Find path.
+            path.addAll(findPath(firstWayPoint, goalWayPoint, world));
+            path.set(path.size()-1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
+        }
+
 
         Collections.reverse(path);
 

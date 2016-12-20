@@ -1,6 +1,7 @@
 package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.BaseController;
@@ -86,6 +87,13 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         return false;
     }
 
+    @Override
+    public boolean fling(float velocityX, float velocityY, int button) {
+        System.out.println("x:"+velocityX+"y:"+velocityY);
+
+        return true;
+    }
+
 
     @Override
     public boolean keyDown(int keycode) {
@@ -123,6 +131,11 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         if(keycode == Input.Keys.DOWN)
             this.downIsPressed = false;
         return true;
+    }
+
+    @Override
+    public void onPathFound(ArrayList<IPathNode> path) {
+        this.path = path;
     }
 
     private void handleLookingAtHudChanges(ICharacter currentPossessedCharacter, float dTime) {
@@ -178,10 +191,5 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
             currentPossessedCharacter.stop();
             currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
         }
-    }
-
-    @Override
-    public void onPathFound(ArrayList<IPathNode> path) {
-        this.path = path;
     }
 }
