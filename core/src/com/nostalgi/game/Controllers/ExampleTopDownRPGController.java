@@ -62,7 +62,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         IWorld world = getWorld();
         Vector2 worldPos2D = world.unproject(new Vector2(screenX, screenY));
 
