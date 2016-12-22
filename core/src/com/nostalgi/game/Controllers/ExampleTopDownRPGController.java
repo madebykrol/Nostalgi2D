@@ -2,6 +2,8 @@ package com.nostalgi.game.Controllers;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.BaseController;
@@ -9,6 +11,7 @@ import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Navigation.IPathFoundCallback;
 import com.nostalgi.engine.Navigation.IPathNode;
 import com.nostalgi.engine.States.AnimationState;
+import com.nostalgi.engine.Utils.NMath;
 import com.nostalgi.engine.World.Wall;
 import com.nostalgi.engine.interfaces.Hud.IHudModule;
 import com.nostalgi.engine.interfaces.World.IActor;
@@ -30,8 +33,14 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
+    private boolean isDashing = false;
 
     private ArrayList<IPathNode> path;
+
+    private IActor focus;
+    private float dashTimer = 0;
+
+    private float stamina = 100;
 
     public ExampleTopDownRPGController(IWorld world) {
         super(world);
@@ -39,6 +48,13 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
 
     @Override
     public void tick(float dTime) {
+
+        if(isDashing && dashTimer <= 0.25) {
+            dashTimer += dTime;
+        } else {
+            dashTimer = 0;
+            isDashing = false;
+        }
 
         ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
@@ -49,17 +65,36 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                         currentPossessedCharacter.getPhysicsBody().getWorldCenter());
                 if(nextNode != null) {
                     currentPossessedCharacter.lookAt(nextNode.getPosition());
-                    currentPossessedCharacter.moveForward(5);
+                    float speed = 5;
+                    if(stamina < 30) {
+                        speed  = 1;
+                    }
+                    currentPossessedCharacter.moveForward(speed);
                 } else {
                     currentPossessedCharacter.stop();
                 }
             } else {
                 handleMovement(currentPossessedCharacter, dTime);
+
+                if(!isDashing && (!rightIsPressed && !leftIsPressed && !upIsPressed && !downIsPressed)) {
+                    currentPossessedCharacter.stop();
+                    currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
+                }
+            }
+
+            if(!isDashing) {
+                if(stamina < 100) {
+                    if(stamina+0.1 <= 100)
+                        stamina += 0.1;
+                    else
+                        stamina += 100 - stamina;
+                }
             }
 
             handleLookingAtHudChanges(currentPossessedCharacter, dTime);
         }
 
+        System.out.println("Stamina: "+stamina);
     }
 
     @Override
@@ -67,21 +102,31 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         IWorld world = getWorld();
         Vector2 worldPos2D = world.unproject(new Vector2(screenX, screenY));
 
+        world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, world, this);
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        IWorld world = getWorld();
+        Vector2 worldPos2D = world.unproject(new Vector2(screenX, screenY));
 
         ArrayList<IActor> actors = world.actorsCloseToLocation(worldPos2D, 0f);
         if(!actors.isEmpty()) {
             IActor topActor = actors.get(0);
             if(topActor == this.getCurrentPossessedCharacter()) {
-                System.out.println("Clicked player - Open character wheel");
                 IHudModule module = world.getGameMode().getHud().getModule("Debug");
                 if(module != null) {
                     module.isVisible(!module.isVisible());
                 }
             } else {
+
+                if(topActor instanceof ICharacter) {
+                    focus = topActor;
+                }
+
                 this.getCurrentPossessedCharacter().lookAt(topActor.getPhysicsBody().getWorldCenter());
             }
-        } else {
-            world.getNavigationSystem().findPathAsync(getCurrentPossessedCharacter().getPhysicsBody().getWorldCenter(), worldPos2D, world, this);
         }
 
         return false;
@@ -89,7 +134,15 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        System.out.println("x:"+velocityX+"y:"+velocityY);
+        Vector2 vec = new Vector2(velocityX, 1 - velocityY);
+
+        if(stamina >= 30) {
+            this.path = null;
+            this.getCurrentPossessedCharacter().stop();
+
+            beginDash(vec);
+            stamina -= 30;
+        }
 
         return true;
     }
@@ -187,9 +240,13 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         if(upIsPressed || downIsPressed || rightIsPressed || leftIsPressed) {
             currentPossessedCharacter.moveForward(5);
             currentPossessedCharacter.isMoving(true);
-        } else {
-            currentPossessedCharacter.stop();
-            currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
         }
+    }
+
+    private void beginDash(Vector2 direction) {
+        Vector2 cpy = getCurrentPossessedCharacter().getPosition().cpy();
+        getCurrentPossessedCharacter().lookAt(direction);
+        getCurrentPossessedCharacter().moveForward(15f);
+        isDashing = true;
     }
 }
