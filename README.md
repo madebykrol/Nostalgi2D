@@ -44,7 +44,7 @@ The current state of the game. This state is associated with the current played 
 <li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
 <li><s>Spatial sound sources</s>(Alpha - Unstable)</li>
 <li><s>Lighting effects</s>(Bundling Boxlight2D)</li>
-<li><s>Timers</s><li>
+<li><s>Timers</s></li>
 <li>Timelines</li>
 <li>SpawnerActor</li>
 <li>Level travelling</li>
