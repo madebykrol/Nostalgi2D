@@ -19,6 +19,8 @@ public class NostalgiNavigationSystem implements INavigationSystem {
     private INavMesh currentNavMesh;
     private IWorld world;
 
+    private Object lock = new Object();
+
     public void loadNavMesh(INavMesh mesh) {
         this.currentNavMesh = mesh;
     }
@@ -53,32 +55,33 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
     public ArrayList<IPathNode> findPath(Vector2 start, Vector2 finish, IWorld world) {
 
-        this.currentNavMesh.reset();
-
         ArrayList<IPathNode> path = new ArrayList<IPathNode>();
-        float[] verts = new float[]{0f, 0f,0f,0f,0f,0f};
-        // add end location as a node on the path.
-        path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
+        synchronized (lock) {
+            this.currentNavMesh.reset();
 
-        // First up we need to set see if we can draw a straight line between start -> finish
-        ArrayList<Class> filter = new ArrayList<Class>();
-        filter.add(world.getGameMode().getCurrentController().getCurrentPossessedCharacter().getClass());
-        if(world.rayTrace(start, finish, filter, true).size() > 0) {
+            float[] verts = new float[]{0f, 0f, 0f, 0f, 0f, 0f};
+            // add end location as a node on the path.
+            path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
 
-            IPathNode firstWayPoint = getNodeCloseToPoint(start);
-            IPathNode goalWayPoint = getNodeCloseToPoint(finish);
-            if (firstWayPoint == null || goalWayPoint == null) {
-                return path;
+            // First up we need to set see if we can draw a straight line between start -> finish
+            ArrayList<Class> filter = new ArrayList<Class>();
+            filter.add(world.getGameMode().getCurrentController().getCurrentPossessedCharacter().getClass());
+            if (world.rayTrace(start, finish, filter, true).size() > 0) {
+
+                IPathNode firstWayPoint = getNodeCloseToPoint(start);
+                IPathNode goalWayPoint = getNodeCloseToPoint(finish);
+                if (firstWayPoint == null || goalWayPoint == null) {
+                    return path;
+                }
+
+                // Find path.
+                path.addAll(findPath(firstWayPoint, goalWayPoint, world));
+                path.set(path.size() - 1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
             }
 
-            // Find path.
-            path.addAll(findPath(firstWayPoint, goalWayPoint, world));
-            path.set(path.size()-1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
+
+            Collections.reverse(path);
         }
-
-
-        Collections.reverse(path);
-
         return path;
     }
 

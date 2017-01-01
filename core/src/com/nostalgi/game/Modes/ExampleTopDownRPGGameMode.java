@@ -19,6 +19,8 @@ import com.nostalgi.game.Controllers.ExampleTopDownRPGController;
 import com.nostalgi.game.ExamplePlayerState;
 import com.nostalgi.game.Hud.ExampleHudModule;
 
+import java.util.TimerTask;
+
 /**
  * Created by Krille on 05/11/2016.
  */
@@ -53,29 +55,17 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
         this.setDefaultAIControllerClass(ExampleNPCAIController.class);
         this.setDefaultCharacterClass(ExampleTopDownRPGCharacter.class);
         this.setDefaultPlayerStateClass(ExamplePlayerState.class);
+
+        this.world.getTimeManagementSystem().setTimer(1, new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Run every second");
+            }
+        }, true, true);
     }
 
     public void init() {
-        try {
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player", true, new Vector2(32f, 32f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player2", true, new Vector2(33f, 33f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player3", true, new Vector2(20f, 20f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player4", true, new Vector2(40f, 40f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player5", true, new Vector2(51f, 51f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player6", true, new Vector2(22f, 22f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player7", true, new Vector2(37f, 37f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player8", true, new Vector2(35f, 35f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player9", true, new Vector2(38f, 38f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player10", true, new Vector2(43f, 43f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player11", true, new Vector2(40f, 40f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player12", true, new Vector2(41f, 41f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player13", true, new Vector2(42f, 42f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player14", true, new Vector2(21f, 11f));
-            this.world.spawnActor(ExampleTopDownRPGAICharacter.class, "AI Player15", true, new Vector2(44f, 44f));
 
-        } catch (FailedToSpawnActorException e) {
-            e.printStackTrace();
-        }
     }
 
 }

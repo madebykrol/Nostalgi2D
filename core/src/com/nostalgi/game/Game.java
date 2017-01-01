@@ -15,6 +15,7 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.Utils.Guid;
 import com.nostalgi.engine.World.PointLightActor;
 import com.nostalgi.game.Actors.ExampleTopDownRPGAICharacter;
 
@@ -58,7 +59,7 @@ public class Game extends BaseGame {
         this.gameEngine.loadLevel("maps/grasslands");
 		this.gameEngine.getWorld().getLightingSystem().updateAmbientLight(new Color(0.00f, 0.00f, 0.00f, 1f));
 
-		this.gameEngine.createNewPlayer(new ExamplePlayerState());
+		this.gameEngine.createNewPlayer("player 1", Guid.createNew());
 
 		this.gameEngine.init();
 	}

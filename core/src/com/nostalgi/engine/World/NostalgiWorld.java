@@ -829,6 +829,11 @@ public class NostalgiWorld implements IWorld {
         return this.soundSystem;
     }
 
+    @Override
+    public ITimeManagementSystem getTimeManagementSystem() {
+        return this.timeManagementSystem;
+    }
+
     /**
      * @inheritDoc
      */

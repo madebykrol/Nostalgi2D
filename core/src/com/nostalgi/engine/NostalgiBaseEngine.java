@@ -18,6 +18,8 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.WorldFactory;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.Utils.Guid;
+import com.nostalgi.engine.World.ITimeManagementSystem;
 import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
@@ -146,7 +148,6 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-
             // Tick the world
             this.world.tick();
             // Tick all the actors.
@@ -244,6 +245,25 @@ public class NostalgiBaseEngine implements IGameEngine {
             // Set the world.
             world = worldFactory.create(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
 
+            // if the map has a game mode
+            if(GameMode != null) {
+                // and it is actually defined
+                if(GameMode instanceof String) {
+                    // create an instance
+                    Class c =  ClassReflection.forName((String)GameMode);
+                    Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
+                    IGameMode gameMode = (IGameMode)ctor.newInstance(world);
+
+
+                    // Everytime we set a new gameMode we pass the gameInstance.
+                    gameMode.setGameInstance(this.gameInstance);
+
+                    // set the game mode on the world.
+                    world.setGameMode(gameMode);
+
+                }
+            }
+
             // If the map has a type
             if(Type != null) {
                 // And the type is actually defined
@@ -265,25 +285,6 @@ public class NostalgiBaseEngine implements IGameEngine {
                     world.setCameraPositionSafe(lvl.getCameraInitLocation());
                 }
             }
-            // if the map has a game mode
-            if(GameMode != null) {
-                // and it is actually defined
-                if(GameMode instanceof String) {
-                    // create an instance
-                    Class c =  ClassReflection.forName((String)GameMode);
-                    Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
-                    IGameMode gameMode = (IGameMode)ctor.newInstance(world);
-
-
-                    // Everytime we set a new gameMode we pass the gameInstance.
-                    gameMode.setGameInstance(this.gameInstance);
-
-                    // set the game mode on the world.
-                    world.setGameMode(gameMode);
-
-                }
-            }
-
 
         } catch (ReflectionException e) {
             e.printStackTrace();
@@ -292,18 +293,32 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     @Override
-    public void createNewPlayer(IPlayerState state) {
+    public void createNewPlayer(String playerName, Guid playerId) {
 
         // When a new player joins the game we need to assign a controller.
         Class controllerClass = this.world.getGameMode().getDefaultControllerClass();
         Class playerStateClass = this.world.getGameMode().getDefaultPlayerStateClass();
+
+        IPlayerState playerState = new BasePlayerState();
+
+        try {
+            if (playerStateClass != null) {
+                playerState = (IPlayerState) ClassReflection.getConstructor(playerStateClass).newInstance();
+            }
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
+
+        playerState.setPlayerName(playerName);
+        playerState.setPlayerUniqueId(playerId);
+
 
         IController controller = null;
         try {
             // and spawn a default pawn.
             // @TODO If the map is set to always spawn a "SpectorCharacter" spawn from that class instead.
 
-            ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), state.getPlayerName(), true, new Vector2(32, 26));
+            ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), playerState.getPlayerName(), true, new Vector2(32, 26));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
             } catch (ReflectionException e) {
@@ -316,15 +331,9 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-            try {
-                if (playerStateClass != null) {
-                    IPlayerState playerState = (IPlayerState) ClassReflection.getConstructor(playerStateClass).newInstance();
-                    if(controller != null)
-                        controller.setPlayerState(playerState);
-                }
-            } catch (ReflectionException e) {
-                e.printStackTrace();
-            }
+            if(controller != null)
+                controller.setPlayerState(playerState);
+
             // Possess the freshly spawned character.
             controller.possessCharacter(playerCharacter);
         } catch (FailedToSpawnActorException e) {

@@ -193,4 +193,13 @@ public abstract class BaseLevel implements ILevel {
     public INavMesh getNavMesh() {
         return this.navMesh;
     }
+
+    public IWorld getWorld() {
+        return world;
+    }
+
+    public IActor getMapRoot () {
+        return this.mapRoot;
+    }
 }
+

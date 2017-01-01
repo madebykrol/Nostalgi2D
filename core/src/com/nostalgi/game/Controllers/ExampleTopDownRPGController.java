@@ -20,6 +20,8 @@ import com.nostalgi.engine.interfaces.World.IInteractable;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.interfaces.World.IWorldObject;
 import com.nostalgi.engine.physics.TraceHit;
+import com.nostalgi.game.Actors.ExampleTopDownRPGCharacter;
+import com.nostalgi.game.ExamplePlayerState;
 import com.nostalgi.game.Hud.ExampleHudModule;
 
 import java.util.ArrayList;
@@ -33,14 +35,12 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     private boolean rightIsPressed = false;
     private boolean upIsPressed = false;
     private boolean downIsPressed = false;
-    private boolean isDashing = false;
+
 
     private ArrayList<IPathNode> path;
 
     private IActor focus;
-    private float dashTimer = 0;
 
-    private float stamina = 100;
 
     public ExampleTopDownRPGController(IWorld world) {
         super(world);
@@ -48,15 +48,10 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
 
     @Override
     public void tick(float dTime) {
+        ExamplePlayerState ps = (ExamplePlayerState)getPlayerState();
 
-        if(isDashing && dashTimer <= 0.25) {
-            dashTimer += dTime;
-        } else {
-            dashTimer = 0;
-            isDashing = false;
-        }
 
-        ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
+        ExampleTopDownRPGCharacter currentPossessedCharacter = (ExampleTopDownRPGCharacter) this.getCurrentPossessedCharacter();
 
         if (currentPossessedCharacter != null) {
 
@@ -66,7 +61,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                 if(nextNode != null) {
                     currentPossessedCharacter.lookAt(nextNode.getPosition());
                     float speed = 5;
-                    if(stamina < 30) {
+                    if(ps.getStamina() < 30) {
                         speed  = 1;
                     }
                     currentPossessedCharacter.moveForward(speed);
@@ -76,25 +71,18 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
             } else {
                 handleMovement(currentPossessedCharacter, dTime);
 
-                if(!isDashing && (!rightIsPressed && !leftIsPressed && !upIsPressed && !downIsPressed)) {
+                if(!currentPossessedCharacter.isDashing() && (!rightIsPressed && !leftIsPressed && !upIsPressed && !downIsPressed)) {
                     currentPossessedCharacter.stop();
                     currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
                 }
             }
 
-            if(!isDashing) {
-                if(stamina < 100) {
-                    if(stamina+0.1 <= 100)
-                        stamina += 0.1;
-                    else
-                        stamina += 100 - stamina;
-                }
+            if(!currentPossessedCharacter.isDashing()) {
+                ps.addStamina(+0.1f);
             }
 
             handleLookingAtHudChanges(currentPossessedCharacter, dTime);
         }
-
-        System.out.println("Stamina: "+stamina);
     }
 
     @Override
@@ -120,11 +108,9 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                     module.isVisible(!module.isVisible());
                 }
             } else {
-
                 if(topActor instanceof ICharacter) {
                     focus = topActor;
                 }
-
                 this.getCurrentPossessedCharacter().lookAt(topActor.getPhysicsBody().getWorldCenter());
             }
         }
@@ -135,13 +121,13 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
         Vector2 vec = new Vector2(velocityX, 1 - velocityY);
-
-        if(stamina >= 30) {
+        ExamplePlayerState ps = (ExamplePlayerState)getPlayerState();
+        if(ps.getStamina() >= 30) {
             this.path = null;
             this.getCurrentPossessedCharacter().stop();
 
-            beginDash(vec);
-            stamina -= 30;
+            ((ExampleTopDownRPGCharacter)this.getCurrentPossessedCharacter()).dash(vec);
+            ps.addStamina(-30f);
         }
 
         return true;
@@ -243,10 +229,4 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         }
     }
 
-    private void beginDash(Vector2 direction) {
-        Vector2 cpy = getCurrentPossessedCharacter().getPosition().cpy();
-        getCurrentPossessedCharacter().lookAt(direction);
-        getCurrentPossessedCharacter().moveForward(15f);
-        isDashing = true;
-    }
 }

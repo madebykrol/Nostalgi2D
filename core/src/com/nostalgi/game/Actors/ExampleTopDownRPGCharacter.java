@@ -23,6 +23,9 @@ public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharac
 
     private ISound walkingInGrass;
     ISound.ISoundReference walkingSoundReference = null;
+    private boolean isDashing = false;
+    private float dashTimer = 0;
+    private float dashDistance = 2;
 
     public ExampleTopDownRPGCharacter(IWorld world) {
         this.isStatic(false);
@@ -107,6 +110,13 @@ public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharac
         super.tick(delta);
         updateAnimation();
 
+        if(isDashing && dashTimer <= 0.25) {
+            dashTimer += delta;
+        } else {
+            dashTimer = 0;
+            isDashing = false;
+        }
+
 
         if(!isMoving()) {
 
@@ -138,7 +148,14 @@ public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharac
                 walkingSoundReference.setLooping(true);
             }
         }
+    }
 
+    public void dash(Vector2 direction) {
+
+    }
+
+    public boolean isDashing() {
+        return this.isDashing;
     }
 
     protected void updateAnimation() {

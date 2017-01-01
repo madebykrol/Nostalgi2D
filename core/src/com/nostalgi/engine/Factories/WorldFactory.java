@@ -6,7 +6,7 @@ import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.World.Audio.SoundSystem;
-import com.nostalgi.engine.World.TimeManager;
+import com.nostalgi.engine.World.TimeManagementSystem;
 import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.Box2DLights;
@@ -23,6 +23,6 @@ public class WorldFactory implements IWorldFactory {
                 new NostalgiNavigationSystem(),
                 new Box2DLights(world),
                 new SoundSystem(),
-                new TimeManager());
+                new TimeManagementSystem());
     }
 }

@@ -52,9 +52,11 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
     }
 
     public void loadLevel(ILevel level) {
-        level.onLoad();
+
         this.level  = level;
         this.map = level.getMap();
+
+        level.onLoad();
     }
 
     public ILevel getCurrentLevel() {

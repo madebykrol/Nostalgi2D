@@ -1,5 +1,6 @@
 package com.nostalgi.game;
 
+import com.nostalgi.engine.BasePlayerState;
 import com.nostalgi.engine.Utils.Guid;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 
@@ -7,49 +8,73 @@ import com.nostalgi.engine.interfaces.States.IPlayerState;
  * Created by Krille on 14/12/2016.
  */
 
-public class ExamplePlayerState implements IPlayerState {
-    @Override
-    public void setPlayerName(String name) {
+public class ExamplePlayerState extends BasePlayerState {
 
+    float maxHp = 100;
+    float maxStamina = 100;
+    float maxMana = 100;
+
+    float hp = 100;
+    float stamina = 100;
+    float mana = 100;
+
+    /**
+     * Add or subtract stamina from playerstate.
+     * @param stamina
+     */
+    public void addStamina(float stamina) {
+        if(stamina > 0) {
+            if (this.stamina < maxStamina) {
+                if (this.stamina + stamina > maxStamina) {
+                    this.stamina += maxStamina - this.stamina;
+                } else {
+                    this.stamina += stamina;
+                }
+            }
+        } else {
+            if(this.stamina > 0) {
+                if(this.stamina + stamina <= 0) {
+                    this.stamina = 0;
+                } else {
+                    this.stamina += stamina;
+                }
+            }
+        }
     }
 
-    @Override
-    public String getPlayerName() {
-        return null;
+    public float getStamina() {
+        return this.stamina;
     }
 
-    @Override
-    public void setPlayerUniqueId(Guid uuid) {
-
+    public float getMaxStamina() {
+        return this.maxStamina;
     }
 
-    @Override
-    public Guid getPlayerUniqueId() {
-        return null;
+    public void setMaxStamina(float stamina) {
+        this.maxStamina = stamina;
     }
 
-    @Override
-    public void OnReconnected() {
-
+    public float getHp() {
+        return this.hp;
     }
 
-    @Override
-    public void onDeactivated() {
-
+    public float getMaxHp() {
+        return this.maxHp;
     }
 
-    @Override
-    public void updatePing(float ping) {
-
+    public void setMaxHp(float hp) {
+        this.maxHp = hp;
     }
 
-    @Override
-    public void setScore(float score) {
-
+    public float getMana() {
+        return this.mana;
     }
 
-    @Override
-    public float getScore() {
-        return 0;
+    public float getMaxMana() {
+        return this.maxMana;
+    }
+
+    public void setMaxMana(float mana) {
+        this.maxMana = mana;
     }
 }

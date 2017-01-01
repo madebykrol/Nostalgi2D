@@ -3,6 +3,7 @@ package com.nostalgi.engine.interfaces;
 import com.badlogic.gdx.InputProcessor;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
+import com.nostalgi.engine.Utils.Guid;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IWorld;
 
@@ -28,7 +29,7 @@ public interface IGameEngine {
 
     void loadLevel(String level);
 
-    void createNewPlayer(IPlayerState state);
+    void createNewPlayer(String playerName, Guid playerId);
 
 
 }
