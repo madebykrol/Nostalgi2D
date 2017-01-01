@@ -1,7 +1,7 @@
 # Nostalgi2D
 Nostalgi2D is a open source multiplatform 2D game engine built ontop of libgdx.
 It relies on the TMX map format, so Tiled is recommended for designing your levels for games built with Nostalgi2D
-Alot of the design choices for the framework has been inspired by Unreal Engine so if you have experimented with that engine before you might recoginize some of the concepts
+Alot of the design choices for the engine has been inspired by Unreal Engine so if you have experimented with that engine before you might recoginize some of the concepts
 
 ## Your first project.
 It is recommended that you build your projects using Android studios as of this writing and it has only been tested on a PC.
@@ -43,9 +43,10 @@ The current state of the game. This state is associated with the current played 
 <li><s>Floors and layered rendering (4 floors default)</s></li>
 <li><s>Navigation system and Pathfinding</s>(Alpha - unstable)</li>
 <li><s>Spatial sound sources</s>(Alpha - Unstable)</li>
-<li>Lighting effects</li>
+<li><s>Lighting effects</s>(Bundling Boxlight2D)</li>
+<li><s>Timers</s></li>
+<li><s>Timelines</s></li>
 <li>SpawnerActor</li>
-<li>Timelines</li>
 <li>Level travelling</li>
 <li>Behavior trees</li>
 <li>Animated tiles</li>
