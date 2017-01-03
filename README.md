@@ -46,8 +46,8 @@ The current state of the game. This state is associated with the current played 
 <li><s>Lighting effects</s>(Bundling Boxlight2D)</li>
 <li><s>Timers</s></li>
 <li><s>Timelines</s></li>
+<li><s>Level travelling</s></li>
 <li>SpawnerActor</li>
-<li>Level travelling</li>
 <li>Behavior trees</li>
 <li>Animated tiles</li>
 <li>Network / Multiplayer capabilities</li>
