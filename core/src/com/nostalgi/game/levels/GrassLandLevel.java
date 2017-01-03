@@ -1,5 +1,6 @@
 package com.nostalgi.game.levels;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.BaseLevel;
@@ -14,7 +15,6 @@ public class GrassLandLevel extends BaseLevel {
 
     public GrassLandLevel(TiledMap map, IWorld world) {
         super(map, world);
-
     }
 
     @Override
@@ -40,6 +40,7 @@ public class GrassLandLevel extends BaseLevel {
         } catch (FailedToSpawnActorException e) {
             e.printStackTrace();
         }
+        getWorld().getLightingSystem().updateAmbientLight(new Color(0.00f, 0.00f, 0.00f, 1f));
     }
 
     @Override

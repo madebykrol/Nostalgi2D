@@ -48,7 +48,7 @@ public class Wall implements IWall {
     }
 
     @Override
-    public void preCreatePhysicsBody() {
+    public void buildBoundingVolume() {
 
     }
 

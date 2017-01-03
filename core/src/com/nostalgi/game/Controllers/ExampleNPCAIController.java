@@ -60,7 +60,6 @@ public class ExampleNPCAIController extends BaseController implements INoiseList
                 //locatePlayer();
             }
         }
-
     }
 
     @Override
@@ -75,7 +74,7 @@ public class ExampleNPCAIController extends BaseController implements INoiseList
 
     private void locatePlayer() {
         this.getWorld().getNavigationSystem().findPathAsync(this.getCurrentPossessedCharacter(),
-                this.getWorld().getGameMode().getCurrentController().getCurrentPossessedCharacter(),
+                this.getWorld().getCurrentController().getCurrentPossessedCharacter(),
                 this.getWorld(),
                 this);
     }

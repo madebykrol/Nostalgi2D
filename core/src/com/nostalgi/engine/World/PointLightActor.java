@@ -3,7 +3,10 @@ package com.nostalgi.engine.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.ILight;
+
+import java.util.ArrayList;
 
 import box2dLight.ConeLight;
 import box2dLight.Light;
@@ -19,7 +22,8 @@ public class PointLightActor extends BaseActor implements ILight{
     private Light light;
     private boolean ignoreParent;
 
-    public PointLightActor(IWorld world) {
+    public PointLightActor(IWorld world, ArrayList<BoundingVolume> boundingVolumes) {
+        super(boundingVolumes);
         this.world = world;
         this.canEverTick = true;
     }

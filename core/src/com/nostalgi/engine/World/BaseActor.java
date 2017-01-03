@@ -89,8 +89,8 @@ public abstract class BaseActor implements IActor {
     @NostalgiField(fieldName = "BlockNavMesh")
     private boolean blocksNavMesh;
 
-    public BaseActor() {
-
+    public BaseActor(ArrayList<BoundingVolume> boundingVolumes) {
+        this.boundingVolumes.addAll(boundingVolumes);
     }
 
     @Override
@@ -362,7 +362,7 @@ public abstract class BaseActor implements IActor {
     }
 
     @Override
-    public void preCreatePhysicsBody() {
+    public void buildBoundingVolume() {
 
     }
 
@@ -399,6 +399,7 @@ public abstract class BaseActor implements IActor {
 
     @Override
     public void destroy() {
+        animations = null;
 
     }
 

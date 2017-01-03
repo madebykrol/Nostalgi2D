@@ -19,8 +19,6 @@ import java.util.ArrayList;
 public class BaseGameMode implements IGameMode {
 
     private IGameState gameState;
-    private ArrayList<IController> playerControllers =  new ArrayList<IController>();
-    private ArrayList<IController>  aiControllers = new ArrayList<IController>();
     private IHud hud;
     private final NetworkRole isAuthority;
     private Class defaultControllerClass;
@@ -139,47 +137,6 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
-    public IController getCurrentController() {
-        if(!this.playerControllers.isEmpty())
-            return this.playerControllers.get(0);
-        return null;
-    }
-
-    @Override
-    public void setCurrentController(IController controller) {
-        if(this.playerControllers.size() > 0) {
-            this.playerControllers.set(0, controller);
-        } else {
-            this.addController(controller);
-        }
-    }
-
-    @Override
-    public IController getController(int player) {
-        return this.playerControllers.get(player);
-    }
-
-    @Override
-    public void addController(IController controller) {
-        this.playerControllers.add(controller);
-    }
-
-    @Override
-    public void addAIController(IController controller) {
-        this.aiControllers.add(controller);
-    }
-
-    @Override
-    public ArrayList<IController> getControllers() {
-        return this.playerControllers;
-    }
-
-    @Override
-    public ArrayList<IController> getAIController() {
-        return aiControllers;
-    }
-
-    @Override
     public IActor choosePlayerStart(IController player) {
         return null;
     }
@@ -196,7 +153,7 @@ public class BaseGameMode implements IGameMode {
 
     @Override
     public void dispose() {
-
+        
     }
 
     @Override

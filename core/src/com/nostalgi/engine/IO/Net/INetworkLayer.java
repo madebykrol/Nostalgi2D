@@ -6,10 +6,10 @@ package com.nostalgi.engine.IO.Net;
 
 public interface INetworkLayer {
     
-    void replicateInput(OnlineSession session, InputSnapshot snapshot);
+    void replicateInput(PlayerSession session, InputSnapshot snapshot);
 
-    void replicateActor(OnlineSession session, ActorSnapshot snapshot);
+    void replicateActor(PlayerSession session, ActorSnapshot snapshot);
 
-    void onRecieveActorSnapshot(OnlineSession session, INetworkDataReceiveCallback<ActorSnapshot> callback);
+    void onRecieveActorSnapshot(PlayerSession session, INetworkDataReceiveCallback<ActorSnapshot> callback);
 
 }

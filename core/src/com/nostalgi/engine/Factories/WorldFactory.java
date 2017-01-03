@@ -6,7 +6,7 @@ import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.World.NostalgiWorld;
 import com.nostalgi.engine.World.Audio.SoundSystem;
-import com.nostalgi.engine.World.TimeManagementSystem;
+import com.nostalgi.engine.TimeManagementSystem;
 import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.Box2DLights;

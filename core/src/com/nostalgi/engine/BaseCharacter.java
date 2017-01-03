@@ -10,6 +10,9 @@ import com.nostalgi.engine.World.BaseActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.World.IItem;
+import com.nostalgi.engine.physics.BoundingVolume;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -31,8 +34,8 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     private boolean shouldSpawnWithAiController = false;
     private boolean shouldBePossessedOnSpawn = false;
 
-    public BaseCharacter() {
-
+    public BaseCharacter(ArrayList<BoundingVolume> boundingVolumes) {
+        super(boundingVolumes);
     }
 
     @Override

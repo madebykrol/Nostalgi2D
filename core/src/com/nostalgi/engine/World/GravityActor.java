@@ -30,12 +30,14 @@ public class GravityActor extends BaseActor {
 
     private ArrayList<IActor> actorsInWell = new ArrayList<IActor>();
 
-    public GravityActor () {
-        canEverTick = true;
+    public GravityActor (ArrayList<BoundingVolume> boundingVolumes) {
+        super(boundingVolumes);
+
     }
 
     @Override
-    public void preCreatePhysicsBody() {
+    public void buildBoundingVolume() {
+        canEverTick = true;
         BoundingVolume boundingVolume2 = new BoundingVolume();
         boundingVolume2.isSensor(true);
         boundingVolume2.setVolumeId("gravitywell");

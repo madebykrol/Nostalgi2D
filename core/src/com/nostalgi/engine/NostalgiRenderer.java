@@ -53,6 +53,9 @@ public class NostalgiRenderer extends OrthogonalTiledMapRenderer {
 
     public void loadLevel(ILevel level) {
 
+        if(this.level != null) {
+            this.level.dispose();
+        }
         this.level  = level;
         this.map = level.getMap();
 

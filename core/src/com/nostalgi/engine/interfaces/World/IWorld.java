@@ -9,7 +9,8 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
 import com.nostalgi.engine.World.Audio.ISoundSystem;
-import com.nostalgi.engine.World.ITimeManagementSystem;
+import com.nostalgi.engine.ITimeManagementSystem;
+import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.physics.ILightingSystem;
@@ -26,6 +27,16 @@ public interface IWorld {
 
     OrthographicCamera getCurrentCamera();
     void setCurrentCamera(OrthographicCamera camera);
+
+    IController getCurrentController();
+    void setCurrentController(IController controller);
+
+    IController getController(int player);
+    void addController(IController controller);
+    void addAIController(IController controller);
+
+    ArrayList<IController> getControllers();
+    ArrayList<IController> getAIController();
 
     INavigationSystem getNavigationSystem();
 

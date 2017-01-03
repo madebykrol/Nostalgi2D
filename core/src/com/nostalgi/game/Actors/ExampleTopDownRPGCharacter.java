@@ -14,6 +14,8 @@ import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 
+import java.util.ArrayList;
+
 /**
  * Created by ksdkrol on 2016-07-04.
  */
@@ -27,7 +29,8 @@ public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharac
     private float dashTimer = 0;
     private float dashDistance = 2;
 
-    public ExampleTopDownRPGCharacter(IWorld world) {
+    public ExampleTopDownRPGCharacter(IWorld world, ArrayList<BoundingVolume> bv) {
+        super(bv);
         this.isStatic(false);
         this.world = world;
         BoundingVolume boundingVolume = new BoundingVolume();

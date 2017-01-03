@@ -17,5 +17,7 @@ public interface IPlayerState {
     void updatePing(float ping);
     void setScore(float score);
     float getScore();
+
+    void join(IPlayerState ps);
     
 }

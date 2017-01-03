@@ -10,6 +10,7 @@ import com.nostalgi.engine.BaseController;
 import com.nostalgi.engine.Direction;
 import com.nostalgi.engine.Navigation.IPathFoundCallback;
 import com.nostalgi.engine.Navigation.IPathNode;
+import com.nostalgi.engine.NostalgiBaseEngine;
 import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.Utils.NMath;
 import com.nostalgi.engine.World.Wall;
@@ -154,6 +155,9 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         if(keycode == Input.Keys.DOWN) {
             this.downIsPressed = true;
             currentPossessedCharacter.setRotation(Direction.SOUTH);
+        }
+        if((keycode == Input.Keys.L)) {
+            NostalgiBaseEngine.instance.loadLevel("maps/grasslands2");
         }
 
         return true;

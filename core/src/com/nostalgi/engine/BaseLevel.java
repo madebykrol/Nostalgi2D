@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Created by ksdkrol on 2016-07-03.
  */
-public abstract class BaseLevel implements ILevel {
+public class BaseLevel implements ILevel {
 
     private TiledMap map;
     private TiledMapTileLayer mainLayer;
@@ -39,7 +39,7 @@ public abstract class BaseLevel implements ILevel {
     private IActor mapRoot = new RootActor();
 
     private IWorld world;
-    public INavMesh navMesh;
+    private INavMesh navMesh;
 
     public BaseLevel(
                      TiledMap map,
@@ -108,6 +108,16 @@ public abstract class BaseLevel implements ILevel {
     }
 
     @Override
+    public Vector2 getCameraInitLocation() {
+        return new Vector2(0,0);
+    }
+
+    @Override
+    public void initMap() {
+
+    }
+
+    @Override
     public Vector2 getPosition () {
         return this.mapPosition;
     }
@@ -135,7 +145,7 @@ public abstract class BaseLevel implements ILevel {
         this.map.dispose();
         for(Map.Entry<String, IActor> entry : getActors().entrySet()) {
             IActor actor = entry.getValue();
-
+            actor.destroy();
         }
     }
 

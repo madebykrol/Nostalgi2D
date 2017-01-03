@@ -35,7 +35,7 @@ public class CurveFloat {
             return 0f;
         }
         progress += deltaTime;
-        return NMath.norm(this.f(progress), 0f,1f);
+        return this.f(progress);
     }
 
     public float f(float x){

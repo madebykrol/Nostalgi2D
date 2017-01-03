@@ -72,8 +72,7 @@ public interface IWorldObject {
 
     /**
      * Last chance for actor to add bounding volumes before its being spawned to the world.
-     * This method is called right before createBody
-     *
+     * This method is called right before the engine calls createBody
      */
-    void preCreatePhysicsBody();
+    void buildBoundingVolume();
 }

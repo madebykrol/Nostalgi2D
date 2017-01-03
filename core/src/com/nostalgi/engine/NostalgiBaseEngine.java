@@ -18,8 +18,8 @@ import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
 import com.nostalgi.engine.Factories.WorldFactory;
 import com.nostalgi.engine.IO.Net.INetworkLayer;
 import com.nostalgi.engine.IO.Net.NetworkRole;
+import com.nostalgi.engine.IO.Net.PlayerSession;
 import com.nostalgi.engine.Utils.Guid;
-import com.nostalgi.engine.World.ITimeManagementSystem;
 import com.nostalgi.engine.interfaces.Factories.IWorldFactory;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameEngine;
@@ -45,6 +45,8 @@ import java.util.Map;
  * Created by ksdkrol on 2016-07-04.
  */
 public class NostalgiBaseEngine implements IGameEngine {
+
+    public static IGameEngine instance = null;
 
     // Current camera.
     private NostalgiCamera currentCamera;
@@ -77,6 +79,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
     private IGameInstance gameInstance;
 
+    private ArrayList<PlayerSession> playerSessions = new ArrayList<PlayerSession>();
 
     /**
      * Simplest engine constructor, uses default Map loader, world factory and debug renderer.
@@ -116,6 +119,7 @@ public class NostalgiBaseEngine implements IGameEngine {
         this.initInput();
 
         this.getWorld().getGameMode().init();
+        NostalgiBaseEngine.instance = this;
     }
 
     @Override
@@ -131,8 +135,8 @@ public class NostalgiBaseEngine implements IGameEngine {
             // Tick the gamemode.
             this.world.getGameMode().tick(dTime);
 
-            ArrayList<IController> controllers = world.getGameMode().getControllers();
-            controllers.addAll(world.getGameMode().getAIController());
+            ArrayList<IController> controllers = world.getControllers();
+            controllers.addAll(world.getAIController());
             // Get updates from controller.
             for(IController controller :  controllers) {
                 ICharacter character = controller.getCurrentPossessedCharacter();
@@ -161,7 +165,7 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         // Update camera
         if(this.currentCamera != null) {
-            ICharacter currentCharacter = world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
+            ICharacter currentCharacter = world.getCurrentController().getCurrentPossessedCharacter();
 
             if(currentCharacter != null) {
                 this.getWorld().setCameraPositionSafe(currentCharacter.getWorldPosition());
@@ -171,8 +175,6 @@ public class NostalgiBaseEngine implements IGameEngine {
             // Set view
             this.mapRenderer.setView(this.currentCamera);
         }
-
-
     }
 
     @Override
@@ -188,7 +190,6 @@ public class NostalgiBaseEngine implements IGameEngine {
 
         if(debug)
             debugRenderer.render(world.getPhysicsWorld(), currentCamera.combined);
-
     }
 
     @Override
@@ -240,10 +241,22 @@ public class NostalgiBaseEngine implements IGameEngine {
         Object GameMode = mapProperties.containsKey("GameMode") ? map.getProperties().get("GameMode") : null;
 
         // Get Map type
-        Object Type = mapProperties.containsKey("Type") ? map.getProperties().get("Type") : null;
+        Object Type = mapProperties.containsKey("Type") ? (String)map.getProperties().get("Type") : "com.nostalgi.engine.BaseLevel";
+
+        float gravityX = mapProperties.containsKey("GravityX") ? Float.valueOf((String)mapProperties.get("GravityX")) : 0;
+        float gravityY = mapProperties.containsKey("GravityY") ? Float.valueOf((String)mapProperties.get("GravityY")) : 0;
+
+        // Controllers from the old map / game mode
+        ArrayList<IController> currentControllers = new ArrayList<IController>();
         try {
+
+            if (this.world != null){
+                currentControllers.addAll(this.world.getControllers());
+                this.world.dispose();
+
+            }
             // Set the world.
-            world = worldFactory.create(new World(new Vector2(0,0), true), mapRenderer, currentCamera);
+            this.world = worldFactory.create(new World(new Vector2(gravityX,gravityY), true), mapRenderer, currentCamera);
 
             // if the map has a game mode
             if(GameMode != null) {
@@ -254,47 +267,58 @@ public class NostalgiBaseEngine implements IGameEngine {
                     Constructor ctor = ClassReflection.getConstructor(c, IWorld.class);
                     IGameMode gameMode = (IGameMode)ctor.newInstance(world);
 
-
                     // Everytime we set a new gameMode we pass the gameInstance.
                     gameMode.setGameInstance(this.gameInstance);
 
                     // set the game mode on the world.
-                    world.setGameMode(gameMode);
-
+                    this.world.setGameMode(gameMode);
                 }
+            } else {
+
             }
 
             // If the map has a type
             if(Type != null) {
                 // And the type is actually defined
-                if(Type instanceof String) {
-                    // Create an instance of the map type
-                    Class c =  ClassReflection.forName((String)Type);
+                Class  c = ClassReflection.forName((String) Type);
 
-                    Constructor ctor = ClassReflection.getConstructor(c, TiledMap.class, IWorld.class);
-                    ILevel lvl = (ILevel)ctor.newInstance(map, world);
+                Constructor ctor = ClassReflection.getConstructor(c, TiledMap.class, IWorld.class);
+                ILevel lvl = (ILevel)ctor.newInstance(map, this.world);
 
-                    // Add it to the renderer.
-                    mapRenderer.loadLevel(lvl);
-                    world.getNavigationSystem().loadNavMesh(lvl.getNavMesh());
+                // Add it to the renderer.
+                this.mapRenderer.loadLevel(lvl);
+                this.world.getNavigationSystem().loadNavMesh(lvl.getNavMesh());
 
-                    // set bounds for the world on the edges of the map
-                    world.setWorldBounds(lvl.getCameraBounds());
+                // set bounds for the world on the edges of the map
+                this.world.setWorldBounds(lvl.getCameraBounds());
 
-                    // set the camera starting position. @TODO: This might have to be reworked to allow for dynamic cameras
-                    world.setCameraPositionSafe(lvl.getCameraInitLocation());
-                }
+                // set the camera starting position. @TODO: This might have to be reworked to allow for dynamic cameras
+                this.world.setCameraPositionSafe(lvl.getCameraInitLocation());
+            }
+
+            // Create players.
+            for(PlayerSession playerSession : playerSessions) {
+                this.spawnStateControllerAndPawnForPlayer(playerSession);
             }
 
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
+        this.initInput();
 
+        this.getWorld().getGameMode().init();
     }
 
     @Override
     public void createNewPlayer(String playerName, Guid playerId) {
+        PlayerSession ps = new PlayerSession();
+        ps.setPlayerId(playerId);
 
+        spawnStateControllerAndPawnForPlayer(ps);
+        this.playerSessions.add(ps);
+    }
+
+    private void spawnStateControllerAndPawnForPlayer(PlayerSession ps) {
         // When a new player joins the game we need to assign a controller.
         Class controllerClass = this.world.getGameMode().getDefaultControllerClass();
         Class playerStateClass = this.world.getGameMode().getDefaultPlayerStateClass();
@@ -309,16 +333,20 @@ public class NostalgiBaseEngine implements IGameEngine {
             e.printStackTrace();
         }
 
-        playerState.setPlayerName(playerName);
-        playerState.setPlayerUniqueId(playerId);
 
+
+        if(ps.getCurrentController() != null) {
+            playerState.join(ps.getCurrentController().getPlayerState());
+        } else {
+            playerState.setPlayerName(ps.getPlayerName());
+            playerState.setPlayerUniqueId(ps.getPlayerId());
+        }
 
         IController controller = null;
         try {
             // and spawn a default pawn.
-            // @TODO If the map is set to always spawn a "SpectorCharacter" spawn from that class instead.
+            // @TODO If the map is set to always spawn a "SpectatorCharacter" spawn from that class instead.
 
-            ICharacter playerCharacter = (ICharacter)world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), playerState.getPlayerName(), true, new Vector2(32, 26));
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
             } catch (ReflectionException e) {
@@ -331,18 +359,24 @@ public class NostalgiBaseEngine implements IGameEngine {
                 }
             }
 
-            if(controller != null)
+            if(controller != null) {
                 controller.setPlayerState(playerState);
+                ICharacter playerCharacter = (ICharacter) world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), controller.getPlayerState().getPlayerName(), true, new Vector2(32, 26));
+                // Possess the freshly spawned character.
+                controller.possessCharacter(playerCharacter);
+            }
 
-            // Possess the freshly spawned character.
-            controller.possessCharacter(playerCharacter);
         } catch (FailedToSpawnActorException e) {
             e.printStackTrace();
         }
-        // Add the controller to the game mode allowing it to pass input along to the engine.
-        this.world.getGameMode().addController(controller);
-    }
 
+        ps.setCurrentController(controller);
+
+        // Add the controller to the game mode allowing it to pass input along to the engine.
+        if(!this.world.getControllers().contains(controller))
+            this.world.addController(controller);
+
+    }
 
     private void replicateActors(HashMap<String, IActor> actors) {
         for(IActor actor : actors.values()) {
@@ -393,15 +427,15 @@ public class NostalgiBaseEngine implements IGameEngine {
             inputProcessor.addProcessor(world.getGameMode().getHud().getInputProcessor());
 
         // Set gesture input processor
-        if(world.getGameMode().getCurrentController() != null) {
-            if (world.getGameMode().getCurrentController().getGestureListener() != null)
+        if(world.getCurrentController() != null) {
+            if (world.getCurrentController().getGestureListener() != null)
                 inputProcessor.addProcessor(new GestureDetector(
-                        world.getGameMode().getCurrentController().getGestureListener()));
+                        world.getCurrentController().getGestureListener()));
 
             // Set standard input processor from controller
-            if (world.getGameMode().getCurrentController().getInputProcessor() != null)
+            if (world.getCurrentController().getInputProcessor() != null)
                 inputProcessor.addProcessor(
-                        world.getGameMode().getCurrentController().getInputProcessor());
+                        world.getCurrentController().getInputProcessor());
 
         }
         Gdx.input.setInputProcessor(inputProcessor);

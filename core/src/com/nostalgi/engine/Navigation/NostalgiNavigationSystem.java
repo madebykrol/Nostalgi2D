@@ -65,7 +65,7 @@ public class NostalgiNavigationSystem implements INavigationSystem {
 
             // First up we need to set see if we can draw a straight line between start -> finish
             ArrayList<Class> filter = new ArrayList<Class>();
-            filter.add(world.getGameMode().getCurrentController().getCurrentPossessedCharacter().getClass());
+            filter.add(world.getCurrentController().getCurrentPossessedCharacter().getClass());
             if (world.rayTrace(start, finish, filter, true).size() > 0) {
 
                 IPathNode firstWayPoint = getNodeCloseToPoint(start);

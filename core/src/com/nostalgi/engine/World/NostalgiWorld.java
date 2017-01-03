@@ -28,11 +28,10 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.nostalgi.engine.*;
 import com.nostalgi.engine.Annotations.NostalgiField;
 import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
-import com.nostalgi.engine.LevelCameraBounds;
 import com.nostalgi.engine.Navigation.INavigationSystem;
-import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.interfaces.IController;
 import com.nostalgi.engine.interfaces.IGameMode;
 import com.nostalgi.engine.interfaces.States.IGameState;
@@ -81,9 +80,12 @@ public class NostalgiWorld implements IWorld {
 
     private ILightingSystem lightSystem;
 
-    private ITimeManagementSystem timeManagementSystem;
+    private com.nostalgi.engine.ITimeManagementSystem timeManagementSystem;
 
     private ISoundSystem soundSystem;
+
+    private ArrayList<IController> playerControllers =  new ArrayList<IController>();
+    private ArrayList<IController>  aiControllers = new ArrayList<IController>();
 
     public NostalgiWorld(World world,
                          NostalgiRenderer mapRenderer,
@@ -91,7 +93,7 @@ public class NostalgiWorld implements IWorld {
                          INavigationSystem navSystem,
                          ILightingSystem lightSystem,
                          ISoundSystem soundSystem,
-                         ITimeManagementSystem timeManagementSystem) {
+                         com.nostalgi.engine.ITimeManagementSystem timeManagementSystem) {
         this.world = world;
         this.camera = camera;
         this.renderer = mapRenderer;
@@ -177,6 +179,47 @@ public class NostalgiWorld implements IWorld {
     @Override
     public void setCurrentCamera(OrthographicCamera camera) {
         this.camera = camera;
+    }
+
+    @Override
+    public IController getCurrentController() {
+        if(!this.playerControllers.isEmpty())
+            return this.playerControllers.get(0);
+        return null;
+    }
+
+    @Override
+    public void setCurrentController(IController controller) {
+        if(this.playerControllers.size() > 0) {
+            this.playerControllers.set(0, controller);
+        } else {
+            this.addController(controller);
+        }
+    }
+
+    @Override
+    public IController getController(int player) {
+        return this.playerControllers.get(player);
+    }
+
+    @Override
+    public void addController(IController controller) {
+        this.playerControllers.add(controller);
+    }
+
+    @Override
+    public void addAIController(IController controller) {
+        this.aiControllers.add(controller);
+    }
+
+    @Override
+    public ArrayList<IController> getControllers() {
+        return this.playerControllers;
+    }
+
+    @Override
+    public ArrayList<IController> getAIController() {
+        return aiControllers;
     }
 
     @Override
@@ -308,7 +351,6 @@ public class NostalgiWorld implements IWorld {
             actorBody.setUserData(actor);
         }
         int bvI = 0;
-        float sumDensity = 0;
         for(BoundingVolume bv : actor.getBoundingVolumes()) {
 
             FixtureDef blockingBounds = new FixtureDef();
@@ -319,7 +361,7 @@ public class NostalgiWorld implements IWorld {
             blockingBounds.filter.categoryBits = bv.getCollisionCategory();
             blockingBounds.isSensor = bv.isSensor();
 
-            sumDensity += bv.getDensity();
+
             if(bvI == 0) {
                 blockingBounds.filter.maskBits = (short) (bv.getCollisionMask() | CollisionCategories.floorFromInt(actor.getFloorLevel()));
             } else {
@@ -573,7 +615,7 @@ public class NostalgiWorld implements IWorld {
     public <T extends IActor> T spawnActor(Class<T> type, String name, boolean physicsBound, Vector2 spawnPoint, IActor parent, ICharacter instigator)
             throws FailedToSpawnActorException
     {
-        IActor a = createActorInstance(type);
+        IActor a = createActorInstance(type, new ArrayList<BoundingVolume>());
 
         a.setPosition(spawnPoint);
         a.setName(name);
@@ -594,7 +636,7 @@ public class NostalgiWorld implements IWorld {
             a = doCharacterInitialization(a);
         }
 
-        a.preCreatePhysicsBody();
+        a.buildBoundingVolume();
         a.postSpawn();
         return (T)a;
     }
@@ -604,7 +646,43 @@ public class NostalgiWorld implements IWorld {
     throws FailedToSpawnActorException
     {
         try {
-            IActor actor = createActorInstance(type);
+
+            float[] vertices;
+            Vector2 position = new Vector2(0,0);
+            BoundingVolume bv =  null;
+            if(mapObject instanceof RectangleMapObject) {
+                Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
+                position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
+                vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
+                bv = createBoundingVolume(mapObject, vertices, unitScale);
+            } else if(mapObject instanceof PolygonMapObject) {
+                PolygonMapObject obj = (PolygonMapObject) mapObject;
+                position = new Vector2(obj.getPolygon().getX()/unitScale, obj.getPolygon().getY()/unitScale);
+                vertices = obj.getPolygon().getVertices();
+                bv = createBoundingVolume(mapObject, vertices, unitScale);
+            } else if(mapObject instanceof CircleMapObject) {
+                CircleMapObject obj = (CircleMapObject)mapObject;
+                position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
+                CircleShape circle = new CircleShape();
+                circle.setRadius(obj.getCircle().radius);
+                bv = createBoundingVolume(obj, circle);
+            } else  if (mapObject instanceof EllipseMapObject) {
+                EllipseMapObject obj = (EllipseMapObject)mapObject;
+                CircleShape circle = new CircleShape();
+                float radius = obj.getEllipse().width  / 2;
+                circle.setRadius(radius / unitScale);
+                position = new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale);
+                bv = createBoundingVolume(obj, circle);
+            }
+
+            ArrayList<BoundingVolume> bvs = new ArrayList<BoundingVolume>();
+
+            if(bv != null) {
+                bv.setVolumeId("base");
+                bvs.add(bv);
+            }
+
+            IActor actor = createActorInstance(type, bvs);
             actor.setName(mapObject.getName());
 
             try {
@@ -614,50 +692,9 @@ public class NostalgiWorld implements IWorld {
                 e.printStackTrace();
             }
 
-            float[] vertices;
-            Vector2 position = new Vector2(0,0);
-            BoundingVolume bv =  null;
-            if(mapObject instanceof RectangleMapObject) {
-                Rectangle obj = ((RectangleMapObject) mapObject).getRectangle();
-                position = new Vector2(obj.getX()/unitScale, obj.getY()/unitScale);
-                if(actor.shouldCreatePhysicsBodyFromMapObject()) {
-                    vertices = rectangleToVertices(0, 0, obj.getWidth(), obj.getHeight());
-                    bv = createBoundingVolume(mapObject, vertices, unitScale);
-                }
-            } else if(mapObject instanceof PolygonMapObject) {
-                PolygonMapObject obj = (PolygonMapObject) mapObject;
-                position = new Vector2(obj.getPolygon().getX()/unitScale, obj.getPolygon().getY()/unitScale);
-                if(actor.shouldCreatePhysicsBodyFromMapObject()) {
-                    vertices = obj.getPolygon().getVertices();
-                    bv = createBoundingVolume(mapObject, vertices, unitScale);
-                }
-            } else if(mapObject instanceof CircleMapObject) {
-                CircleMapObject obj = (CircleMapObject)mapObject;
-                position = new Vector2(obj.getCircle().x/unitScale, obj.getCircle().y/unitScale);
-                if(actor.shouldCreatePhysicsBodyFromMapObject()) {
-                    CircleShape circle = new CircleShape();
-                    circle.setRadius(obj.getCircle().radius);
-                    bv = createBoundingVolume(obj, circle);
-                }
-            } else  if (mapObject instanceof EllipseMapObject) {
-                EllipseMapObject obj = (EllipseMapObject)mapObject;
-                CircleShape circle = new CircleShape();
-                float radius = obj.getEllipse().width  / 2;
-                circle.setRadius(radius / unitScale);
-                position = new Vector2((obj.getEllipse().x+radius)/unitScale, (obj.getEllipse().y+radius)/unitScale);
-                if(actor.shouldCreatePhysicsBodyFromMapObject()) {
-                    bv = createBoundingVolume(obj, circle);
-                }
-            }
-
             actor.setPosition(position);
+            actor.buildBoundingVolume();
 
-            if(bv != null) {
-                bv.setVolumeId("base");
-                actor.setBoundingVolume(bv);
-            }
-
-            actor.preCreatePhysicsBody();
             createBody(actor);
 
             if(actor instanceof ICharacter) {
@@ -685,7 +722,7 @@ public class NostalgiWorld implements IWorld {
                                 IWorld.class
                         ).newInstance(this);
 
-                        this.getGameMode().addAIController(controller);
+                        this.addAIController(controller);
 
                         if(cActor.shouldBePossessedOnSpawn()) {
                             controller.possessCharacter(cActor);
@@ -830,7 +867,7 @@ public class NostalgiWorld implements IWorld {
     }
 
     @Override
-    public ITimeManagementSystem getTimeManagementSystem() {
+    public com.nostalgi.engine.ITimeManagementSystem getTimeManagementSystem() {
         return this.timeManagementSystem;
     }
 
@@ -920,11 +957,10 @@ public class NostalgiWorld implements IWorld {
                             field.set(actor, data);
                         }
                     } else if (field.getType() == String.class) {
-                        String data = propertyValue;
                         if(withMethod != null) {
-                            withMethod.invoke(actor, data);
+                            withMethod.invoke(actor, propertyValue);
                         } else {
-                            field.set(actor, data);
+                            field.set(actor, propertyValue);
                         }
                     }
                 }
@@ -932,8 +968,6 @@ public class NostalgiWorld implements IWorld {
             field.setAccessible(false);
         }
 
-
-        String superClassName = type.getSuperclass().getSimpleName();
         if(!type.getSuperclass().getSimpleName().equals("Object")) {
             // Set base class fields
             setFields(actor, object, ClassReflection.getDeclaredFields(type.getSuperclass()), type.getSuperclass());
@@ -999,15 +1033,15 @@ public class NostalgiWorld implements IWorld {
         return createBoundingVolume(object, boundShape);
     }
 
-    protected IActor createActorInstance(Class type) throws FailedToSpawnActorException {
+    protected IActor createActorInstance(Class type, ArrayList<BoundingVolume> boundingVolumes) throws FailedToSpawnActorException {
         IActor a;
         try {
-            a = (IActor) ClassReflection.getConstructor(type, IWorld.class).newInstance(this);
+            a = (IActor) ClassReflection.getConstructor(type, IWorld.class, ArrayList.class).newInstance(this, boundingVolumes);
             //a = (IActor)type.getConstructor(IWorld.class).newInstance(this);
         } catch (ReflectionException e) {
             if(e.getCause() instanceof NoSuchMethodException) {
                 try {
-                    a = (IActor) ClassReflection.newInstance(type);
+                    a = (IActor) ClassReflection.getConstructor(type, ArrayList.class).newInstance(boundingVolumes);
                 } catch(ReflectionException e1 ) {
                     throw new FailedToSpawnActorException(e1);
                 }

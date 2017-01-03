@@ -2,6 +2,7 @@ package com.nostalgi.game.Actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.Direction;
@@ -9,11 +10,14 @@ import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.Audio.ISound;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
 import com.nostalgi.game.Controllers.ExampleNPCAIController;
+
+import java.util.ArrayList;
 
 /**
  * Created by ksdkrol on 2016-07-04.
@@ -25,7 +29,8 @@ public class ExampleTopDownRPGAICharacter extends BaseCharacter implements IChar
     private ISound walkingInGrass;
     ISound.ISoundReference walkingSoundReference = null;
 
-    public ExampleTopDownRPGAICharacter(IWorld world) {
+    public ExampleTopDownRPGAICharacter(IWorld world, ArrayList<BoundingVolume> boundingVolumes) {
+        super(boundingVolumes);
         this.isStatic(false);
         this.world = world;
         BoundingVolume boundingVolume = new BoundingVolume();
@@ -167,6 +172,15 @@ public class ExampleTopDownRPGAICharacter extends BaseCharacter implements IChar
                 setWalkingState(AnimationState.WalkingNorthAnimation);
             }
         }
+    }
+
+    @Override
+    public boolean blockOnCollision(IActor actor, Contact contact) {
+        if(actor instanceof ExampleTopDownRPGCharacter) {
+            return false;
+        }
+
+        return contact.isEnabled();
     }
 
     @Override

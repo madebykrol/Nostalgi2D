@@ -195,7 +195,7 @@ public class NavigationMesh implements INavMesh{
                 ((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
         float gamma = 1.0f - alpha - beta;
 
-        if ((alpha > 0 && beta > 0 && gamma > 0) ? true : false) {
+        if ((alpha > 0 && beta > 0 && gamma > 0)) {
             return true;
         }
         else if (isPointBetweenTwoOtherPoints(currentPoint, p1, p2) ||

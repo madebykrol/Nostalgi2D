@@ -37,17 +37,6 @@ public interface IGameMode extends Disposable{
     Class getDefaultPlayerStateClass();
     void postDefaultPlayerStateCreation(IPlayerState playerState);
 
-
-    IController getCurrentController();
-    void setCurrentController(IController controller);
-
-    IController getController(int player);
-    void addController(IController controller);
-    void addAIController(IController controller);
-
-    ArrayList<IController> getControllers();
-    ArrayList<IController> getAIController();
-
     IActor choosePlayerStart(IController player);
 
     IHud getHud();

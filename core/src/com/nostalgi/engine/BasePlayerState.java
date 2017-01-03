@@ -60,5 +60,12 @@ public class BasePlayerState implements IPlayerState {
         return this.score;
     }
 
+    @Override
+    public void join(IPlayerState ps) {
+        this.setPlayerUniqueId(ps.getPlayerUniqueId());
+        this.setPlayerName(ps.getPlayerName());
+        this.setScore(ps.getScore());
+    }
+
 
 }

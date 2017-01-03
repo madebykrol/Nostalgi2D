@@ -5,6 +5,9 @@ import com.nostalgi.engine.World.Audio.ISound;
 import com.nostalgi.engine.World.Audio.ISoundSystem;
 import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.IWorld;
+import com.nostalgi.engine.physics.BoundingVolume;
+
+import java.util.ArrayList;
 
 /**
  * Created by Krille on 15/11/2016.
@@ -30,14 +33,15 @@ public class AmbientSoundActor extends BaseActor {
     private IWorld world;
 
 
-    public AmbientSoundActor(IWorld world) {
+    public AmbientSoundActor(IWorld world, ArrayList<BoundingVolume> boundingVolumes) {
+        super(boundingVolumes);
         this.world = world;
 
         this.canEverTick = true;
     }
 
-    public AmbientSoundActor(IWorld world, String soundWave, boolean loop, float radius, float falloffDistance) {
-        this(world);
+    public AmbientSoundActor(IWorld world, String soundWave, ArrayList<BoundingVolume> boundingVolumes, boolean loop, float radius, float falloffDistance) {
+        this(world, boundingVolumes);
 
         this.soundWave = soundWave;
         this.loop = loop;
@@ -53,7 +57,7 @@ public class AmbientSoundActor extends BaseActor {
 
     public void tick(float deltaTime) {
         ISoundSystem soundSystem = this.world.getSoundSystem();
-        IActor relativeToCheck = this.world.getGameMode().getCurrentController().getCurrentPossessedCharacter();
+        IActor relativeToCheck = this.world.getCurrentController().getCurrentPossessedCharacter();
         if(this.getPosition().dst(relativeToCheck.getPosition()) <= this.radius+this.falloffDistance) {
             if(this.soundRef == null) {
                 this.soundRef = this.sound.play(0f,
