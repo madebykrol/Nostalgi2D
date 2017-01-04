@@ -128,7 +128,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         // Time difference since last frame.
         float dTime = Gdx.graphics.getDeltaTime();
 
-
         // Check if we are in authoritative mode (Server). (Single player games are always authoritative.)
         if(this.world.getGameMode().getGameState().getNetworkRole() == NetworkRole.ROLE_AUTHORITY) {
 
@@ -310,12 +309,21 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     @Override
-    public void createNewPlayer(String playerName, Guid playerId) {
-        PlayerSession ps = new PlayerSession();
-        ps.setPlayerId(playerId);
+    public PlayerSession createNewPlayer(String playerName, Guid playerId) {
+        PlayerSession ps;
+        if(!this.playerSessions.contains(playerId)) {
+            ps = new PlayerSession();
+            ps.setPlayerId(playerId);
+            ps.setPlayerName(playerName);
+
+            this.playerSessions.add(ps);
+        } else {
+            ps = this.playerSessions.get(playerSessions.indexOf(playerId));
+        }
 
         spawnStateControllerAndPawnForPlayer(ps);
-        this.playerSessions.add(ps);
+
+        return ps;
     }
 
     private void spawnStateControllerAndPawnForPlayer(PlayerSession ps) {
@@ -332,8 +340,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
-
-
 
         if(ps.getCurrentController() != null) {
             playerState.join(ps.getCurrentController().getPlayerState());
@@ -416,6 +422,7 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     private void initInput() {
+
 
         // Set input processor to multiplexer
         inputProcessor = new InputMultiplexer();

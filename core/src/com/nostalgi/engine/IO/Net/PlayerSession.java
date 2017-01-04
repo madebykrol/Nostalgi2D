@@ -44,4 +44,15 @@ public class PlayerSession {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Guid) {
+            return this.playerId.equals(obj);
+        } else if (obj instanceof PlayerSession) {
+            return this.playerId.equals(((PlayerSession) obj).getPlayerId());
+        }
+
+        return obj == this;
+    }
 }

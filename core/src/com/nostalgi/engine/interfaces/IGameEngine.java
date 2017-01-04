@@ -1,6 +1,7 @@
 package com.nostalgi.engine.interfaces;
 
 import com.badlogic.gdx.InputProcessor;
+import com.nostalgi.engine.IO.Net.PlayerSession;
 import com.nostalgi.engine.NostalgiRenderer;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.Utils.Guid;
@@ -29,7 +30,7 @@ public interface IGameEngine {
 
     void loadLevel(String level);
 
-    void createNewPlayer(String playerName, Guid playerId);
+    PlayerSession createNewPlayer(String playerName, Guid playerId);
 
 
 }

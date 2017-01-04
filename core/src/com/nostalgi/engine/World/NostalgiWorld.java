@@ -1049,7 +1049,6 @@ public class NostalgiWorld implements IWorld {
                 throw new FailedToSpawnActorException(e);
             }
         }
-
         return a;
     }
 }
