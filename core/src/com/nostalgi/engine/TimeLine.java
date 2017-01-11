@@ -104,7 +104,6 @@ public class TimeLine implements ITimeLine {
 
     @Override
     public void tick(float dTime) {
-
         if(this.state == TimeManagementSystem.State.RUNNING) {
             if (timeDiff >= timeStep) {
                 timeDiff = 0;

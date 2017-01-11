@@ -247,6 +247,9 @@ public interface IWorld {
 
     <T extends IActor> T  spawnActor(Class<T> type, MapObject mapObject, IActor parent, float unitScale) throws FailedToSpawnActorException;
 
+
+    void despawnActor(IActor actor);
+
     IWall createWall(MapObject object, Vector2 mapOrigin, float unitScale);
     IWall createWall(MapObject object, Vector2 mapOrigin);
 

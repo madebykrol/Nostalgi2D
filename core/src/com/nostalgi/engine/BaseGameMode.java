@@ -1,5 +1,6 @@
 package com.nostalgi.engine;
 
+import com.badlogic.gdx.math.Vector2;
 import com.nostalgi.engine.IO.Net.NetworkRole;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.IController;
@@ -137,8 +138,8 @@ public class BaseGameMode implements IGameMode {
     }
 
     @Override
-    public IActor choosePlayerStart(IController player) {
-        return null;
+    public Vector2 choosePlayerStart(IController player) {
+        return new Vector2(1,1);
     }
 
     @Override

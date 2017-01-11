@@ -2,6 +2,7 @@ package com.nostalgi.game.Actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.Direction;
@@ -9,10 +10,13 @@ import com.nostalgi.engine.Factories.NostalgiAnimationFactory;
 import com.nostalgi.engine.States.AnimationState;
 import com.nostalgi.engine.World.Audio.ISound;
 import com.nostalgi.engine.interfaces.Factories.IAnimationFactory;
+import com.nostalgi.engine.interfaces.World.IActor;
 import com.nostalgi.engine.interfaces.World.ICharacter;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.engine.physics.BoundingVolume;
 import com.nostalgi.engine.physics.CollisionCategories;
+import com.nostalgi.game.Actors.Pickups.IPickupable;
+import com.nostalgi.game.Modes.ExampleTopDownRPGGameMode;
 
 import java.util.ArrayList;
 
@@ -181,6 +185,16 @@ public class ExampleTopDownRPGCharacter extends BaseCharacter implements ICharac
             }
         }
     }
+
+    @Override
+    public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
+
+        if(overlapper instanceof IPickupable) {
+            ExampleTopDownRPGGameMode gameMode = (ExampleTopDownRPGGameMode)world.getGameMode();
+            gameMode.handlePickup((IPickupable)overlapper);
+        }
+    }
+
 
     @Override
     public void dispose() {

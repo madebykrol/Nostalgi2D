@@ -14,6 +14,7 @@ import com.nostalgi.engine.interfaces.States.IGameState;
 import com.nostalgi.engine.interfaces.States.IPlayerState;
 import com.nostalgi.engine.interfaces.World.IWorld;
 import com.nostalgi.game.Actors.ExampleTopDownRPGCharacter;
+import com.nostalgi.game.Actors.Pickups.IPickupable;
 import com.nostalgi.game.Controllers.ExampleNPCAIController;
 import com.nostalgi.game.Controllers.ExampleTopDownRPGController;
 import com.nostalgi.game.ExamplePlayerState;
@@ -81,6 +82,10 @@ public class ExampleTopDownRPGGameMode extends BaseGameMode {
         }, new CurveFloat(1, 6));
         tl.setTimeStep(1f);
         tl.play();
+    }
+
+    public void handlePickup(IPickupable item) {
+
     }
 
     public void init() {

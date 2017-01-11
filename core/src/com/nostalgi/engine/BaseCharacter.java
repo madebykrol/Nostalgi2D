@@ -44,16 +44,6 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     }
 
     @Override
-    public Stat getStat(int mod) {
-        return null;
-    }
-
-    @Override
-    public void setStat(int mod, Stat stat) {
-
-    }
-
-    @Override
     public boolean canEverTick() {
         return this.canEverTick;
     }
@@ -63,26 +53,6 @@ public class BaseCharacter extends BaseActor implements ICharacter {
         super.tick(delta);
     }
 
-
-    @Override
-    public IItem getEquipmentItem(int slot) {
-        return null;
-    }
-
-    @Override
-    public IItem[] getEquipmentItems() {
-        return new IItem[0];
-    }
-
-    @Override
-    public IItem getInventoryItem(int slot) {
-        return null;
-    }
-
-    @Override
-    public IItem[] getInventoryItems() {
-        return new IItem[0];
-    }
 
     @Override
     public void setCurrentController(IController controller) {
@@ -125,12 +95,6 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     }
 
     @Override
-    public Sprite getStaticSprite(float deltaT) {
-        return null;
-    }
-
-
-    @Override
     public void lookAt(Vector2 target) {
         double angleBetween = NMath.angleBetween(this.getPhysicsBody().getWorldCenter(), target);
 
@@ -171,11 +135,6 @@ public class BaseCharacter extends BaseActor implements ICharacter {
     @Override
     public float getHeight() {
         return this.height;
-    }
-
-    @Override
-    public Vector2 getVelocity() {
-        return this.currentVelocity;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.nostalgi.engine.interfaces;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.nostalgi.engine.interfaces.Hud.IHud;
 import com.nostalgi.engine.interfaces.States.IGameState;
@@ -37,7 +38,7 @@ public interface IGameMode extends Disposable{
     Class getDefaultPlayerStateClass();
     void postDefaultPlayerStateCreation(IPlayerState playerState);
 
-    IActor choosePlayerStart(IController player);
+    Vector2 choosePlayerStart(IController player);
 
     IHud getHud();
     void setHud(IHud hud);

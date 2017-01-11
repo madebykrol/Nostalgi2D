@@ -128,6 +128,11 @@ public abstract class BaseActor implements IActor {
         actor.setParent(this);
     }
 
+    public void removeChild(IActor actor) {
+        this.children.remove(actor);
+        actor.setParent(null);
+    }
+
     @Override
     public Vector2 getWorldPosition() {
         this.doWorldTransformation();

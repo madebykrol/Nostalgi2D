@@ -709,6 +709,14 @@ public class NostalgiWorld implements IWorld {
         }
     }
 
+    @Override
+    public void despawnActor(IActor actor) {
+        IActor parent = actor.getParent();
+        parent.removeChild(actor);
+
+        actor.onDespawn();
+    }
+
     private IActor doCharacterInitialization(IActor actor) {
         if(actor instanceof ICharacter) {
 

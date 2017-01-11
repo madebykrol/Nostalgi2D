@@ -2,6 +2,8 @@ package com.nostalgi.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.nostalgi.engine.IO.DiskGameInstanceStore;
+import com.nostalgi.game.ExampleGameInstance;
 import com.nostalgi.game.Game;
 import com.nostalgi.game.desktop.com.nostalgi.cli.CLI;
 import com.nostalgi.server.HeadlessApplication;
@@ -20,9 +22,9 @@ public class DesktopLauncher {
 		ServerConfig serverConfig = new ServerConfig();
 
 		if(cli.getBooleanArg("server")) {
-			new HeadlessApplication(new Game(true), serverConfig).run();
+			new HeadlessApplication(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), true), serverConfig).run();
 		} else {
-			new LwjglApplication(new Game(false), config);
+			new LwjglApplication(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), false), config);
 		}
 	}
 }

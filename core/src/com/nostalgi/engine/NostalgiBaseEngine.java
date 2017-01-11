@@ -352,7 +352,6 @@ public class NostalgiBaseEngine implements IGameEngine {
         try {
             // and spawn a default pawn.
             // @TODO If the map is set to always spawn a "SpectatorCharacter" spawn from that class instead.
-
             try {
                 controller = (IController) ClassReflection.getConstructor(controllerClass, IWorld.class).newInstance(world);
             } catch (ReflectionException e) {
@@ -367,7 +366,11 @@ public class NostalgiBaseEngine implements IGameEngine {
 
             if(controller != null) {
                 controller.setPlayerState(playerState);
-                ICharacter playerCharacter = (ICharacter) world.spawnActor(this.world.getGameMode().getDefaultCharacterClass(), controller.getPlayerState().getPlayerName(), true, new Vector2(32, 26));
+                ICharacter playerCharacter = (ICharacter) world.spawnActor(
+                        this.world.getGameMode().getDefaultCharacterClass(),
+                        controller.getPlayerState().getPlayerName(),
+                        true,
+                        this.world.getGameMode().choosePlayerStart(controller));
                 // Possess the freshly spawned character.
                 controller.possessCharacter(playerCharacter);
             }
@@ -422,8 +425,6 @@ public class NostalgiBaseEngine implements IGameEngine {
     }
 
     private void initInput() {
-
-
         // Set input processor to multiplexer
         inputProcessor = new InputMultiplexer();
 

@@ -3,6 +3,7 @@ package com.nostalgi.game.Actors;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.nostalgi.engine.BaseCharacter;
 import com.nostalgi.engine.Direction;
@@ -181,6 +182,11 @@ public class ExampleTopDownRPGAICharacter extends BaseCharacter implements IChar
         }
 
         return contact.isEnabled();
+    }
+
+    @Override
+    public void onOverlapBegin(IActor overlapper, Fixture instigatorFixture, Fixture targetFixture) {
+
     }
 
     @Override

@@ -52,7 +52,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
         ExamplePlayerState ps = (ExamplePlayerState)getPlayerState();
 
 
-        ExampleTopDownRPGCharacter currentPossessedCharacter = (ExampleTopDownRPGCharacter) this.getCurrentPossessedCharacter();
+        ICharacter currentPossessedCharacter = this.getCurrentPossessedCharacter();
 
         if (currentPossessedCharacter != null) {
 
@@ -71,17 +71,18 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
                 }
             } else {
                 handleMovement(currentPossessedCharacter, dTime);
-
+                /*
                 if(!currentPossessedCharacter.isDashing() && (!rightIsPressed && !leftIsPressed && !upIsPressed && !downIsPressed)) {
                     currentPossessedCharacter.stop();
                     currentPossessedCharacter.setWalkingState(AnimationState.IdleFaceSouthAnimation);
                 }
+                */
             }
-
+            /*
             if(!currentPossessedCharacter.isDashing()) {
                 ps.addStamina(+0.1f);
             }
-
+            */
             handleLookingAtHudChanges(currentPossessedCharacter, dTime);
         }
     }
@@ -111,6 +112,7 @@ public class ExampleTopDownRPGController extends BaseController implements IPath
             } else {
                 if(topActor instanceof ICharacter) {
                     focus = topActor;
+                    this.possessCharacter((ICharacter) topActor);
                 }
                 this.getCurrentPossessedCharacter().lookAt(topActor.getPhysicsBody().getWorldCenter());
             }

@@ -69,6 +69,8 @@ public interface IActor extends IWorldObject {
      */
     void addChild(IActor actor);
 
+    void removeChild(IActor actor);
+
     /**
      * Returns whether or not this actor can tick.
      * one tick occurs on every frame.

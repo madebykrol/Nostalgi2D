@@ -1,27 +1,16 @@
 package com.nostalgi.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.nostalgi.engine.BaseGame;
-import com.nostalgi.engine.BasePlayerState;
-import com.nostalgi.engine.Exceptions.FailedToSpawnActorException;
-import com.nostalgi.engine.NostalgiBaseEngine;
-import com.nostalgi.engine.NostalgiRenderer;
+import com.nostalgi.engine.*;
 import com.nostalgi.engine.Render.NostalgiCamera;
 import com.nostalgi.engine.Utils.Guid;
-import com.nostalgi.engine.World.PointLightActor;
-import com.nostalgi.game.Actors.ExampleTopDownRPGAICharacter;
+import com.nostalgi.engine.interfaces.IGameInstance;
 
 public class Game extends BaseGame {
 
 	NostalgiRenderer tiledMapRenderer;
+	IGameInstance gameInstance;
 
 	int w;
 	int h;
@@ -29,15 +18,16 @@ public class Game extends BaseGame {
 	int vH;
 	int unitScale = 32;
 
-	public Game(boolean headless) {
-		this(64, 36, 32, headless);
+	public Game(IGameInstance gameInstance, boolean headless) {
+		this(gameInstance,64, 36, 32, headless);
 	}
 
-	public Game(int virtualWidth, int virtualHeight, int unitScale, boolean headless) {
+	public Game(IGameInstance gameInstance, int virtualWidth, int virtualHeight, int unitScale, boolean headless) {
 		super(headless, false);
 		this.unitScale = unitScale;
 		this.vW = virtualWidth;
 		this.vH = virtualHeight;
+		this.gameInstance = gameInstance;
 	}
 
 	@Override
@@ -54,7 +44,7 @@ public class Game extends BaseGame {
 		viewport = new FitViewport(vW, vH, camera);
 		viewport.apply();
 
-		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, new GameInstance(), false);
+		this.gameEngine = new NostalgiBaseEngine(camera, tiledMapRenderer, gameInstance, false);
         this.gameEngine.loadLevel("maps/grasslands");
 
 		this.gameEngine.createNewPlayer("player 1", Guid.createNew());
