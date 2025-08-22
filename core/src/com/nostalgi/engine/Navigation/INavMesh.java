@@ -33,4 +33,5 @@ public interface INavMesh {
     void drawNeighbors(OrthographicCamera camera);
     boolean pointInTriangle(Vector2 currentPoint, Polygon triangle);
     void reset();
+    IPathNode getNodeCloseToPoint(Vector2 point);
  }

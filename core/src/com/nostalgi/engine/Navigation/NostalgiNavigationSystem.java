@@ -1,3 +1,26 @@
+    // Thread-safe version: pass in a nav mesh to use (cloned per thread)
+    public ArrayList<IPathNode> findPath(Vector2 start, Vector2 finish, IWorld world, INavMesh navMesh) {
+        ArrayList<IPathNode> path = new ArrayList<IPathNode>();
+        float[] verts = new float[]{0f, 0f, 0f, 0f, 0f, 0f};
+        // add end location as a node on the path.
+        path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
+
+        // First up we need to set see if we can draw a straight line between start -> finish
+        ArrayList<Class> filter = new ArrayList<Class>();
+        filter.add(world.getCurrentController().getCurrentPossessedCharacter().getClass());
+        if (world.rayTrace(start, finish, filter, true).size() > 0) {
+            IPathNode firstWayPoint = navMesh.getNodeCloseToPoint(start);
+            IPathNode goalWayPoint = navMesh.getNodeCloseToPoint(finish);
+            if (firstWayPoint == null || goalWayPoint == null) {
+                return path;
+            }
+            // Find path.
+            path.addAll(findPath(firstWayPoint, goalWayPoint, world));
+            path.set(path.size() - 1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
+        }
+        Collections.reverse(path);
+        return path;
+    }
 package com.nostalgi.engine.Navigation;
 
 import com.badlogic.gdx.math.Polygon;
@@ -89,12 +112,47 @@ public class NostalgiNavigationSystem implements INavigationSystem {
         return findPath(from.getWorldPosition(), to.getWorldPosition(), world);
     }
 
+    // Thread-safe version: pass in a nav mesh to use (cloned per thread)
+    public ArrayList<IPathNode> findPath(Vector2 start, Vector2 finish, IWorld world, INavMesh navMesh) {
+        ArrayList<IPathNode> path = new ArrayList<IPathNode>();
+        navMesh.reset();
+
+        float[] verts = new float[]{0f, 0f, 0f, 0f, 0f, 0f};
+        // add end location as a node on the path.
+        path.add(new PathNode(finish, new Polygon(verts), new int[]{0}, 0));
+
+        // First up we need to set see if we can draw a straight line between start -> finish
+        ArrayList<Class> filter = new ArrayList<Class>();
+        filter.add(world.getCurrentController().getCurrentPossessedCharacter().getClass());
+        if (world.rayTrace(start, finish, filter, true).size() > 0) {
+            IPathNode firstWayPoint = navMesh.getNodeCloseToPoint(start);
+            IPathNode goalWayPoint = navMesh.getNodeCloseToPoint(finish);
+            if (firstWayPoint == null || goalWayPoint == null) {
+                return path;
+            }
+            // Find path.
+            path.addAll(findPath(firstWayPoint, goalWayPoint, world));
+            path.set(path.size() - 1, new PathNode(start, new Polygon(verts), new int[]{0}, path.size()));
+        }
+
+        Collections.reverse(path);
+        return path;
+    }
+
     @Override
     public void findPathAsync(final Vector2 start, final Vector2 finish, final IWorld world, final IPathFoundCallback callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final ArrayList<IPathNode> result = findPath(start, finish, world);
+                // Clone the nav mesh for this thread
+                INavMesh meshClone = null;
+                if (currentNavMesh instanceof NavigationMesh) {
+                    meshClone = ((NavigationMesh) currentNavMesh).cloneMesh();
+                } else {
+                    // fallback: use the original (not thread safe)
+                    meshClone = currentNavMesh;
+                }
+                final ArrayList<IPathNode> result = findPath(start, finish, world, meshClone);
                 callback.onPathFound(result);
             }
         }).start();

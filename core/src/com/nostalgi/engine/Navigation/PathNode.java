@@ -94,11 +94,11 @@ public class PathNode implements IPathNode {
     @Override
     public IPathNode clone() {
         PathNode cpy = new PathNode(this.position.cpy(), new Polygon(triangle.getVertices()), this.floors.clone(), this.index);
-
-        for(IPathNode neighbor : this.neighbors.values()) {
-            cpy.addNeighbor(neighbor);
-        }
-        cpy.parent = this.parent;
+        
+        // Don't copy neighbors or parent - these will be set up separately in NavigationMesh.cloneMesh()
+        // This ensures proper thread isolation as each cloned node starts with fresh state
+        cpy.cost = 9999; // Reset cost for pathfinding
+        cpy.parent = null; // Reset parent for pathfinding
 
         return cpy;
     }

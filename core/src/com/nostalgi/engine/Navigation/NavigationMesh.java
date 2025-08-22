@@ -1,3 +1,28 @@
+    /**
+     * Deep clone the navigation mesh and all its nodes, including neighbor relationships.
+     */
+    public NavigationMesh cloneMesh() {
+        NavigationMesh clone = new NavigationMesh(this.meshLayer, this.unitScale);
+        clone.floor = this.floor;
+        // 1. Clone all nodes (without neighbors)
+        HashMap<Integer, IPathNode> clonedNodes = new HashMap<>();
+        for (IPathNode node : this.nodes.values()) {
+            IPathNode nodeClone = node.clone();
+            clonedNodes.put(node.getIndex(), nodeClone);
+        }
+        // 2. Rebuild neighbor relationships to point to clones
+        for (IPathNode node : this.nodes.values()) {
+            IPathNode nodeClone = clonedNodes.get(node.getIndex());
+            for (IPathNode neighbor : node.getNeighbors().values()) {
+                IPathNode neighborClone = clonedNodes.get(neighbor.getIndex());
+                if (neighborClone != null) {
+                    nodeClone.addNeighbor(neighborClone);
+                }
+            }
+        }
+        clone.nodes = clonedNodes;
+        return clone;
+    }
 package com.nostalgi.engine.Navigation;
 
 import com.badlogic.gdx.graphics.Color;
@@ -216,6 +241,19 @@ public class NavigationMesh implements INavMesh{
         }
     }
 
+    @Override
+    public IPathNode getNodeCloseToPoint(Vector2 point) {
+        for(IPathNode node : this.getNodes().values()) {
+            // we need to translate the point from unit space to pixel space.
+            if(pointInTriangle(new Vector2(
+                    point.x * getUnitScale(),
+                    point.y * getUnitScale()), node.getPolygon())) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     private boolean isPointBetweenTwoOtherPoints(Vector2 currentPoint, Vector2 p1, Vector2 p2) {
         float dxc = currentPoint.x - p1.x;
         float dyc = currentPoint.y - p1.y;
@@ -238,6 +276,35 @@ public class NavigationMesh implements INavMesh{
                         p1.y <= currentPoint.y && currentPoint.y <= p2.y :
                         p2.y <= currentPoint.y && currentPoint.y <= p1.y;
         }
+    }
+
+    /**
+     * Deep clone the navigation mesh and all its nodes, including neighbor relationships.
+     */
+    public NavigationMesh cloneMesh() {
+        NavigationMesh clone = new NavigationMesh(this.meshLayer, this.unitScale);
+        clone.floor = this.floor;
+        
+        // 1. Clone all nodes (without neighbors)
+        HashMap<Integer, IPathNode> clonedNodes = new HashMap<>();
+        for (IPathNode node : this.nodes.values()) {
+            IPathNode nodeClone = node.clone();
+            clonedNodes.put(node.getIndex(), nodeClone);
+        }
+        
+        // 2. Rebuild neighbor relationships to point to clones
+        for (IPathNode node : this.nodes.values()) {
+            IPathNode nodeClone = clonedNodes.get(node.getIndex());
+            for (IPathNode neighbor : node.getNeighbors().values()) {
+                IPathNode neighborClone = clonedNodes.get(neighbor.getIndex());
+                if (neighborClone != null) {
+                    nodeClone.addNeighbor(neighborClone);
+                }
+            }
+        }
+        
+        clone.nodes = clonedNodes;
+        return clone;
     }
 
 
