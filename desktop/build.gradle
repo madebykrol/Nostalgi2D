@@ -1,6 +1,10 @@
 apply plugin: "java"
 
-sourceCompatibility = 1.6
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "DesktopLauncher"
@@ -15,9 +19,9 @@ task run(dependsOn: classes, type: JavaExec) {
 }
 
 task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
+    from {configurations.runtimeClasspath.collect {zipTree(it)}}
     from files(project.assetsDir);
  
     manifest {
@@ -35,7 +39,7 @@ eclipse {
 }
 
 dependencies {
-    compile project(path: ':server')
+    implementation project(path: ':server')
 }
 task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
   doLast {

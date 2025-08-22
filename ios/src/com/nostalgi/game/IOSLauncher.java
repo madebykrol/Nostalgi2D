@@ -5,12 +5,13 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import com.nostalgi.engine.IO.DiskGameInstanceStore;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
-        return new IOSApplication(new Game(false), config);
+        return new IOSApplication(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), false), config);
     }
 
     public static void main(String[] argv) {

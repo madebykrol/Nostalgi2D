@@ -1,6 +1,11 @@
 apply plugin: 'java'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.badlogicgames.gdx:gdx:1.9.3'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
 }

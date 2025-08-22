@@ -43,7 +43,7 @@ public class NostalgiAnimationFactory implements IAnimationFactory {
             }
         }
 
-        Animation a = new Animation(1f/6f, animationFrames);
+        Animation<TextureRegion> a = new Animation<TextureRegion>(1f/6f, animationFrames);
         a.setPlayMode(playMode);
 
         return a;

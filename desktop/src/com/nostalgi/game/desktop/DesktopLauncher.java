@@ -1,7 +1,7 @@
 package com.nostalgi.game.desktop;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.nostalgi.engine.IO.DiskGameInstanceStore;
 import com.nostalgi.game.ExampleGameInstance;
 import com.nostalgi.game.Game;
@@ -13,18 +13,20 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		CLI cli = new CLI(arg);
 
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = cli.getIntArg("height", 1080);
-		config.width = cli.getIntArg("width", 1920);
-		config.fullscreen = cli.getBooleanArg("fullscreen");
-		config.resizable = false;
+		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setWindowedMode(cli.getIntArg("width", 1920), cli.getIntArg("height", 1080));
+		config.setResizable(false);
+		
+		if(cli.getBooleanArg("fullscreen")) {
+			config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		}
 
 		ServerConfig serverConfig = new ServerConfig();
 
 		if(cli.getBooleanArg("server")) {
 			new HeadlessApplication(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), true), serverConfig).run();
 		} else {
-			new LwjglApplication(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), false), config);
+			new Lwjgl3Application(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), false), config);
 		}
 	}
 }

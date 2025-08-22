@@ -4,7 +4,6 @@ import com.nostalgi.engine.interfaces.IGameInstance;
 import com.nostalgi.engine.interfaces.ILoadEventCallback;
 import com.nostalgi.engine.interfaces.ISaveEventCallback;
 import com.nostalgi.engine.interfaces.ISaveSlot;
-import com.sun.org.apache.bcel.internal.generic.ILOAD;
 
 import java.util.ArrayList;
 
