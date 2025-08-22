@@ -1,7 +1,9 @@
 package com.example;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.nostalgi.engine.IO.DiskGameInstanceStore;
+import com.nostalgi.game.ExampleGameInstance;
 import com.nostalgi.game.Game;
 
 import java.awt.BorderLayout;
@@ -44,11 +46,11 @@ public class Editor {
         frame.setBounds(100, 100, 1024, 768);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "Mygame";
-        config.width = 800;
-        config.height = 600;
-
+        // Note: LWJGL3 doesn't support embedding in AWT Canvas like LWJGL2 did
+        // For a modern editor, consider using a separate window or switching to JavaFX
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setTitle("Nostalgi2D Editor");
+        config.setWindowedMode(800, 600);
 
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -73,7 +75,9 @@ public class Editor {
         canvasPanel.add(canvas, BorderLayout.CENTER);
 
         frame.setVisible(true);
-        new LwjglApplication(new Game(false), config, canvas);
+        
+        // Launch LibGDX application in separate window since LWJGL3 doesn't support AWT Canvas embedding
+        new Lwjgl3Application(new Game(new ExampleGameInstance(new DiskGameInstanceStore()), false), config);
 
 
 

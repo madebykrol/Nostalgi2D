@@ -15,27 +15,6 @@ gwt {
     src = files(file("src/")) // Needs to be in front of "modules" below.
     modules 'com.nostalgi.game.GdxDefinition'
     devModules 'com.nostalgi.game.GdxDefinitionSuperdev'
-    project.webAppDirName = 'webapp'
-
-    compiler {
-        strict = true;
-        enableClosureCompiler = true;
-        disableCastChecking = true;
-    }
-}
-
-task draftRun(type: org.akhikhl.gretty.JettyRunWar) {
-    dependsOn draftWar
-    dependsOn.remove('war')
-    webApp=draftWar.archiveFile
-    daemon=true
-}
-
-task superDev(type: org.wisepersist.gradle.plugins.gwt.GwtSuperDev) {
-    dependsOn draftRun
-    doFirst {
-    	gwt.modules = gwt.devModules
-    }
 }
 
 task dist(dependsOn: [clean, compileGwt]) {
@@ -56,21 +35,7 @@ task dist(dependsOn: [clean, compileGwt]) {
     }
 }
 
-draftWar {
-   from "war"
-}
-
-task addSource {
-    doLast {
-        sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
-    }
-}
-
-tasks.compileGwt.dependsOn(addSource)
-tasks.draftCompileGwt.dependsOn(addSource)
-
 sourceSets.main.java.srcDirs = [ "src/" ]
-
 
 eclipse.project {
     name = appName + "-html"
