@@ -170,7 +170,7 @@ public class BaseCharacter extends BaseActor implements ICharacter {
 
     @Override
     public void draw(Batch batch, float timeElapsed) {
-        TextureRegion tr = this.getAnimation(this.getWalkingState()).getKeyFrame(timeElapsed);
+        TextureRegion tr = (TextureRegion) this.getAnimation(this.getWalkingState()).getKeyFrame(timeElapsed);
         if(tr != null) {
             batch.draw(tr,
                     this.getWorldPosition().x,

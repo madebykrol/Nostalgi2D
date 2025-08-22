@@ -1,8 +1,14 @@
 apply plugin: "java"
-apply plugin: "jetty"
+apply plugin: "org.wisepersist.gwt"
+apply plugin: "war"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 gwt {
-    gwtVersion='2.6.0' // Should match the gwt version used for building the gwt backend
+    gwtVersion='2.10.0' // Updated GWT version
     maxHeapSize="1G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
     minHeapSize="1G"
 
@@ -18,14 +24,14 @@ gwt {
     }
 }
 
-task draftRun(type: JettyRunWar) {
+task draftRun(type: org.akhikhl.gretty.JettyRunWar) {
     dependsOn draftWar
     dependsOn.remove('war')
-    webApp=draftWar.archivePath
+    webApp=draftWar.archiveFile
     daemon=true
 }
 
-task superDev(type: de.richsource.gradle.plugins.gwt.GwtSuperDev) {
+task superDev(type: org.wisepersist.gradle.plugins.gwt.GwtSuperDev) {
     dependsOn draftRun
     doFirst {
     	gwt.modules = gwt.devModules
@@ -54,14 +60,15 @@ draftWar {
    from "war"
 }
 
-task addSource << {
-	sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+task addSource {
+    doLast {
+        sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+    }
 }
 
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-sourceCompatibility = 1.6
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 

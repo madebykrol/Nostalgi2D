@@ -1,2 +1,2 @@
-include ':server', ':test', ':editor'
+include ':server', ':editor'
 include 'desktop', 'android', 'ios', 'html', 'core'

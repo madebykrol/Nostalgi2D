@@ -1,6 +1,10 @@
 apply plugin: "java"
 
-sourceCompatibility = 1.6
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -11,5 +15,5 @@ eclipse.project {
 }
 
 dependencies {
-    compile 'junit:junit:4.12'
+    implementation 'junit:junit:4.13.2'
 }
